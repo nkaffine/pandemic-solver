@@ -13,6 +13,9 @@
 		01660BDA2230D28200FD400A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 01660BD92230D28200FD400A /* Assets.xcassets */; };
 		01660BDD2230D28200FD400A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 01660BDB2230D28200FD400A /* LaunchScreen.storyboard */; };
 		01660BE82230D28200FD400A /* PandemicSolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BE72230D28200FD400A /* PandemicSolverTests.swift */; };
+		01660BF42230D47200FD400A /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF32230D47200FD400A /* Card.swift */; };
+		01660BF62230D85200FD400A /* Decks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF52230D85200FD400A /* Decks.swift */; };
+		01660BF82230E00E00FD400A /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF72230E00E00FD400A /* Board.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +39,9 @@
 		01660BE32230D28200FD400A /* PandemicSolverTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PandemicSolverTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		01660BE72230D28200FD400A /* PandemicSolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PandemicSolverTests.swift; sourceTree = "<group>"; };
 		01660BE92230D28200FD400A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		01660BF32230D47200FD400A /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
+		01660BF52230D85200FD400A /* Decks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decks.swift; sourceTree = "<group>"; };
+		01660BF72230E00E00FD400A /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +106,9 @@
 		01660BF22230D29400FD400A /* model */ = {
 			isa = PBXGroup;
 			children = (
+				01660BF32230D47200FD400A /* Card.swift */,
+				01660BF52230D85200FD400A /* Decks.swift */,
+				01660BF72230E00E00FD400A /* Board.swift */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -205,8 +214,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01660BF62230D85200FD400A /* Decks.swift in Sources */,
 				01660BD52230D28100FD400A /* ViewController.swift in Sources */,
+				01660BF82230E00E00FD400A /* Board.swift in Sources */,
 				01660BD32230D28100FD400A /* AppDelegate.swift in Sources */,
+				01660BF42230D47200FD400A /* Card.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
