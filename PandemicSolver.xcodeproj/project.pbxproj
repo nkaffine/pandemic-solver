@@ -78,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				01660BD22230D28100FD400A /* AppDelegate.swift */,
+				01660BF22230D29400FD400A /* model */,
 				01660BD42230D28100FD400A /* ViewController.swift */,
 				01660BD62230D28100FD400A /* Main.storyboard */,
 				01660BD92230D28200FD400A /* Assets.xcassets */,
@@ -94,6 +95,13 @@
 				01660BE92230D28200FD400A /* Info.plist */,
 			);
 			path = PandemicSolverTests;
+			sourceTree = "<group>";
+		};
+		01660BF22230D29400FD400A /* model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
