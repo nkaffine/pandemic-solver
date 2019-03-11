@@ -16,6 +16,7 @@
 		01660BF42230D47200FD400A /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF32230D47200FD400A /* Card.swift */; };
 		01660BF62230D85200FD400A /* Decks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF52230D85200FD400A /* Decks.swift */; };
 		01660BF82230E00E00FD400A /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF72230E00E00FD400A /* Board.swift */; };
+		EDA4934E22357C2100BF77BF /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA4934D22357C2100BF77BF /* Action.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +43,7 @@
 		01660BF32230D47200FD400A /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		01660BF52230D85200FD400A /* Decks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decks.swift; sourceTree = "<group>"; };
 		01660BF72230E00E00FD400A /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
+		EDA4934D22357C2100BF77BF /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +111,7 @@
 				01660BF32230D47200FD400A /* Card.swift */,
 				01660BF52230D85200FD400A /* Decks.swift */,
 				01660BF72230E00E00FD400A /* Board.swift */,
+				EDA4934D22357C2100BF77BF /* Action.swift */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -215,6 +218,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				01660BF62230D85200FD400A /* Decks.swift in Sources */,
+				EDA4934E22357C2100BF77BF /* Action.swift in Sources */,
 				01660BD52230D28100FD400A /* ViewController.swift in Sources */,
 				01660BF82230E00E00FD400A /* Board.swift in Sources */,
 				01660BD32230D28100FD400A /* AppDelegate.swift in Sources */,

@@ -8,26 +8,61 @@
 
 import Foundation
 
+enum CubeDistributionError
+{
+    /// When the number of cubes added to a distribution would cause there
+    ///to be more than 3 cubes of that color
+    case outbreak
+}
+
+protocol CubeDistribution
+{
+    /**
+     The number of red cubes in the distribution.
+     */
+    var red: Int { get }
+    /**
+     The number of yellow cubes in the distribution.
+    */
+    var yellow: Int { get }
+    /**
+     The number of blue cubes in the distribution.
+     */
+    var blue: Int { get }
+    /**
+     The number of black cubes in the distribution.
+     */
+    var black: Int { get }
+    
+    /**
+     Adds the given cubes to the distribution.
+     - Parameters:
+        - cubes: a dictionary of disease color to integer for the number of cubes of each color.
+     - Throws: `CubeDistributionError.outbreak` when the total number of cubes for the given
+        disease would be increased to greater than 3.
+    */
+    func add(cubes: [DiseaseColor : Int]) throws
+    
+    /**
+     Adds the given number of cubes of the given disease to the distribution.
+     - Parameters:
+        - cubes: the number of cubes to be added.
+        - disease: the disease of the cubes being added
+     - Throws: `CubeDistributionError.outbreak` when the total number of cubes for the given
+        disease would be increased to greater than 3.
+     */
+    func add(cubes: Int, ofDisease disease: DiseaseColor) throws
+}
+
 protocol BoardLocation
 {
     var city: City { get }
-    var cubes: [DiseaseColor : Int] { get }
+    var cubes: CubeDistribution { get }
 }
 
-enum Action
+enum PlayState
 {
-    case general(action: GeneralAction)
-}
-
-enum GeneralAction
-{
-    case drive(to: BoardLocation)
-    case directFlight(to: BoardLocation)
-    case charterFlight(to: BoardLocation)
-    case shuttleFlight(to: BoardLocation)
-    case buildResearchStation, treat
-    case cure(disease: DiseaseColor)
-    case shareKnowledge(card: Card, pawn: Pawn)
+    case inProgress, win, loss
 }
 
 enum BoardError: Error
@@ -50,7 +85,7 @@ protocol GameState
     /**
      A list of pawns in the game.
     */
-    var pawns: [Pawn] { get }
+    var pawns: [Role] { get }
     /**
      The deck the players draw from at the end of each turn.
      */
@@ -72,17 +107,18 @@ protocol GameState
      */
     var maxOutBreaks: Int { get }
     /**
-     The number of cubes available for each color.
+     A dictinoary of disease cubes to the number of cubes of that color that
+     can be placed on the board.
      */
-    var totalCubesPerColor: Int { get }
-    /**
-     A dictionary of disease cubes to the number of cubes currently on the board.
-     */
-    var cubesInPlay: [DiseaseColor : Int] { get }
+    var cubesRemaining: [DiseaseColor : Int] { get }
     /**
      The cities on the board.
      */
     var cities: [BoardLocation] { get }
+    /**
+     The edges between all of the cities on the baord (this might be refactored later)
+    */
+    var connections: [(BoardLocation, BoardLocation)] { get }
     /**
      List of diseases that are not cured.
      */
@@ -92,9 +128,9 @@ protocol GameState
      */
     var curedDisease: [DiseaseColor] { get }
     /**
-     Whether or not the game is in the goal state.
+     Whether the game is still in progress, lost, or won.
      */
-    var isGoalState: Bool { get }
+    var playState: PlayState { get }
     /**
      Returns the current location of the given pawn on the board.
      - Parameters:
@@ -118,8 +154,10 @@ protocol GameState
          - action: the action that is being performed.
      - Throws: `BoardError.invalidMove` if the move is invalid.
         - `BoardError.invalidPawn` when the pawn is not in the game
+     - Returns: the state of the game after the transition (if this is implemented as a struct
+        this will be easy to make multithreaded).
      */
-    func transition(pawn: Pawn, for action: Action) throws
+    func transition(pawn: Pawn, for action: Action) throws -> GameState
     /**
      Returns the current hand for the given pawn.
      - Parameters:
