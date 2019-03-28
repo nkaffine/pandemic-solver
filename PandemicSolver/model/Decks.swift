@@ -191,35 +191,19 @@ class PlayerDeck: Deck
 class InfectionPile: Deck
 {
     //TODO: Create a better datastructure for this
-    private var deck: [[Card]]
+    private var deck: PartitionedDeck
     var discardPile: [Card]
     
     /**
      With the discard pile it always has the same cards to start.
     */
     init() {
-        deck = [GameStartHelper.generateCityCards()]
+        deck = PartitionedDeck(piles: [GameStartHelper.generateCityCards()])
+        discardPile = []
     }
 
     func drawCards(numberOfCards: Int) throws -> [Card] {
-        //Set up local variable for cards
-        var cards = [Card]()
-        //Get the first pile to start pulling from
-        var currentPile = self.deck.first
-        //Iterate while there are still cards left in the deck
-        //and the right number of cards haven't been drawn
-        while cards.count < numberOfCards && currentPile != nil
-        {
-            if let card = currentPile?.first
-            {
-                cards.append(card)
-            }
-            if currentPile?.isEmpty ?? false
-            {
-                self.deck.removeLast()
-                currentPile = self.deck.first
-            }
-        }
+        let cards = deck.draw(numberOfCards: numberOfCards)
         if cards.count < numberOfCards
         {
             throw DeckError.invalidDraw
@@ -236,19 +220,198 @@ class InfectionPile: Deck
     }
 
     func probability(ofDrawing card: Card) -> Double {
-        let totalCards = deck.reduce([]){ $0 + $1 }
-        return Double(totalCards.filter{ deckCard in card == deckCard }.count) / Double(totalCards.count)
+        return deck.probability(ofDrawing: card)
     }
 
     func probability(ofDrawing card: Card, inNext draws: Int) -> Double {
-        //TODO: actually do it
-        return 0
+        return deck.probability(ofDrawing: card, inNext: draws)
     }
 
     func probability(ofDrawing cards: [Card], inNext draws: Int) -> Double {
-        //TODO: actually do it
-        return 0
+        return deck.probability(ofDrawing: cards, inNext: draws)
     }
 
+    func addCards(cards: [Card])
+    {
+        deck.add(cards: cards)
+    }
+}
 
+protocol ProbabilityDeck
+{
+    /**
+     Draw and remove a card from the top of the deck.
+     - Parameters:
+        -numberOfCards: the number of cards to be drawn
+    */
+    func draw(numberOfCards: Int) -> [Card]
+    
+    /**
+     Returns the probability of drawing the given card.
+     - Parameters:
+        -card: the card that is the subject of the probabilistic query.
+    */
+    func probability(ofDrawing card: Card) -> Double
+    
+    /**
+     Returns the probability of drawing the given card in the next given number
+     of draws.
+     - Parameters:
+        -card: the card that is the subject of the probabilistic query.
+        -draws: the number of trials for drawing the card.
+    */
+    func probability(ofDrawing card: Card, inNext draws: Int) -> Double
+    
+    /**
+     Returns the probability of drawing the given list of cards in the next
+     given number of draws.
+     - Parameters:
+        -cards: a list of cards that are the subject of the probabilisitc query.
+        -draws: the number of trials for drawing the list of cards
+    */
+    func probability(ofDrawing cards: [Card], inNext draws: Int) -> Double
+    
+    /**
+     Adds the given cards to the top of the deck.
+     - Parameters:
+     - cards: the cards being added to the top of th dcek.
+    */
+    func add(cards: [Card])
+ }
+
+/**
+ Class to handle the paritioned aspect of the infection pile.
+ - Note: This class does not handle duplicate cards since it is not something
+ that can happen in the infection pile.
+ */
+class PartitionedDeck: ProbabilityDeck
+{
+    private var deck: [[Card]]
+    
+    init(piles: [[Card]]) {
+        deck = piles
+    }
+    
+    /**
+     Draws the given number of cards from the top of the deck.
+     - Parameters:
+        -numberOfCards: the number of cards to be drawn
+    */
+    func draw(numberOfCards: Int) -> [Card]
+    {
+        return (0..<numberOfCards).compactMap { _ -> Card? in return removeOne() }
+            .reduce([]){ result, card -> [Card] in return result + [card] }
+    }
+    
+    /**
+     If the card is not in the top deck then the probability is zero.
+    */
+    func probability(ofDrawing card: Card) -> Double
+    {
+        if let deck = deck.first, deck.contains(card)
+        {
+            return 1 / Double(deck.count)
+        }
+        return 0
+    }
+    
+    func probability(ofDrawing card: Card, inNext draws: Int) -> Double
+    {
+        let (guaranteed, probable) = topCardPiles(numberOfCards: draws)
+        if guaranteed.contains(card)
+        {
+            return 1
+        }
+        else if probable.contains(card)
+        {
+            return pow(1 / Double(probable.count), Double(draws - guaranteed.count))
+        }
+        else
+        {
+            return 0
+        }
+    }
+    
+    func probability(ofDrawing cards: [Card], inNext draws: Int) -> Double
+    {
+        if (cards.count > draws)
+        {
+            return 0
+        }
+        let (guaranteed, probable) = topCardPiles(numberOfCards: draws)
+        var probability: Double = 1
+        let nonGuaranteedCards = cards.filter{!guaranteed.contains($0)}
+        if guaranteed.count + nonGuaranteedCards.count > draws
+        {
+            return 0
+        }
+        cards.forEach
+        { card in
+            if !guaranteed.contains(card) && !probable.contains(card)
+            {
+                //Allows for escaping early if it gets zeroed out.
+                probability = 0
+                return
+            }
+            else if probable.contains(card)
+            {
+                probability = probability * pow(1 / Double(probable.count), Double(draws - guaranteed.count))
+            }
+        }
+        return probability
+    }
+    
+    func add(cards: [Card]) {
+        deck = [cards] + deck
+    }
+    
+    /**
+     Removes the first card of the deck and remeoves the first list if thee first list is empty.
+     - Returns: the first card of the deck if there is one.
+    */
+    private func removeOne() -> Card?
+    {
+        if deck.count > 0
+        {
+            let card = deck[0].removeFirst()
+            if deck[0].isEmpty
+            {
+                deck.removeFirst()
+            }
+            return card
+        }
+        return nil
+    }
+    
+    /**
+     Gets a list of cards that will be drawn for sure and a list of cards that might be drawn.
+     - Parameters:
+        - numberOfCards: the number of cards that are going to be drawn
+     - Returns: a tuple with the cards that will definitely be drawn and the cards that might be drawn.
+    */
+    private func topCardPiles(numberOfCards: Int) -> (guaranteed: [Card], probabilistic: [Card])
+    {
+        //Initializing the list of piles to an empty array.
+        var piles = [[Card]]()
+        //Keeping track of the total cards in all the piles combined.
+        var count = 0
+        deck.forEach
+        { pile in
+            if count < numberOfCards
+            {
+                piles.append(pile)
+                count += pile.count
+            }
+        }
+        let last = piles.removeLast()
+        let first = piles.reduce([]) { result, pile -> [Card] in return result + pile }
+        if first.isEmpty && last.count == numberOfCards
+        {
+            return (last, first)
+        }
+        else
+        {
+            return (first, last)
+        }
+    }
 }
