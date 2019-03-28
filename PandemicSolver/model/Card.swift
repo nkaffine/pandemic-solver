@@ -9,34 +9,6 @@
 import Foundation
 
 /**
-    There are 4 colors of cards in the game, each representing a different disease.
- */
-enum DiseaseColor: CaseIterable
-{
-    case red, black, blue, yellow
-}
-
-/**
-    There are finite number of cities in the game
- */
-enum CityName: CaseIterable
-{
-    case atlanta
-}
-
-/**
-    A city represents a unique location which is attached to cards and locations on the board. Each
-    city has a color and a name associated with it.
- */
-struct City
-{
-    ///The color of the city
-    let color: DiseaseColor
-    ///The name of the city
-    let name: CityName
-}
-
-/**
     Every playing card has one attribute, the city that it is associated with
  */
 protocol CityCardProtocol
@@ -45,16 +17,40 @@ protocol CityCardProtocol
     var city: City { get }
 }
 
-struct CityCard
+struct CityCard: CityCardProtocol, Equatable, CustomStringConvertible
 {
+    var description: String
+    {
+        return city.name.rawValue
+    }
+    
+    static func == (lhs: CityCard, rhs: CityCard) -> Bool {
+        return lhs.city == rhs.city
+    }
+    
     let city: City
 }
 
 /**
     A card can either be a city card or it can be an epidemic
  */
-enum Card
+enum Card: Equatable, CustomStringConvertible
 {
+    var description: String
+    {
+        switch self
+        {
+            case .epidemic:
+                return "epidemic"
+            case .cityCard(let card):
+                return card.description
+        }
+    }
     case cityCard(card: CityCard)
     case epidemic
+    
+    init(cityName: CityName)
+    {
+        self = .cityCard(card: CityCard(city: City(name: cityName)))
+    }
 }

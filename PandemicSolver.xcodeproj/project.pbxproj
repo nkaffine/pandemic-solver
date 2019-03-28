@@ -17,6 +17,18 @@
 		01660BF62230D85200FD400A /* Decks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF52230D85200FD400A /* Decks.swift */; };
 		01660BF82230E00E00FD400A /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF72230E00E00FD400A /* Board.swift */; };
 		EDA4934E22357C2100BF77BF /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA4934D22357C2100BF77BF /* Action.swift */; };
+		EDEAF57F224C1A3E007C2CC6 /* GameStartHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEAF57E224C1A3E007C2CC6 /* GameStartHelper.swift */; };
+		EDEAF582224C1C5C007C2CC6 /* DictionaryExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEAF581224C1C5C007C2CC6 /* DictionaryExtension.swift */; };
+		EDEAF584224C250A007C2CC6 /* Diseases.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEAF583224C250A007C2CC6 /* Diseases.swift */; };
+		EDEAF586224C5AAB007C2CC6 /* CubeDistribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEAF585224C5AAB007C2CC6 /* CubeDistribution.swift */; };
+		EDEAF588224C5AD9007C2CC6 /* CubeDistributionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEAF587224C5AD9007C2CC6 /* CubeDistributionTests.swift */; };
+		EDEAF58E224C6630007C2CC6 /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEAF58D224C6630007C2CC6 /* City.swift */; };
+		EDEAF590224C665F007C2CC6 /* CityTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEAF58F224C665F007C2CC6 /* CityTest.swift */; };
+		EDEAF592224C671F007C2CC6 /* Disease.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEAF591224C671F007C2CC6 /* Disease.swift */; };
+		EDEAF594224C6758007C2CC6 /* Hand.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEAF593224C6758007C2CC6 /* Hand.swift */; };
+		EDEAF596224C6A6B007C2CC6 /* MutableCollectionExtensio.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEAF595224C6A6B007C2CC6 /* MutableCollectionExtensio.swift */; };
+		EDEAF598224C7F7F007C2CC6 /* DeckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEAF597224C7F7F007C2CC6 /* DeckTests.swift */; };
+		EDEAF59A224C8097007C2CC6 /* CardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEAF599224C8097007C2CC6 /* CardTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +56,18 @@
 		01660BF52230D85200FD400A /* Decks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decks.swift; sourceTree = "<group>"; };
 		01660BF72230E00E00FD400A /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 		EDA4934D22357C2100BF77BF /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
+		EDEAF57E224C1A3E007C2CC6 /* GameStartHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStartHelper.swift; sourceTree = "<group>"; };
+		EDEAF581224C1C5C007C2CC6 /* DictionaryExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryExtension.swift; sourceTree = "<group>"; };
+		EDEAF583224C250A007C2CC6 /* Diseases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diseases.swift; sourceTree = "<group>"; };
+		EDEAF585224C5AAB007C2CC6 /* CubeDistribution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubeDistribution.swift; sourceTree = "<group>"; };
+		EDEAF587224C5AD9007C2CC6 /* CubeDistributionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubeDistributionTests.swift; sourceTree = "<group>"; };
+		EDEAF58D224C6630007C2CC6 /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
+		EDEAF58F224C665F007C2CC6 /* CityTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityTest.swift; sourceTree = "<group>"; };
+		EDEAF591224C671F007C2CC6 /* Disease.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Disease.swift; sourceTree = "<group>"; };
+		EDEAF593224C6758007C2CC6 /* Hand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hand.swift; sourceTree = "<group>"; };
+		EDEAF595224C6A6B007C2CC6 /* MutableCollectionExtensio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutableCollectionExtensio.swift; sourceTree = "<group>"; };
+		EDEAF597224C7F7F007C2CC6 /* DeckTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckTests.swift; sourceTree = "<group>"; };
+		EDEAF599224C8097007C2CC6 /* CardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				01660BD22230D28100FD400A /* AppDelegate.swift */,
+				EDEAF58B224C65C5007C2CC6 /* Utilities */,
 				01660BF22230D29400FD400A /* model */,
 				01660BD42230D28100FD400A /* ViewController.swift */,
 				01660BD62230D28100FD400A /* Main.storyboard */,
@@ -100,6 +125,10 @@
 			isa = PBXGroup;
 			children = (
 				01660BE72230D28200FD400A /* PandemicSolverTests.swift */,
+				EDEAF587224C5AD9007C2CC6 /* CubeDistributionTests.swift */,
+				EDEAF58F224C665F007C2CC6 /* CityTest.swift */,
+				EDEAF599224C8097007C2CC6 /* CardTests.swift */,
+				EDEAF597224C7F7F007C2CC6 /* DeckTests.swift */,
 				01660BE92230D28200FD400A /* Info.plist */,
 			);
 			path = PandemicSolverTests;
@@ -109,11 +138,42 @@
 			isa = PBXGroup;
 			children = (
 				01660BF32230D47200FD400A /* Card.swift */,
+				EDEAF591224C671F007C2CC6 /* Disease.swift */,
+				EDEAF58D224C6630007C2CC6 /* City.swift */,
 				01660BF52230D85200FD400A /* Decks.swift */,
+				EDEAF593224C6758007C2CC6 /* Hand.swift */,
 				01660BF72230E00E00FD400A /* Board.swift */,
 				EDA4934D22357C2100BF77BF /* Action.swift */,
+				EDEAF58C224C65E3007C2CC6 /* Helpers */,
+				EDEAF583224C250A007C2CC6 /* Diseases.swift */,
+				EDEAF58A224C61B7007C2CC6 /* Cubes */,
 			);
 			path = model;
+			sourceTree = "<group>";
+		};
+		EDEAF58A224C61B7007C2CC6 /* Cubes */ = {
+			isa = PBXGroup;
+			children = (
+				EDEAF585224C5AAB007C2CC6 /* CubeDistribution.swift */,
+			);
+			path = Cubes;
+			sourceTree = "<group>";
+		};
+		EDEAF58B224C65C5007C2CC6 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				EDEAF581224C1C5C007C2CC6 /* DictionaryExtension.swift */,
+				EDEAF595224C6A6B007C2CC6 /* MutableCollectionExtensio.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		EDEAF58C224C65E3007C2CC6 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				EDEAF57E224C1A3E007C2CC6 /* GameStartHelper.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -217,12 +277,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EDEAF586224C5AAB007C2CC6 /* CubeDistribution.swift in Sources */,
+				EDEAF584224C250A007C2CC6 /* Diseases.swift in Sources */,
 				01660BF62230D85200FD400A /* Decks.swift in Sources */,
+				EDEAF596224C6A6B007C2CC6 /* MutableCollectionExtensio.swift in Sources */,
 				EDA4934E22357C2100BF77BF /* Action.swift in Sources */,
+				EDEAF594224C6758007C2CC6 /* Hand.swift in Sources */,
 				01660BD52230D28100FD400A /* ViewController.swift in Sources */,
 				01660BF82230E00E00FD400A /* Board.swift in Sources */,
+				EDEAF592224C671F007C2CC6 /* Disease.swift in Sources */,
 				01660BD32230D28100FD400A /* AppDelegate.swift in Sources */,
+				EDEAF58E224C6630007C2CC6 /* City.swift in Sources */,
 				01660BF42230D47200FD400A /* Card.swift in Sources */,
+				EDEAF57F224C1A3E007C2CC6 /* GameStartHelper.swift in Sources */,
+				EDEAF582224C1C5C007C2CC6 /* DictionaryExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -230,6 +298,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EDEAF598224C7F7F007C2CC6 /* DeckTests.swift in Sources */,
+				EDEAF588224C5AD9007C2CC6 /* CubeDistributionTests.swift in Sources */,
+				EDEAF59A224C8097007C2CC6 /* CardTests.swift in Sources */,
+				EDEAF590224C665F007C2CC6 /* CityTest.swift in Sources */,
 				01660BE82230D28200FD400A /* PandemicSolverTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
