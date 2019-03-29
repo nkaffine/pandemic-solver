@@ -11,4 +11,6 @@ import Foundation
 protocol Policy
 {
     func chooseAction(from actions: [Action], with gameState: GameState) -> Action
+    
+    func chooseCardToDiscar(from cards: [Card], with gameState: GameState) -> Card
 }

@@ -8,12 +8,9 @@
 
 import Foundation
 
-/**
- Enum for all of the errors that could occur from interacting with a hand.
- */
-enum HandError: Error
+protocol HandDelegate
 {
-    case invalidDraw, invalidDiscard
+    func didGoOverHandLimit()
 }
 
 /**
@@ -22,37 +19,77 @@ enum HandError: Error
 protocol HandProtocol
 {
     /**
+     The delegate that will be notified when the player needs to discard a card.
+    */
+    var delegate: HandDelegate? { get set }
+    /**
      The cards currently in this hand.
      */
     var cards: [Card] { get }
     /**
      Adds the given card to this hand.
      - Parameters:
-     - card: the card to add to this hand.
-     - Throws: `HandError.invalidDraw` when the hand is above handlimit or there is a duplicate card in the hand.
+        - card: the card to add to this hand.
      */
-    func draw(card: Card) throws
+    func draw(card: Card)
     /**
      Adds the given cards to this hand.
      - Parameters:
-     - cards: the cards to add to this hand.
-     - Throws: `HandError.invalidDraw` when the hand is above handlimit or there are any duplicates in the hand.
+        - cards: the cards to add to this hand.
      */
-    func draw(cards: [Card]) throws
+    func draw(cards: [Card])
     /**
      Removes the given card from this hand.
      - Parameters:
-     - card : the card being removed from this hand.
-     - Throws: `HandError.invalidDiscard` when the card is not in the hand.
-     - Returns: the card that was removed from the hand.
+        - card : the card being removed from this hand.
      */
-    func discard(card: Card) throws -> Card
+    func discard(card: Card)
     /**
      Removes the given cards from this hand.
      - Parameters:
-     - card : the cards being removed from this hand.
-     - Throws: `HandError.invalidDiscard` when any of the cards are not in the hand.
-     - Returns: the cards that were removed from the hand.
+        - card : the cards being removed from this hand.
      */
-    func discard(cards: [Card]) throws -> [Card]
+    func discard(cards: [Card])
+}
+
+class Hand: HandProtocol
+{
+    var delegate: HandDelegate?
+    var cards: [Card]
+    init() {
+        self.cards = []
+    }
+    
+    func draw(card: Card)
+    {
+        self.cards.append(card)
+        checkHandLimit()
+    }
+    
+    func draw(cards: [Card])
+    {
+        self.cards.append(contentsOf: cards)
+        checkHandLimit()
+    }
+    
+    func discard(card: Card)
+    {
+        discard(cards: [card])
+    }
+    
+    func discard(cards: [Card])
+    {
+        self.cards.removeAll
+        { card -> Bool in
+            cards.contains(card)
+        }
+    }
+    
+    private func checkHandLimit()
+    {
+        if self.cards.count > 7
+        {
+            delegate?.didGoOverHandLimit()
+        }
+    }
 }

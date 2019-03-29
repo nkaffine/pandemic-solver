@@ -8,12 +8,6 @@
 
 import Foundation
 
-protocol BoardLocation
-{
-    var city: City { get }
-    var cubes: CubeDistributionProtocol { get }
-}
-
 enum PlayState
 {
     case inProgress, win, loss
@@ -166,7 +160,7 @@ struct GameBoard: GameState
     
     func location(of pawn: Pawn) -> BoardLocation {
         //TODO: return a real location
-        return Location(city: City(name: .algiers), cubes: CubeDistribution())
+        return BoardLocation(city: City(name: .algiers), cubes: CubeDistribution())
     }
     
     func legalActions(for pawn: Pawn) -> [Action] {
@@ -200,7 +194,7 @@ struct GameBoard: GameState
     }
 }
 
-struct Location: BoardLocation
+struct BoardLocation: Hashable, Equatable
 {
     let city: City
     let cubes: CubeDistributionProtocol
@@ -209,37 +203,13 @@ struct Location: BoardLocation
         self.city = city
         self.cubes = cubes
     }
-}
 
-struct Hand: HandProtocol
-{
-    private var hand: [Card]
-    var cards: [Card]
+    static func == (lhs: BoardLocation, rhs: BoardLocation) -> Bool {
+        return lhs.city == rhs.city
+    }
+    
+    func hash(into hasher: inout Hasher)
     {
-        return hand
+        hasher.combine(city)
     }
-    
-    init() {
-        hand = []
-    }
-    
-    func draw(card: Card) throws {
-        
-    }
-    
-    func draw(cards: [Card]) throws {
-        
-    }
-    
-    func discard(card: Card) throws -> Card {
-        //TODO: discard a real card
-        return .epidemic
-    }
-    
-    func discard(cards: [Card]) throws -> [Card] {
-        //TODO: discard real cards
-        return []
-    }
-    
-    
 }

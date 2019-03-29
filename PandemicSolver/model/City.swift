@@ -44,12 +44,17 @@ enum CityName: String, CaseIterable
  A city represents a unique location which is attached to cards and locations on the board. Each
  city has a color and a name associated with it.
  */
-struct City: Equatable
+struct City: Equatable, Hashable
 {
     ///The color of the city
     let color: DiseaseColor
     ///The name of the city
     let name: CityName
+    
+    func hash(into hasher: inout Hasher)
+    {
+        hasher.combine(name)
+    }
     
     init(name: CityName)
     {
