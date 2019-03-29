@@ -10,80 +10,84 @@ import XCTest
 @testable import PandemicSolver
 
 class CubeDistributionTests: XCTestCase {
-    var distribution: CubeDistribution!
-    var delegate: MockOutbreakDelegate!
+    var distribution: CubeDistribution = CubeDistribution()
+    var outbreak: Outbreak = []
     
     override func setUp() {
         distribution = CubeDistribution()
-        delegate = MockOutbreakDelegate()
-        distribution.delegate = delegate
+        outbreak = []
     }
     
     func testAddingCubesToSingleColor()
     {
         //Testing each color
-        distribution.add(cubes: 1, of: .red)
-        XCTAssertEqual(distribution.red, 1)
+        (outbreak, distribution) = distribution.add(cubes: .one, of: .red)
+        XCTAssertEqual(distribution.red, .one)
         
-        distribution.add(cubes: 1, of: .yellow)
-        XCTAssertEqual(distribution.yellow, 1)
+        (outbreak, distribution) = distribution.add(cubes: .one, of: .yellow)
+        XCTAssertEqual(distribution.yellow, .one)
         
-        distribution.add(cubes: 1, of: .blue)
-        XCTAssertEqual(distribution.blue, 1)
+        (outbreak, distribution) = distribution.add(cubes: .one, of: .blue)
+        XCTAssertEqual(distribution.blue, .one)
         
-        distribution.add(cubes: 1, of: .black)
-        XCTAssertEqual(distribution.black, 1)
+        (outbreak, distribution) = distribution.add(cubes: .one, of: .black)
+        XCTAssertEqual(distribution.black, .one)
         
         //Testing edge case of 3 cubes
-        distribution.add(cubes: 2, of: .red)
-        XCTAssertEqual(distribution.red, 3)
-        XCTAssertNil(delegate.outbreakColor)
+        (outbreak, distribution) = distribution.add(cubes: .two, of: .red)
+        XCTAssertEqual(distribution.red, .three)
+        XCTAssertEqual(outbreak, [])
         
-        distribution.add(cubes: 2, of: .yellow)
-        XCTAssertEqual(distribution.yellow, 3)
-        XCTAssertNil(delegate.outbreakColor)
+        (outbreak, distribution) = distribution.add(cubes: .two, of: .yellow)
+        XCTAssertEqual(distribution.yellow, .three)
+        XCTAssertEqual(outbreak, [])
         
-        distribution.add(cubes: 2, of: .blue)
-        XCTAssertEqual(distribution.blue, 3)
-        XCTAssertNil(delegate.outbreakColor)
+        (outbreak, distribution) = distribution.add(cubes: .two, of: .blue)
+        XCTAssertEqual(distribution.blue, .three)
+        XCTAssertEqual(outbreak, [])
         
-        distribution.add(cubes: 2, of: .black)
-        XCTAssertEqual(distribution.black, 3)
-        XCTAssertNil(delegate.outbreakColor)
+        (outbreak, distribution) = distribution.add(cubes: .two, of: .black)
+        XCTAssertEqual(distribution.black, .three)
+        XCTAssertEqual(outbreak, [])
     }
     
     func testAddingCubesToManyColors()
     {
         //Test adding no colors
-        distribution.add(cubes: [:])
-        XCTAssertEqual(distribution.red, 0)
-        XCTAssertEqual(distribution.yellow, 0)
-        XCTAssertEqual(distribution.blue, 0)
-        XCTAssertEqual(distribution.black, 0)
+        (outbreak, distribution) = distribution.add(cubes: [:])
+        XCTAssertEqual(distribution.red, .zero)
+        XCTAssertEqual(distribution.yellow, .zero)
+        XCTAssertEqual(distribution.blue, .zero)
+        XCTAssertEqual(distribution.black, .zero)
         
         //Test adding each color
-        distribution.add(cubes: [.red : 1, .yellow: 2, .blue: 3, .black: 4])
-        XCTAssertEqual(distribution.red, 1)
-        XCTAssertEqual(distribution.yellow, 2)
-        XCTAssertEqual(distribution.blue, 3)
-        XCTAssertEqual(distribution.black, 3)
-        XCTAssertEqual(delegate.outbreakColor, .black)
+        (outbreak, distribution) = distribution.add(cubes: [.red : .one, .yellow: .two, .blue: .three, .black: .three])
+        (outbreak, distribution) = distribution.add(cubes: .one, of: .black)
+        XCTAssertEqual(distribution.red, .one)
+        XCTAssertEqual(distribution.yellow, .two)
+        XCTAssertEqual(distribution.blue, .three)
+        XCTAssertEqual(distribution.black, .three)
+        XCTAssertEqual(outbreak, [.black])
     }
     
     func testCheckingForOutbreak()
     {
         //Testing that an outbreak will occur for each color
-        distribution.add(cubes: 4, of: .red)
-        XCTAssertEqual(delegate.outbreakColor, .red)
+        (outbreak, distribution) = distribution.add(cubes: .three, of: .red)
+        (outbreak, distribution) = distribution.add(cubes: .one, of: .red)
+        XCTAssertEqual(outbreak, [.red])
         
-        distribution.add(cubes: 4, of: .yellow)
-        XCTAssertEqual(delegate.outbreakColor, .yellow)
+        (outbreak, distribution) = distribution.add(cubes: .two, of: .yellow)
+        (outbreak, distribution) = distribution.add(cubes: .two, of: .yellow)
+        XCTAssertEqual(outbreak, [.yellow])
         
-        distribution.add(cubes: 4, of: .black)
-        XCTAssertEqual(delegate.outbreakColor, .black)
+        (outbreak, distribution) = distribution.add(cubes: .two, of: .black)
+        (outbreak, distribution) = distribution.add(cubes: .two, of: .black)
+        XCTAssertEqual(outbreak, [.black])
         
-        distribution.add(cubes: 4, of: .blue)
-        XCTAssertEqual(delegate.outbreakColor, .blue)
+        (outbreak, distribution) = distribution.add(cubes: .two, of: .blue)
+        (outbreak, distribution) = distribution.add(cubes: .two, of: .blue)
+        XCTAssertEqual(outbreak, [.blue])
     }
     
     func testRemovingCubeFromOneColor()
@@ -91,17 +95,17 @@ class CubeDistributionTests: XCTestCase {
         setUpFullDistribution()
         
         //Test each color
-        distribution.remove(cubes: 1, of: .red)
-        XCTAssertEqual(distribution.red, 2)
+        distribution = distribution.remove(cubes: .one, of: .red)
+        XCTAssertEqual(distribution.red, .two)
         
-        distribution.remove(cubes: 1, of: .yellow)
-        XCTAssertEqual(distribution.yellow, 2)
+        distribution = distribution.remove(cubes: .one, of: .yellow)
+        XCTAssertEqual(distribution.yellow, .two)
         
-        distribution.remove(cubes: 1, of: .black)
-        XCTAssertEqual(distribution.black, 2)
+        distribution = distribution.remove(cubes: .one, of: .black)
+        XCTAssertEqual(distribution.black, .two)
         
-        distribution.remove(cubes: 1, of: .blue)
-        XCTAssertEqual(distribution.blue, 2)
+        distribution = distribution.remove(cubes: .one, of: .blue)
+        XCTAssertEqual(distribution.blue, .two)
     }
     
     func testRemovingCubeFromMoreThanOneColor()
@@ -109,53 +113,43 @@ class CubeDistributionTests: XCTestCase {
         setUpFullDistribution()
         
         //Test removing nothing
-        distribution.remove(cubes: [:])
-        XCTAssertEqual(distribution.red, 3)
-        XCTAssertEqual(distribution.yellow, 3)
-        XCTAssertEqual(distribution.blue, 3)
-        XCTAssertEqual(distribution.black, 3)
+        distribution = distribution.remove(cubes: [:])
+        XCTAssertEqual(distribution.red, .three)
+        XCTAssertEqual(distribution.yellow, .three)
+        XCTAssertEqual(distribution.blue, .three)
+        XCTAssertEqual(distribution.black, .three)
         
-        distribution.remove(cubes: [.red: 1, .yellow: 2, .blue: 3, .black: 4])
-        XCTAssertEqual(distribution.red, 2)
-        XCTAssertEqual(distribution.yellow, 1)
-        XCTAssertEqual(distribution.blue, 0)
-        XCTAssertEqual(distribution.black, 0)
+        distribution = distribution.remove(cubes: [.red: .one, .yellow: .two, .blue: .three, .black: .three])
+        distribution = distribution.remove(cubes: .one, of: .black)
+        XCTAssertEqual(distribution.red, .two)
+        XCTAssertEqual(distribution.yellow, .one)
+        XCTAssertEqual(distribution.blue, .zero)
+        XCTAssertEqual(distribution.black, .zero)
     }
     
     func testRemovingPastZero()
     {
         setUpFullDistribution()
         //Testing each color
-        distribution.remove(cubes: 4, of: .red)
-        XCTAssertEqual(distribution.red, 0)
+        distribution = distribution.remove(cubes: .two, of: .red)
+        distribution = distribution.remove(cubes: .two, of: .red)
+        XCTAssertEqual(distribution.red, .zero)
         
-        distribution.remove(cubes: 4, of: .yellow)
-        XCTAssertEqual(distribution.yellow, 0)
+        distribution = distribution.remove(cubes: .two, of: .yellow)
+        distribution = distribution.remove(cubes: .two, of: .yellow)
+        XCTAssertEqual(distribution.yellow, .zero)
         
-        distribution.remove(cubes: 4, of: .blue)
-        XCTAssertEqual(distribution.blue, 0)
+        distribution = distribution.remove(cubes: .two, of: .blue)
+        distribution = distribution.remove(cubes: .two, of: .blue)
+        XCTAssertEqual(distribution.blue, .zero)
         
-        distribution.remove(cubes: 4, of: .black)
-        XCTAssertEqual(distribution.black, 0)
+        distribution = distribution.remove(cubes: .two, of: .black)
+        distribution = distribution.remove(cubes: .two, of: .black)
+        XCTAssertEqual(distribution.black, .zero)
     }
     
     private func setUpFullDistribution()
     {
-        distribution.add(cubes: [.red: 3, .yellow: 3, .black: 3, .blue: 3])
-    }
-}
-
-class MockOutbreakDelegate: OutbreakDelegate
-{
-    var outbreakColor: DiseaseColor?
-    
-    func didOutbreak(for color: DiseaseColor)
-    {
-        outbreakColor = color
-    }
-    
-    func reset()
-    {
-        outbreakColor = nil
+        (outbreak, distribution) = distribution.add(cubes: [.red: .three, .yellow: .three, .black: .three, .blue: .three])
     }
 }

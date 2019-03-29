@@ -8,36 +8,68 @@
 
 import Foundation
 
+enum CubeCount: Int, Comparable, CaseIterable
+{
+    case zero = 0, one = 1, two = 2, three = 3
+    
+    func willOutbreak(with cubes: CubeCount) -> Bool
+    {
+        switch self
+        {
+            case .zero:
+                return false
+            case .one:
+                return cubes > .two
+            case .two:
+                return cubes > .one
+            case .three:
+                return cubes > .zero
+        }
+    }
+    
+    static func < (lhs: CubeCount, rhs: CubeCount) -> Bool {
+        return lhs.rawValue < rhs.rawValue
+    }
+    
+    static func +(lhs: CubeCount, rhs: CubeCount) -> CubeCount
+    {
+        return CubeCount(rawValue: lhs.rawValue + rhs.rawValue) ?? .three
+    }
+    
+    static func -(lhs: CubeCount, rhs: CubeCount) -> CubeCount
+    {
+        return CubeCount(rawValue: lhs.rawValue - rhs.rawValue) ?? .zero
+    }
+}
+
+typealias Outbreak = [DiseaseColor]
+
 protocol CubeDistributionProtocol
 {
     /**
-     The delegate that will be notified if there is an outbreak.
-    */
-    var delegate: OutbreakDelegate? { get set }
-    /**
      The number of red cubes in the distribution.
      */
-    var red: Int { get }
+    var red: CubeCount { get }
     /**
      The number of yellow cubes in the distribution.
      */
-    var yellow: Int { get }
+    var yellow: CubeCount { get }
     /**
      The number of blue cubes in the distribution.
      */
-    var blue: Int { get }
+    var blue: CubeCount { get }
     /**
      The number of black cubes in the distribution.
      */
-    var black: Int { get }
+    var black: CubeCount { get }
     
     /**
      Adds the given cubes to the distribution.
      - Parameters:
         - cubes: a dictionary of disease color to integer for the number of cubes of each color.
-     - Note: This function will call the delegate if there is an outbreak.
+     - Returns
      */
-    func add(cubes: [DiseaseColor : Int])
+    func add(cubes: [DiseaseColor : CubeCount]) -> (outbreak: Outbreak, distribution: CubeDistribution)
     
     /**
      Adds the given number of cubes of the given disease to the distribution.
@@ -47,7 +79,7 @@ protocol CubeDistributionProtocol
      - Throws: `CubeDistributionError.outbreak` when the total number of cubes for the given
      disease would be increased to greater than 3.
      */
-    func add(cubes: Int, of disease: DiseaseColor)
+    func add(cubes: CubeCount, of disease: DiseaseColor) -> (outbreak: Outbreak, distribution: CubeDistribution)
     
     /**
      Removes the given cubess from the distribution.
@@ -56,7 +88,7 @@ protocol CubeDistributionProtocol
      - Note: if the function is supplied with more disease cubes than the number currently in
      the distribution it will just 0 that color out.
      */
-    func remove(cubes: [DiseaseColor: Int])
+    func remove(cubes: [DiseaseColor: CubeCount]) -> CubeDistribution
     
     /**
      Removes the given number of cubes from the given disease in the distribution.
@@ -66,109 +98,87 @@ protocol CubeDistributionProtocol
      - Note: if the function is supplied with more disease cubes than the number currenlty in the
      distribution it will just 0 that color out.
     */
-    func remove(cubes: Int, of disease: DiseaseColor)
+    func remove(cubes: CubeCount, of disease: DiseaseColor) -> CubeDistribution
 }
 
-protocol OutbreakDelegate: class
+struct CubeDistribution: CubeDistributionProtocol
 {
-    /**
-     Function called when a city outbreaks.
-     - Parameters:
-     - color: the disease that caused the outbreak.
-     */
-    func didOutbreak(for color: DiseaseColor)
-}
-
-class CubeDistribution: CubeDistributionProtocol
-{
-    weak var delegate: OutbreakDelegate?
-    var red: Int
-    var yellow: Int
-    var blue: Int
-    var black: Int
+    var red: CubeCount
+    var yellow: CubeCount
+    var blue: CubeCount
+    var black: CubeCount
     
     init()
     {
-        red = 0
-        yellow = 0
-        blue = 0
-        black = 0
+        red = .zero
+        yellow = .zero
+        blue = .zero
+        black = .zero
     }
     
-    func add(cubes: [DiseaseColor : Int])
+    private init(red: CubeCount, yellow: CubeCount, blue: CubeCount, black: CubeCount)
     {
-        red += cubes[.red] ?? 0
-        yellow += cubes[.yellow] ?? 0
-        blue += cubes[.blue] ?? 0
-        black += cubes[.black] ?? 0
-        checkForOutbreaks()
+        self.red = red
+        self.yellow = yellow
+        self.blue = blue
+        self.black = black
     }
     
-    func add(cubes: Int, of disease: DiseaseColor)
+    func add(cubes: [DiseaseColor : CubeCount]) -> (outbreak: Outbreak, distribution: CubeDistribution)
     {
-        add(cubes: [disease: cubes])
+        let red = self.red + (cubes[.red] ?? .zero)
+        let yellow = self.yellow + (cubes[.yellow] ?? .zero)
+        let blue = self.blue + (cubes[.blue] ?? .zero)
+        let black = self.black + (cubes[.black] ?? .zero)
+        let outbreaks = getOutbreaks(from: cubes)
+        return (outbreaks, CubeDistribution(red: red, yellow: yellow, blue: blue, black: black))
+    }
+    
+    func add(cubes: CubeCount, of disease: DiseaseColor) -> (outbreak: Outbreak, distribution: CubeDistribution)
+    {
+        return add(cubes: [disease: cubes])
+    }
+    
+    func remove(cubes: [DiseaseColor : CubeCount]) -> CubeDistribution
+    {
+        let red = self.red - (cubes[.red] ?? .zero)
+        let yellow = self.yellow - (cubes[.yellow] ?? .zero)
+        let blue = self.blue - (cubes[.blue] ?? .zero)
+        let black = self.black - (cubes[.black] ?? .zero)
+        return CubeDistribution(red: red, yellow: yellow, blue: blue, black: black)
+        
+    }
+    
+    func remove(cubes: CubeCount, of disease: DiseaseColor) -> CubeDistribution
+    {
+        return remove(cubes: [disease: cubes])
     }
     
     /**
-     Checks each of the stored colors for outbreaks. If an outbreak occured, it will
-     set that to 3 and then notify the delegate.
+     Gets a list of all the colors that will outbreak with the given added cubes.
+     - Parameters:
+        - cubes: a map from disease color to the number of cubes being placed
+     - Returns: a list of all colors that will outbreak.
     */
-    private func checkForOutbreaks()
+    private func getOutbreaks(from cubes: [DiseaseColor: CubeCount]) -> Outbreak
     {
-        if (red > 3)
+        var outbreaks = [DiseaseColor]()
+        if cubes[.red]?.willOutbreak(with: red) ?? false
         {
-            red = 3
-            delegate?.didOutbreak(for: .red)
+            outbreaks.append(.red)
         }
-        if (yellow > 3)
+        if cubes[.yellow]?.willOutbreak(with: yellow) ?? false
         {
-            yellow = 3
-            delegate?.didOutbreak(for: .yellow)
+            outbreaks.append(.yellow)
         }
-        if (blue > 3)
+        if cubes[.blue]?.willOutbreak(with: blue) ?? false
         {
-            blue = 3
-            delegate?.didOutbreak(for: .blue)
+            outbreaks.append(.blue)
         }
-        if (black > 3)
+        if cubes[.black]?.willOutbreak(with: black) ?? false
         {
-            black = 3
-            delegate?.didOutbreak(for: .black)
+            outbreaks.append(.black)
         }
-    }
-    
-    func remove(cubes: [DiseaseColor : Int])
-    {
-        red -= cubes[.red] ?? 0
-        yellow -= cubes[.yellow] ?? 0
-        blue -= cubes[.blue] ?? 0
-        black -= cubes[.black] ?? 0
-        checkForNegatives()
-    }
-    
-    func remove(cubes: Int, of disease: DiseaseColor)
-    {
-        remove(cubes: [disease: cubes])
-    }
-    
-    private func checkForNegatives()
-    {
-        if red < 0
-        {
-            red = 0
-        }
-        if yellow < 0
-        {
-            yellow = 0
-        }
-        if blue < 0
-        {
-            blue = 0
-        }
-        if black < 0
-        {
-            black = 0
-        }
+        return outbreaks
     }
 }
-

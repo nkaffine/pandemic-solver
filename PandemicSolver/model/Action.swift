@@ -29,7 +29,7 @@ enum GeneralAction
     /// The pawn removes one cube of the given disease color from their current location.
     case cure(disease: DiseaseColor)
     /// The pawn transfers the card of the location they are in to a pawn in their location.
-    case shareKnowledge(card: Card, pawn: Pawn)
+    case shareKnowledge(card: Card, pawn: PawnProtocol)
 }
 
 /**
@@ -39,7 +39,7 @@ enum GeneralAction
 enum DispatcherAction
 {
     /// The case where the dispatchers moves another pawn as if it were their own.
-    case control(pawn: Pawn, action: Action)
+    case control(pawn: PawnProtocol, action: Action)
     /// The case where the dispatcher moves one pawn to the same city as another.
-    case snap(pawn: Pawn, to: Pawn)
+    case snap(pawn: PawnProtocol, to: PawnProtocol)
 }

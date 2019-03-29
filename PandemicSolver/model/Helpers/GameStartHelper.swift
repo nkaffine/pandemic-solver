@@ -18,10 +18,10 @@ class GameStartHelper
         }
     }
     
-    static func selectPawns() -> [Pawn]
+    static func selectPawns() -> [PawnProtocol]
     {
-        //TODO: Actually select pawns
-        return []
+        let availablePawns  = Role.allCases.map { role -> PawnProtocol in return Pawn(role: role) }
+        return availablePawns.shuffled().dropLast(availablePawns.count - 4)
     }
     
     /**
@@ -66,15 +66,15 @@ class GameStartHelper
         edges[.buenosAres] = [.bogota, .saoPaulo]
         edges[.johannesburg] = [.kinshasa, .khartoum]
         //Mark: Black
-        edges[.algiers] = [.milan, .paris, .istanbul, .cairo]
+        edges[.algiers] = [.paris, .istanbul, .cairo, .madrid]
         edges[.istanbul] = [.algiers, .milan, .stPetersburg, .moscow, .baghdad, .cairo]
         edges[.moscow] = [.stPetersburg, .istanbul, .tehran]
         edges[.cairo] = [.algiers, .istanbul, .baghdad, .riyadh, .khartoum]
         edges[.baghdad] = [.cairo, .istanbul, .tehran, .karachi, .riyadh]
         edges[.tehran] = [.baghdad, .moscow, .delhi, .karachi]
-        edges[.riyadh] = [.cairo, .baghdad, .karachi, .mumbai]
+        edges[.riyadh] = [.cairo, .baghdad, .karachi]
         edges[.karachi] = [.riyadh, .baghdad, .tehran, .delhi, .mumbai]
-        edges[.delhi] = [.karachi, .tehran, .chennai, .mumbai]
+        edges[.delhi] = [.karachi, .tehran, .chennai, .mumbai, .kolkata]
         edges[.mumbai] = [.karachi, .delhi, .chennai]
         edges[.kolkata] = [.delhi, .chennai, .bangkok, .hongKong]
         edges[.chennai] = [.mumbai, .delhi, .kolkata, .bangkok, .jakarta]
@@ -84,7 +84,7 @@ class GameStartHelper
         edges[.shanghai] = [.beijing, .seoul, .tokyo, .taipei, .hongKong]
         edges[.tokyo] = [.shanghai, .seoul, .sanFrancisco, .osaka]
         edges[.hongKong] = [.kolkata, .shanghai, .taipei, .manila, .hoChiMinhCity, .bangkok]
-        edges[.taipei] = [.hongKong, .osaka, .manila]
+        edges[.taipei] = [.hongKong, .osaka, .manila, .shanghai]
         edges[.osaka] = [.tokyo, .taipei]
         edges[.bangkok] = [.chennai, .kolkata, .hongKong, .hoChiMinhCity, .jakarta]
         edges[.hoChiMinhCity] = [.jakarta, .bangkok, .hongKong, .manila]
@@ -92,5 +92,15 @@ class GameStartHelper
         edges[.jakarta] = [.chennai, .bangkok, .hoChiMinhCity, .sydney]
         edges[.sydney] = [.jakarta, .manila, .losAngeles]
         return edges
+    }
+    
+    static func generateLocationsMap() -> [CityName: BoardLocation]
+    {
+        var locations: [CityName: BoardLocation] = [:]
+        CityName.allCases.forEach
+            { name in
+                locations.updateValue(BoardLocation(city: City(name: name), cubes: CubeDistribution()), forKey: name)
+        }
+        return locations
     }
 }

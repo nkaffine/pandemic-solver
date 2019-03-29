@@ -23,10 +23,7 @@ enum Role: CaseIterable
     case medic, operationsExpert, dispatcher, scientist, researcher
 }
 
-protocol Pawn
-{
-    var role: Role { get }
-}
+
 
 protocol GameState
 {
@@ -98,7 +95,7 @@ protocol GameState
      - Returns: the location of the pawn on the board.
      - Throws: `BoardError.invalidpawn` when the pawn is not in the game
      */
-    func location(of pawn: Pawn) -> BoardLocation
+    func location(of pawn: PawnProtocol) -> BoardLocation
     
     /**
      Returns all the legal actions in the current state for the given pawn.
@@ -107,7 +104,7 @@ protocol GameState
      - Returns: the actions that the pawn can legally make.
      - Throws: `BoardError.invalidpawn` when the pawn is not in the game
     */
-    func legalActions(for pawn: Pawn) -> [Action]
+    func legalActions(for pawn: PawnProtocol) -> [Action]
     
     /**
      Moves the given pawn by doing the given action.
@@ -119,7 +116,7 @@ protocol GameState
      - Returns: the state of the game after the transition (if this is implemented as a struct
         this will be easy to make multithreaded).
      */
-    func transition(pawn: Pawn, for action: Action) throws -> GameState
+    func transition(pawn: PawnProtocol, for action: Action) throws -> GameState
     
     /**
      Returns the current hand for the given pawn.
@@ -128,7 +125,7 @@ protocol GameState
      - Returns: the hand of the given pawn.
      - Throws: `BoardError.invalidpawn` when the pawn is not in the game
      */
-    func hand(for pawn: Pawn) throws -> HandProtocol
+    func hand(for pawn: PawnProtocol) throws -> HandProtocol
 }
 
 struct GameBoard: GameState
@@ -158,22 +155,22 @@ struct GameBoard: GameState
     //TODO: rename to something a little more clear
     let playState: PlayState
     
-    func location(of pawn: Pawn) -> BoardLocation {
+    func location(of pawn: PawnProtocol) -> BoardLocation {
         //TODO: return a real location
         return BoardLocation(city: City(name: .algiers), cubes: CubeDistribution())
     }
     
-    func legalActions(for pawn: Pawn) -> [Action] {
+    func legalActions(for pawn: PawnProtocol) -> [Action] {
         //TODO: return a real list of legal actions
         return []
     }
     
-    func transition(pawn: Pawn, for action: Action) throws -> GameState {
+    func transition(pawn: PawnProtocol, for action: Action) throws -> GameState {
         //TODO: return real changed gamestate
         return self
     }
     
-    func hand(for pawn: Pawn) throws -> HandProtocol {
+    func hand(for pawn: PawnProtocol) throws -> HandProtocol {
         //TODO: return a real hand
         return Hand()
     }
