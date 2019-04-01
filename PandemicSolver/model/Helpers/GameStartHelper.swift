@@ -99,7 +99,7 @@ class GameStartHelper
         var locations: [CityName: BoardLocation] = [:]
         CityName.allCases.forEach
             { name in
-                locations.updateValue(BoardLocation(city: City(name: name), cubes: CubeDistribution()), forKey: name)
+                locations.updateValue(BoardLocation(city: City(name: name)), forKey: name)
         }
         return locations
     }

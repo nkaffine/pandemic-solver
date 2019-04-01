@@ -56,4 +56,12 @@ extension Dictionary
             throw DictionaryError.duplicateKey(key: key, values: values)
         }
     }
+    
+    func imutableUpdate(key: Key, value: Value) -> [Key: Value]
+    {
+        return self.merging([key: value])
+        { value1, value2 -> Value in
+            return value2
+        }
+    }
 }

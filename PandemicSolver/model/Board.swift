@@ -18,13 +18,6 @@ enum BoardError: Error
     case invalidMove, invalidPawn
 }
 
-enum Role: CaseIterable
-{
-    case medic, operationsExpert, dispatcher, scientist, researcher
-}
-
-
-
 protocol GameState
 {
     /**
@@ -157,7 +150,7 @@ struct GameBoard: GameState
     
     func location(of pawn: PawnProtocol) -> BoardLocation {
         //TODO: return a real location
-        return BoardLocation(city: City(name: .algiers), cubes: CubeDistribution())
+        return BoardLocation(city: City(name: .algiers))
     }
     
     func legalActions(for pawn: PawnProtocol) -> [Action] {
@@ -188,25 +181,5 @@ struct GameBoard: GameState
         self.uncuredDiseases = []
         self.curedDisease = []
         self.playState = .inProgress
-    }
-}
-
-struct BoardLocation: Hashable, Equatable
-{
-    let city: City
-    let cubes: CubeDistributionProtocol
-    
-    init(city: City, cubes: CubeDistributionProtocol) {
-        self.city = city
-        self.cubes = cubes
-    }
-
-    static func == (lhs: BoardLocation, rhs: BoardLocation) -> Bool {
-        return lhs.city == rhs.city
-    }
-    
-    func hash(into hasher: inout Hasher)
-    {
-        hasher.combine(city)
     }
 }

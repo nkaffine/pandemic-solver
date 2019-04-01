@@ -8,6 +8,11 @@
 
 import Foundation
 
+enum Role: CaseIterable
+{
+    case medic, operationsExpert, dispatcher, scientist, researcher
+}
+
 protocol PawnProtocol
 {
     var role: Role { get }

@@ -16,6 +16,9 @@
 		01660BF42230D47200FD400A /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF32230D47200FD400A /* Card.swift */; };
 		01660BF62230D85200FD400A /* Decks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF52230D85200FD400A /* Decks.swift */; };
 		01660BF82230E00E00FD400A /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF72230E00E00FD400A /* Board.swift */; };
+		ED3C827B224EEB1A006417FB /* DictionaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3C827A224EEB1A006417FB /* DictionaryTests.swift */; };
+		ED3C827D224FAEF0006417FB /* BoardLocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3C827C224FAEF0006417FB /* BoardLocationTests.swift */; };
+		ED3C827F224FBC1D006417FB /* BoardLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3C827E224FBC1D006417FB /* BoardLocation.swift */; };
 		ED3D6321224E883B00F51DCF /* TestCubeCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3D6320224E883B00F51DCF /* TestCubeCount.swift */; };
 		ED85B4FF224E5F3C0046A03E /* Pawn.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED85B4FE224E5F3C0046A03E /* Pawn.swift */; };
 		ED9EC1DF224D41AF009D9BD9 /* Policy.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9EC1DE224D41AF009D9BD9 /* Policy.swift */; };
@@ -61,6 +64,9 @@
 		01660BF32230D47200FD400A /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		01660BF52230D85200FD400A /* Decks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decks.swift; sourceTree = "<group>"; };
 		01660BF72230E00E00FD400A /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
+		ED3C827A224EEB1A006417FB /* DictionaryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryTests.swift; sourceTree = "<group>"; };
+		ED3C827C224FAEF0006417FB /* BoardLocationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardLocationTests.swift; sourceTree = "<group>"; };
+		ED3C827E224FBC1D006417FB /* BoardLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardLocation.swift; sourceTree = "<group>"; };
 		ED3D6320224E883B00F51DCF /* TestCubeCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCubeCount.swift; sourceTree = "<group>"; };
 		ED85B4FE224E5F3C0046A03E /* Pawn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pawn.swift; sourceTree = "<group>"; };
 		ED9EC1DE224D41AF009D9BD9 /* Policy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Policy.swift; sourceTree = "<group>"; };
@@ -144,6 +150,8 @@
 				ED9EC1E0224D5669009D9BD9 /* PartitionedDeckTests.swift */,
 				ED9EC1E4224DBD65009D9BD9 /* LocationGraphTests.swift */,
 				ED3D6320224E883B00F51DCF /* TestCubeCount.swift */,
+				ED3C827A224EEB1A006417FB /* DictionaryTests.swift */,
+				ED3C827C224FAEF0006417FB /* BoardLocationTests.swift */,
 				01660BE92230D28200FD400A /* Info.plist */,
 			);
 			path = PandemicSolverTests;
@@ -158,6 +166,7 @@
 				01660BF52230D85200FD400A /* Decks.swift */,
 				EDEAF593224C6758007C2CC6 /* Hand.swift */,
 				01660BF72230E00E00FD400A /* Board.swift */,
+				ED3C827E224FBC1D006417FB /* BoardLocation.swift */,
 				ED9EC1E2224D9496009D9BD9 /* LocationGraph.swift */,
 				ED9EC1DE224D41AF009D9BD9 /* Policy.swift */,
 				ED85B4FE224E5F3C0046A03E /* Pawn.swift */,
@@ -300,6 +309,7 @@
 				01660BF62230D85200FD400A /* Decks.swift in Sources */,
 				EDEAF596224C6A6B007C2CC6 /* MutableCollectionExtensio.swift in Sources */,
 				EDA4934E22357C2100BF77BF /* Action.swift in Sources */,
+				ED3C827F224FBC1D006417FB /* BoardLocation.swift in Sources */,
 				EDEAF594224C6758007C2CC6 /* Hand.swift in Sources */,
 				01660BD52230D28100FD400A /* ViewController.swift in Sources */,
 				01660BF82230E00E00FD400A /* Board.swift in Sources */,
@@ -322,8 +332,10 @@
 				EDEAF598224C7F7F007C2CC6 /* DeckTests.swift in Sources */,
 				EDEAF588224C5AD9007C2CC6 /* CubeDistributionTests.swift in Sources */,
 				ED9EC1E5224DBD65009D9BD9 /* LocationGraphTests.swift in Sources */,
+				ED3C827D224FAEF0006417FB /* BoardLocationTests.swift in Sources */,
 				ED9EC1E1224D5669009D9BD9 /* PartitionedDeckTests.swift in Sources */,
 				EDEAF59A224C8097007C2CC6 /* CardTests.swift in Sources */,
+				ED3C827B224EEB1A006417FB /* DictionaryTests.swift in Sources */,
 				EDEAF590224C665F007C2CC6 /* CityTest.swift in Sources */,
 				ED3D6321224E883B00F51DCF /* TestCubeCount.swift in Sources */,
 				01660BE82230D28200FD400A /* PandemicSolverTests.swift in Sources */,
