@@ -248,6 +248,55 @@ class LocationGraphTests: XCTestCase {
         }
     }
     
+    func testAddingResearchStations()
+    {
+        sut.locations.values.forEach
+        { location in
+            XCTAssertFalse(location.hasResearchStation)
+        }
+        
+        let sut1 = sut.addResearchStation(to: .algiers)
+        sut1.locations.values.forEach
+        { location in
+            if location.city.name != .algiers
+            {
+                XCTAssertFalse(location.hasResearchStation)
+            }
+        }
+        XCTAssertTrue(sut1.locations[.algiers]!.hasResearchStation)
+        
+        let sut2 = sut1.addResearchStation(to: .atlanta)
+        sut2.locations.values.forEach
+        { location in
+            if location.city.name != .atlanta && location.city.name != .algiers
+            {
+                XCTAssertFalse(location.hasResearchStation, "\(location.city.name)")
+            }
+        }
+        XCTAssertTrue(sut2.locations[.algiers]!.hasResearchStation)
+        XCTAssertTrue(sut2.locations[.atlanta]!.hasResearchStation)
+    }
+    
+    func testResearchStations()
+    {
+        XCTAssertTrue(sut.getAllResearchStations().isEmpty)
+        let sut1 = sut.addResearchStation(to: .atlanta)
+        var researchStations = sut1.getAllResearchStations()
+        XCTAssertEqual(researchStations.count, 1)
+        XCTAssertEqual(researchStations[0].city.name, .atlanta)
+        XCTAssertTrue(researchStations[0].hasResearchStation)
+        
+        let sut2 = sut1.addResearchStation(to: .madrid)
+        researchStations = sut2.getAllResearchStations()
+        XCTAssertEqual(researchStations.count, 2)
+        XCTAssertTrue(researchStations.contains(where: {$0.city.name == .atlanta}))
+        XCTAssertTrue(researchStations.contains(where: {$0.city.name == .madrid}))
+        researchStations.forEach
+        { location in
+            XCTAssertTrue(location.hasResearchStation)
+        }
+    }
+    
     private func assertDiseaseCounts(of boardLocation: BoardLocation, red: CubeCount = .zero,
                                      yellow: CubeCount = .zero,
                                      blue: CubeCount = .zero,

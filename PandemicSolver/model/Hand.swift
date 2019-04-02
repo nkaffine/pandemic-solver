@@ -8,88 +8,88 @@
 
 import Foundation
 
-protocol HandDelegate
-{
-    func didGoOverHandLimit()
-}
-
 /**
  Protocol to represent the hand of a player.
  */
 protocol HandProtocol
 {
     /**
-     The delegate that will be notified when the player needs to discard a card.
-    */
-    var delegate: HandDelegate? { get set }
-    /**
      The cards currently in this hand.
      */
     var cards: [Card] { get }
     /**
-     Adds the given card to this hand.
+     Adds the given card to this hand and returns whether the hand is over hand limit.
      - Parameters:
         - card: the card to add to this hand.
+     - Returns: A tuple of wether the hand went over hand limit and the new hand.
      */
-    func draw(card: Card)
+    func draw(card: Card) -> (Bool, HandProtocol)
     /**
-     Adds the given cards to this hand.
+     Adds the given cards to this hand and returns whether the hand is over hand limit.
      - Parameters:
         - cards: the cards to add to this hand.
+     - Returns: A tuple of wether the hand is over hand limit and returns the new hand.
      */
-    func draw(cards: [Card])
+    func draw(cards: [Card]) -> (Bool, HandProtocol)
     /**
      Removes the given card from this hand.
      - Parameters:
         - card : the card being removed from this hand.
+     - Returns: The new hand.
      */
-    func discard(card: Card)
+    func discard(card: Card) -> (Bool, HandProtocol)
     /**
      Removes the given cards from this hand.
      - Parameters:
         - card : the cards being removed from this hand.
+     - Returns: The new hand.
      */
-    func discard(cards: [Card])
+    func discard(cards: [Card]) -> (Bool, HandProtocol)
 }
 
-class Hand: HandProtocol
+struct Hand: HandProtocol
 {
-    var delegate: HandDelegate?
-    var cards: [Card]
+    let cards: [Card]
+    var atHandLimit: Bool
+    {
+        return cards.count > 7
+    }
+    
+    init(card1: Card, card2: Card)
+    {
+        self.cards = [card1, card2]
+    }
+    
     init() {
         self.cards = []
     }
     
-    func draw(card: Card)
+    private init(cards: [Card])
     {
-        self.cards.append(card)
-        checkHandLimit()
+        self.cards = cards
     }
     
-    func draw(cards: [Card])
+    func draw(card: Card) -> (Bool, HandProtocol)
     {
-        self.cards.append(contentsOf: cards)
-        checkHandLimit()
+        let newHand = Hand(cards: cards + [card])
+        return (newHand.atHandLimit, newHand)
     }
     
-    func discard(card: Card)
+    func draw(cards: [Card]) -> (Bool, HandProtocol)
     {
-        discard(cards: [card])
+        let newHand = Hand(cards: self.cards + cards)
+        return (newHand.atHandLimit, newHand)
     }
     
-    func discard(cards: [Card])
+    func discard(card: Card) -> (Bool, HandProtocol)
     {
-        self.cards.removeAll
-        { card -> Bool in
-            cards.contains(card)
-        }
+        let newHand = Hand(cards: cards.filter { $0 != card })
+        return (newHand.atHandLimit, newHand)
     }
     
-    private func checkHandLimit()
+    func discard(cards: [Card]) -> (Bool, HandProtocol)
     {
-        if self.cards.count > 7
-        {
-            delegate?.didGoOverHandLimit()
-        }
+        let newHand = Hand(cards: self.cards.filter{ !cards.contains($0) })
+        return (newHand.atHandLimit, newHand)
     }
 }

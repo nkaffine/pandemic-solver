@@ -16,6 +16,8 @@
 		01660BF42230D47200FD400A /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF32230D47200FD400A /* Card.swift */; };
 		01660BF62230D85200FD400A /* Decks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF52230D85200FD400A /* Decks.swift */; };
 		01660BF82230E00E00FD400A /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF72230E00E00FD400A /* Board.swift */; };
+		ED0C03EE2252914B00B9C40C /* HandTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0C03ED2252914B00B9C40C /* HandTests.swift */; };
+		ED0C03F22252BAF400B9C40C /* GameBoardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0C03F12252BAF400B9C40C /* GameBoardTests.swift */; };
 		ED3C827B224EEB1A006417FB /* DictionaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3C827A224EEB1A006417FB /* DictionaryTests.swift */; };
 		ED3C827D224FAEF0006417FB /* BoardLocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3C827C224FAEF0006417FB /* BoardLocationTests.swift */; };
 		ED3C827F224FBC1D006417FB /* BoardLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3C827E224FBC1D006417FB /* BoardLocation.swift */; };
@@ -26,6 +28,7 @@
 		ED9EC1E3224D9496009D9BD9 /* LocationGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9EC1E2224D9496009D9BD9 /* LocationGraph.swift */; };
 		ED9EC1E5224DBD65009D9BD9 /* LocationGraphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9EC1E4224DBD65009D9BD9 /* LocationGraphTests.swift */; };
 		EDA4934E22357C2100BF77BF /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA4934D22357C2100BF77BF /* Action.swift */; };
+		EDAC5D972253245E008A0A2C /* GeneratingLegalMovesTessts.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAC5D962253245E008A0A2C /* GeneratingLegalMovesTessts.swift */; };
 		EDEAF57F224C1A3E007C2CC6 /* GameStartHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEAF57E224C1A3E007C2CC6 /* GameStartHelper.swift */; };
 		EDEAF582224C1C5C007C2CC6 /* DictionaryExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEAF581224C1C5C007C2CC6 /* DictionaryExtension.swift */; };
 		EDEAF584224C250A007C2CC6 /* Diseases.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEAF583224C250A007C2CC6 /* Diseases.swift */; };
@@ -64,6 +67,8 @@
 		01660BF32230D47200FD400A /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		01660BF52230D85200FD400A /* Decks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decks.swift; sourceTree = "<group>"; };
 		01660BF72230E00E00FD400A /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
+		ED0C03ED2252914B00B9C40C /* HandTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandTests.swift; sourceTree = "<group>"; };
+		ED0C03F12252BAF400B9C40C /* GameBoardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBoardTests.swift; sourceTree = "<group>"; };
 		ED3C827A224EEB1A006417FB /* DictionaryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryTests.swift; sourceTree = "<group>"; };
 		ED3C827C224FAEF0006417FB /* BoardLocationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardLocationTests.swift; sourceTree = "<group>"; };
 		ED3C827E224FBC1D006417FB /* BoardLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardLocation.swift; sourceTree = "<group>"; };
@@ -74,6 +79,7 @@
 		ED9EC1E2224D9496009D9BD9 /* LocationGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationGraph.swift; sourceTree = "<group>"; };
 		ED9EC1E4224DBD65009D9BD9 /* LocationGraphTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationGraphTests.swift; sourceTree = "<group>"; };
 		EDA4934D22357C2100BF77BF /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
+		EDAC5D962253245E008A0A2C /* GeneratingLegalMovesTessts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneratingLegalMovesTessts.swift; sourceTree = "<group>"; };
 		EDEAF57E224C1A3E007C2CC6 /* GameStartHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStartHelper.swift; sourceTree = "<group>"; };
 		EDEAF581224C1C5C007C2CC6 /* DictionaryExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryExtension.swift; sourceTree = "<group>"; };
 		EDEAF583224C250A007C2CC6 /* Diseases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diseases.swift; sourceTree = "<group>"; };
@@ -152,6 +158,9 @@
 				ED3D6320224E883B00F51DCF /* TestCubeCount.swift */,
 				ED3C827A224EEB1A006417FB /* DictionaryTests.swift */,
 				ED3C827C224FAEF0006417FB /* BoardLocationTests.swift */,
+				ED0C03ED2252914B00B9C40C /* HandTests.swift */,
+				ED0C03F12252BAF400B9C40C /* GameBoardTests.swift */,
+				EDAC5D962253245E008A0A2C /* GeneratingLegalMovesTessts.swift */,
 				01660BE92230D28200FD400A /* Info.plist */,
 			);
 			path = PandemicSolverTests;
@@ -334,8 +343,11 @@
 				ED9EC1E5224DBD65009D9BD9 /* LocationGraphTests.swift in Sources */,
 				ED3C827D224FAEF0006417FB /* BoardLocationTests.swift in Sources */,
 				ED9EC1E1224D5669009D9BD9 /* PartitionedDeckTests.swift in Sources */,
+				ED0C03EE2252914B00B9C40C /* HandTests.swift in Sources */,
 				EDEAF59A224C8097007C2CC6 /* CardTests.swift in Sources */,
 				ED3C827B224EEB1A006417FB /* DictionaryTests.swift in Sources */,
+				ED0C03F22252BAF400B9C40C /* GameBoardTests.swift in Sources */,
+				EDAC5D972253245E008A0A2C /* GeneratingLegalMovesTessts.swift in Sources */,
 				EDEAF590224C665F007C2CC6 /* CityTest.swift in Sources */,
 				ED3D6321224E883B00F51DCF /* TestCubeCount.swift in Sources */,
 				01660BE82230D28200FD400A /* PandemicSolverTests.swift in Sources */,

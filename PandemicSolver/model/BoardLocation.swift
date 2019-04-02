@@ -12,16 +12,19 @@ struct BoardLocation: Hashable, Equatable
 {
     let city: City
     let cubes: CubeDistributionProtocol
+    let hasResearchStation: Bool
     
     init(city: City)
     {
         self.city = city
         self.cubes = CubeDistribution()
+        self.hasResearchStation = false
     }
     
-    private init(city: City, cubes: CubeDistributionProtocol) {
+    private init(city: City, cubes: CubeDistributionProtocol, hasResearchStation: Bool = false) {
         self.city = city
         self.cubes = cubes
+        self.hasResearchStation = hasResearchStation
     }
     
     static func == (lhs: BoardLocation, rhs: BoardLocation) -> Bool {
@@ -60,8 +63,25 @@ struct BoardLocation: Hashable, Equatable
         return (outbreak, BoardLocation(city: city, cubes: distribution))
     }
     
+    /**
+     Removes the given number of cubes of the given color from this location and returns
+     the new state.
+     - Parameters:
+        - cubes: the number of cubes being removed.
+        - color: the color of the disease being removed.
+     - Returns: The board location with the updated cubes.
+    */
     func remove(cubes: CubeCount, of color: DiseaseColor) -> BoardLocation
     {
         return BoardLocation(city: city, cubes: self.cubes.remove(cubes: cubes, of: color))
+    }
+    
+    /**
+     Adds a research station to this location on the board.
+     - Returns: The board location with the updated research station.
+    */
+    func addResearchStation() -> BoardLocation
+    {
+        return BoardLocation(city: city, cubes: cubes, hasResearchStation: true)
     }
 }

@@ -18,9 +18,9 @@ class GameStartHelper
         }
     }
     
-    static func selectPawns() -> [PawnProtocol]
+    static func selectPawns() -> [Pawn]
     {
-        let availablePawns  = Role.allCases.map { role -> PawnProtocol in return Pawn(role: role) }
+        let availablePawns  = Role.allCases.map { role -> Pawn in return Pawn(role: role) }
         return availablePawns.shuffled().dropLast(availablePawns.count - 4)
     }
     

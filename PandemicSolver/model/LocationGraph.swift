@@ -48,6 +48,20 @@ protocol LocationGraphProtocol
      - Returns: the location graph with the updated state.
     */
     func removeCubes(_ cubes: CubeCount, of color: DiseaseColor, on city: CityName) -> LocationGraph
+    
+    /**
+     Gets all locations where there is a research station.
+     - Returns: all locations with a research station.
+    */
+    func getAllResearchStations() -> [BoardLocation]
+    
+    /**
+     Adds a research station to the given city.
+     - Parameters:
+        - city: the city to add a research station to.
+     - Returns: the location graph with the updated state.
+    */
+    func addResearchStation(to city: CityName) -> LocationGraph
 }
 
 struct LocationGraph: LocationGraphProtocol
@@ -55,6 +69,9 @@ struct LocationGraph: LocationGraphProtocol
     let locations: [CityName: BoardLocation]
     let edges: [CityName: [CityName]]
     
+    /**
+     Initializes the location graph with all of the board locations and all of the edges.
+    */
     init()
     {
         locations = GameStartHelper.generateLocationsMap()
@@ -140,6 +157,18 @@ struct LocationGraph: LocationGraphProtocol
         //Unwrapping because this should never be nil
         var location = locations[city]!
         location = location.remove(cubes: cubes, of: color)
+        return LocationGraph(locations: locations.imutableUpdate(key: city, value: location), edges: edges)
+    }
+    
+    func getAllResearchStations() -> [BoardLocation]
+    {
+        return locations.values.filter { $0.hasResearchStation }
+    }
+    
+    func addResearchStation(to city: CityName) -> LocationGraph
+    {
+        var location = locations[city]!
+        location = location.addResearchStation()
         return LocationGraph(locations: locations.imutableUpdate(key: city, value: location), edges: edges)
     }
 }

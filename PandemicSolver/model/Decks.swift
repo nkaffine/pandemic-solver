@@ -29,6 +29,10 @@ protocol Deck
      */
     var discardPile: [Card] { get }
     /**
+     The count of the cards in the deck.
+    */
+    var count: Int { get }
+    /**
      Returns an array with the given number of cards.
      - Parameters:
         - numberOfCards: the number of cards to be draw from the deck.
@@ -87,6 +91,10 @@ class PlayerDeck: Deck
     */
     private var deck: [Card]
     var discardPile: [Card]
+    var count: Int
+    {
+        return deck.count
+    }
     
     init(deck: [Card])
     {
@@ -190,6 +198,11 @@ class PlayerDeck: Deck
 
 class InfectionPile: Deck
 {
+    var count: Int
+    {
+       return deck.count
+    }
+    
     //TODO: Create a better datastructure for this
     private var deck: PartitionedDeck
     var discardPile: [Card]
@@ -290,6 +303,11 @@ class PartitionedDeck: ProbabilityDeck
     
     init(piles: [[Card]]) {
         deck = piles
+    }
+    
+    var count: Int
+    {
+        return deck.reduce(0) { $0 + $1.count }
     }
     
     /**

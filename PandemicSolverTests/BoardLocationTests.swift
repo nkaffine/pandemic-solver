@@ -23,6 +23,7 @@ class BoardLocationTests: XCTestCase {
         XCTAssertEqual(location.cubes.blue, .zero)
         XCTAssertEqual(location.cubes.yellow, .zero)
         XCTAssertEqual(location.cubes.black, .zero)
+        XCTAssertFalse(location.hasResearchStation)
     }
     
     func testLocationEquals()
@@ -96,6 +97,17 @@ class BoardLocationTests: XCTestCase {
         
         let location5 = location1.remove(cubes: .two, of: .black)
         assertDiseaseCounts(of: location5, red: .one, yellow: .one, blue: .one, black: .zero)
+    }
+    
+    func testAddingResearchStation()
+    {
+        let location1 = location.addResearchStation()
+        XCTAssertTrue(location1.hasResearchStation)
+        XCTAssertEqual(location.cubes.black, location1.cubes.black)
+        XCTAssertEqual(location.cubes.red, location1.cubes.red)
+        XCTAssertEqual(location.cubes.yellow, location1.cubes.yellow)
+        XCTAssertEqual(location.cubes.blue, location1.cubes.blue)
+        XCTAssertEqual(location.city, location1.city)
     }
     
     private func assertDiseaseCounts(of boardLocation: BoardLocation, red: CubeCount = .zero,
