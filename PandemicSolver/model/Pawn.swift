@@ -171,9 +171,16 @@ struct Pawn: Hashable, CaseIterable
         }
         if (currentLocation.hasResearchStation)
         {
-            actions.append(contentsOf: locationGraph.getAllResearchStations().map
-            { location -> Action in
-                return Action.general(action: .shuttleFlight(to: location.city.name))
+            actions.append(contentsOf: locationGraph.getAllResearchStations().compactMap
+            { location -> Action? in
+                if location != currentLocation
+                {
+                    return Action.general(action: .shuttleFlight(to: location.city.name))
+                }
+                else
+                {
+                    return nil
+                }
             })
         }
         return actions
@@ -188,7 +195,8 @@ struct Pawn: Hashable, CaseIterable
     */
     func getCuringActions(from currentHand: HandProtocol, currentLocation: BoardLocation) -> [Action]
     {
-        if currentHand.cards.count < 5 || !currentLocation.hasResearchStation
+        let threshold: Int = self.role == .scientist ? 4 : 5
+        if currentHand.cards.count < threshold || !currentLocation.hasResearchStation
         {
             return []
         }
@@ -219,7 +227,6 @@ struct Pawn: Hashable, CaseIterable
                 }
         }
         var actions = [Action]()
-        let threshold: Int = self.role == .scientist ? 4 : 5
         if red >= threshold
         {
             actions.append(Action.general(action: .cure(disease: .red)))
@@ -256,7 +263,7 @@ struct Pawn: Hashable, CaseIterable
         
         let relevantPawns = otherPawnLocations.filter
         { (pawn, city) -> Bool in
-            return city == currentLocation
+            return city == currentLocation && pawn != self
         }
         if relevantPawns.count > 0
         {
@@ -270,7 +277,7 @@ struct Pawn: Hashable, CaseIterable
                 return (pawn, hand)
             }.compactMap(
             { (pawn, hand) -> Action? in
-                if !hand.cards.contains(where:
+                if hand.cards.contains(where:
                     { card -> Bool in
                         switch card
                         {
