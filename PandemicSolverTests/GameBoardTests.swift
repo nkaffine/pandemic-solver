@@ -55,7 +55,7 @@ class GameBoardTests: XCTestCase {
     
     func testSetup()
     {
-        let sut1 = sut.setupGame()
+        let sut1 = sut.startGame()
         XCTAssertEqual(sut1.locations.filter { location -> Bool in
             return onlyHasOneSetOfCubes(cubes: location.cubes, with: .three)
         }.count, 3)

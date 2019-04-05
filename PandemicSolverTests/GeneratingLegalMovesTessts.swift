@@ -381,6 +381,103 @@ class GeneratingLegalMovesTessts: XCTestCase {
         }
     }
     
+    func testDispatcherMoves()
+    {
+        var otherPawnLocations = [Pawn: CityName]()
+        let currentHand = Hand().draw(cards: [Card(cityName: .algiers), Card(cityName: .baghdad)]).1
+        let cities = [CityName.santiago, .saoPaulo, .sydney, .mumbai]
+        var position = 0
+        let dispatcher = Pawn(role: .dispatcher)
+        otherPawnLocations[dispatcher] = .atlanta
+        Pawn.allCases.filter { $0 != dispatcher }.forEach { otherPawnLocations[$0] = cities[position]; position += 1 }
+        let locationGraph = LocationGraph().addResearchStation(to: .baghdad).addResearchStation(to: .tehran)
+            .addResearchStation(to: .sanFrancisco)
+        
+        //Test that if you aren't the dispatcher you don't have any moves
+        Pawn.allCases.filter { $0 != dispatcher }.forEach
+        { pawn in
+            XCTAssertTrue(pawn.getDispatcherMoves(otherPawnLocations: otherPawnLocations,
+                                                  currentHand: currentHand,
+                                                  on: locationGraph).isEmpty)
+        }
+        
+        //Test dispatcher moves with empty hand
+        let actions = dispatcher.getDispatcherMoves(otherPawnLocations: otherPawnLocations,
+                                                    currentHand: Hand(), on: locationGraph)
+        XCTAssertEqual(actions.count, cities.reduce(0)
+        { result, city -> Int in
+            return result + locationGraph.edges[city]!.count
+        } + Pawn.allCases.count * (Pawn.allCases.count - 1))
+        
+        position = 0
+        Pawn.allCases.forEach
+        { pawn in
+            if pawn != dispatcher
+            {
+                locationGraph.edges[cities[position]]!.forEach
+                { city in
+                        XCTAssertTrue(actions.contains(Action.dispatcher(action:
+                            .control(pawn: pawn, action: Action.general(action: .drive(to: city))))),
+                                      "\(pawn), \(city)")
+                }
+                position += 1
+            }
+        }
+        Pawn.allCases.forEach
+        { pawn in
+            Pawn.allCases.forEach
+            { otherPawn in
+                if pawn != otherPawn
+                {
+                    XCTAssertTrue(actions.contains(Action.dispatcher(action: .snap(pawn: pawn, to: otherPawn))))
+                }
+            }
+        }
+        
+        //Test flying with cards in dispatcher hand
+        otherPawnLocations = [Pawn: CityName]()
+        let medic = Pawn(role: .medic)
+        otherPawnLocations[medic] = .baghdad
+        otherPawnLocations[dispatcher] = .miami
+        let actions2 = dispatcher.getDispatcherMoves(otherPawnLocations: otherPawnLocations, currentHand: currentHand,
+                                                     on: locationGraph)
+        // There should be one where dispatchers snaps to medic and one for the oposite.
+        let snappingActions = 2
+        //The other card will be used for the non-direct flights
+        let directFlights = currentHand.cards.count - 1
+        //Charter flights, should be all cities except for the one they are in
+        let charterFlights = CityName.allCases.count - 1
+        //Also adding a shuttle flight should have two options
+        let shuttleFlight = 2
+        //Regular moves.
+        let regularMoves = locationGraph.edges[.baghdad]!.count
+        XCTAssertEqual(actions2.count, snappingActions + directFlights + charterFlights + shuttleFlight + regularMoves)
+        XCTAssertTrue(actions2.contains(Action.dispatcher(action: .snap(pawn: medic, to: dispatcher))))
+        XCTAssertTrue(actions2.contains(Action.dispatcher(action: .snap(pawn: dispatcher, to: medic))))
+        XCTAssertTrue(actions2.contains(Action.dispatcher(action: .control(pawn: medic, action: .general(action: .directFlight(to: .algiers))))))
+        CityName.allCases.forEach
+        { city in
+            if city != .baghdad
+            {
+                XCTAssertTrue(actions2.contains(Action.dispatcher(action:
+                    .control(pawn: medic, action: .general(action: .charterFlight(to: city))))))
+            }
+        }
+        locationGraph.getAllResearchStations().forEach
+        { location in
+            if location.city.name != .baghdad
+            {
+                XCTAssertTrue(actions2.contains(Action.dispatcher(action:
+                    .control(pawn: medic, action: .general(action: .shuttleFlight(to: location.city.name))))))
+            }
+        }
+        locationGraph.edges[.baghdad]!.forEach
+        { city in
+            XCTAssertTrue(actions2.contains(Action.dispatcher(action:
+                .control(pawn: medic, action: .general(action: .drive(to: city))))))
+        }
+    }
+    
     private func assertCanDrive(from currentLocation: BoardLocation, to cities: [CityName], on locationGraph: LocationGraph)
     {
         Role.allCases.forEach

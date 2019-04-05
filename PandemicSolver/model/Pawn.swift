@@ -40,7 +40,7 @@ struct Pawn: Hashable, CaseIterable
          - pawnHands: the hands of all the pawns in the game.
      - Returns: a list of all valid moves for the current gamestate.s
     */
-    func getLegalMoves(for locationGraph: LocationGraph, with currentHand: HandProtocol, currentLocation: BoardLocation,
+    func getLegalMoves(for locationGraph: LocationGraphProtocol, with currentHand: HandProtocol, currentLocation: BoardLocation,
                        otherPawnLocations: [Pawn: CityName], pawnHands: [Pawn: HandProtocol]) -> [Action]
     {
         var actions = [Action.general(action: .pass)]
@@ -57,6 +57,7 @@ struct Pawn: Hashable, CaseIterable
         {
             actions.append(.general(action: .buildResearchStation))
         }
+        
         actions.append(contentsOf: getTreatingActions(from: currentLocation))
         actions.append(contentsOf: getDrivingActions(from: currentLocation, on: locationGraph))
         actions.append(contentsOf: getOtherTransportationActions(from: currentLocation, currentHand: currentHand,
@@ -109,7 +110,7 @@ struct Pawn: Hashable, CaseIterable
         - currentBoard: the current location graph.
      - Returns: a list of driving actions the pawn can take.
     */
-    func getDrivingActions(from currentLocation: BoardLocation, on currentBoard: LocationGraph) -> [Action]
+    func getDrivingActions(from currentLocation: BoardLocation, on currentBoard: LocationGraphProtocol) -> [Action]
     {
         return currentBoard.edges[currentLocation.city.name]!.map
         { city -> Action in
@@ -127,7 +128,7 @@ struct Pawn: Hashable, CaseIterable
      and current hand.
     */
     func getOtherTransportationActions(from currentLocation: BoardLocation, currentHand: HandProtocol,
-                                       locationGraph: LocationGraph) -> [Action]
+                                       locationGraph: LocationGraphProtocol) -> [Action]
     {
         var actions = currentHand.cards.compactMap
         { card -> Action? in
@@ -335,14 +336,23 @@ struct Pawn: Hashable, CaseIterable
         }
     }
     
+    /**
+     Gets the moves for the dispatcher.
+     - Parameters:
+        - otherPawnLocations: a map of pawn to city name of where the pawns on the board are.
+        - currentHand: the hand of the current pawn.
+        - locationGraph: the current location graph.
+     - Returns: a list of the actions for the dispatcher.
+    */
     func getDispatcherMoves(otherPawnLocations: [Pawn: CityName],
-                                    currentHand: HandProtocol, on locationGraph: LocationGraph) -> [Action]
+                                    currentHand: HandProtocol,
+                                    on locationGraph: LocationGraphProtocol) -> [Action]
     {
         guard role == .dispatcher else
         {
             return []
         }
-        //Get all snapping movesc
+        //Get all snapping moves
         var actions = otherPawnLocations.reduce([])
         { result, keyValuePair -> [Action] in
             return result + otherPawnLocations.reduce([])

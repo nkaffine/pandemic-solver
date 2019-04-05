@@ -38,14 +38,19 @@ protocol Deck
         - numberOfCards: the number of cards to be draw from the deck.
      - Throws: `DeckError.invalidDraw` when there are not enough cards in the deck to draw.
      */
-    func drawCards(numberOfCards: Int) throws -> [Card]
+    func drawCards(numberOfCards: Int) throws -> (deck: Deck, cards: [Card])
+    /**
+     - Throws: `DeckError.invalidDiscard`
+     - Returns: the card from the bottom of the deck
+    */
+    func drawFromBottom() throws -> (Deck, Card)
     /**
      Adds the given card to the discard pile of this deck.
      - Parameters:
         - card: the card to be added to the discard pile.
      - Throws: `DeckError.invalidDiscard` when the card is in the discard pile or still in the deck.
     */
-    func discard(card: Card) throws
+    func discard(card: Card) throws -> Deck
     /**
      Adds the given cards to the dicard pile of this deck in order where the last item will be at the top of the
      discard pile.
@@ -53,7 +58,7 @@ protocol Deck
         - cards: the cards to be added to the discard pile of this deck
      - Throws: `DeckError.invalidDiscard` when one or more cards is in the discard pile or still in the deck.
      */
-    func discard(cards: [Card]) throws
+    func discard(cards: [Card]) throws -> Deck
     /**
      Returns the probability of drawing the given card in the current state of the deck.
      - Parameters:
@@ -78,19 +83,25 @@ protocol Deck
      - Note: If the number of cards is greater than the number of draws, the probability will be 0.
      */
     func probability(ofDrawing cards: [Card], inNext draws: Int) -> Double
+    /**
+     Adds the given cards to the top of the deck.
+     - Parameters:
+     - cards: the cards being added to the top of th dcek.
+     */
+    func add(cards: [Card]) -> Deck
 }
 
 /**
  The deck that players draw cards from.
  */
-class PlayerDeck: Deck
+struct PlayerDeck: Deck
 {
     /**
      The deck of cards that the players draw from.
      Note: The deck is stored where the last index is the top of the deck.
     */
-    private var deck: [Card]
-    var discardPile: [Card]
+    private let deck: [Card]
+    let discardPile: [Card]
     var count: Int
     {
         return deck.count
@@ -103,30 +114,28 @@ class PlayerDeck: Deck
         self.discardPile = []
     }
     
-    func drawCards(numberOfCards: Int) throws -> [Card] {
-        return try (0..<numberOfCards).reduce([])
-        { result, _ -> [Card] in
-            if let card = deck.popLast()
-            {
-                return result + [card]
-            }
-            else
-            {
-                throw DeckError.invalidDraw
-            }
+    private init(deck: [Card], discardPile: [Card])
+    {
+        self.deck = deck
+        self.discardPile = discardPile
+    }
+    
+    func drawCards(numberOfCards: Int) throws -> (deck: Deck, cards: [Card]) {
+        guard numberOfCards <= deck.count else
+        {
+            throw DeckError.invalidDraw
         }
+        let drawn = Array(deck[0..<numberOfCards])
+        let leftover = Array(deck[numberOfCards..<deck.count])
+        return (PlayerDeck(deck: leftover, discardPile: discardPile), drawn)
     }
     
-    func discard(card: Card) throws {
-        try discard(cards: [card])
+    func discard(card: Card) throws -> Deck {
+        return try discard(cards: [card])
     }
     
-    func discard(cards: [Card]) throws {
-        //TODO: Maybe check to see if the cards they are discarding are valid
-        //but for now for performance reasons I am going to just move them to the discard pile.
-        //Another option would be to keep track of the cards that are neither in the
-        //player deck or the discard pile but that might get complicated.
-        discardPile.append(contentsOf: cards)
+    func discard(cards: [Card]) throws -> Deck {
+        return PlayerDeck(deck: deck, discardPile: discardPile + cards)
     }
     
     //TODO: The probability of the epidemic can be more detailed
@@ -167,6 +176,15 @@ class PlayerDeck: Deck
         return prob
     }
     
+    func drawFromBottom() throws -> (Deck, Card) {
+        guard let card = deck.last else
+        {
+            throw DeckError.invalidDraw
+        }
+        let remainingDeck = Array(deck[0..<(deck.count - 1)])
+        return (PlayerDeck(deck: remainingDeck, discardPile: discardPile), card)
+    }
+    
     /**
      Generates the 5 shuffled sections of the deck that each contain an
      epidemic.
@@ -194,9 +212,14 @@ class PlayerDeck: Deck
         }
         return piles
     }
+    
+    func add(cards: [Card]) -> Deck {
+        //Do nothing because it is not allowed
+        return self
+    }
 }
 
-class InfectionPile: Deck
+struct InfectionPile: Deck
 {
     var count: Int
     {
@@ -204,32 +227,35 @@ class InfectionPile: Deck
     }
     
     //TODO: Create a better datastructure for this
-    private var deck: PartitionedDeck
-    var discardPile: [Card]
+    private let deck: ImmutableProbabilityDeck
+    let discardPile: [Card]
     
     /**
      With the discard pile it always has the same cards to start.
     */
     init() {
-        deck = PartitionedDeck(piles: [GameStartHelper.generateCityCards()])
+        deck = ImmutablePartition(piles: [GameStartHelper.generateCityCards()])
         discardPile = []
     }
-
-    func drawCards(numberOfCards: Int) throws -> [Card] {
-        let cards = deck.draw(numberOfCards: numberOfCards)
-        if cards.count < numberOfCards
-        {
-            throw DeckError.invalidDraw
-        }
-        return cards
+    
+    private init(partitionDeck: ImmutableProbabilityDeck, discardPile: [Card])
+    {
+        self.deck = partitionDeck
+        self.discardPile = discardPile
+    }
+    
+    func drawCards(numberOfCards: Int) throws -> (deck: Deck, cards: [Card]) {
+        let deckResult = try deck.draw(numberOfCards: numberOfCards)
+        return (InfectionPile(partitionDeck: deckResult.deck, discardPile: discardPile), deckResult.cards)
     }
 
-    func discard(card: Card) throws {
-        discardPile.append(card)
+    func discard(card: Card) throws -> Deck
+    {
+        return try self.discard(cards: [card])
     }
-
-    func discard(cards: [Card]) throws {
-        discardPile.append(contentsOf: cards)
+    
+    func discard(cards: [Card]) throws -> Deck {
+        return InfectionPile(partitionDeck: deck, discardPile: discardPile + cards)
     }
 
     func probability(ofDrawing card: Card) -> Double {
@@ -244,60 +270,72 @@ class InfectionPile: Deck
         return deck.probability(ofDrawing: cards, inNext: draws)
     }
 
-    func addCards(cards: [Card])
+    func add(cards: [Card]) -> Deck
     {
-        deck.add(cards: cards)
+        return InfectionPile(partitionDeck: deck.add(cards: cards), discardPile: discardPile)
+    }
+    
+    func drawFromBottom() throws -> (Deck, Card)
+    {
+        let drawResult = try deck.drawFromBottom()
+        return (InfectionPile(partitionDeck: drawResult.deck, discardPile: discardPile), drawResult.card)
     }
 }
 
-protocol ProbabilityDeck
+protocol ImmutableProbabilityDeck
 {
+    var count: Int { get }
     /**
      Draw and remove a card from the top of the deck.
      - Parameters:
         -numberOfCards: the number of cards to be drawn
-    */
-    func draw(numberOfCards: Int) -> [Card]
+     - Returns: the updated probability deck with the cards removed, the cards that we removed.
+     */
+    func draw(numberOfCards: Int) throws -> (deck: ImmutableProbabilityDeck, cards: [Card])
     
     /**
      Returns the probability of drawing the given card.
      - Parameters:
         -card: the card that is the subject of the probabilistic query.
-    */
+     */
     func probability(ofDrawing card: Card) -> Double
     
     /**
      Returns the probability of drawing the given card in the next given number
      of draws.
      - Parameters:
-        -card: the card that is the subject of the probabilistic query.
-        -draws: the number of trials for drawing the card.
-    */
+         -card: the card that is the subject of the probabilistic query.
+         -draws: the number of trials for drawing the card.
+     */
     func probability(ofDrawing card: Card, inNext draws: Int) -> Double
     
     /**
      Returns the probability of drawing the given list of cards in the next
      given number of draws.
      - Parameters:
-        -cards: a list of cards that are the subject of the probabilisitc query.
-        -draws: the number of trials for drawing the list of cards
-    */
+         -cards: a list of cards that are the subject of the probabilisitc query.
+         -draws: the number of trials for drawing the list of cards
+     */
     func probability(ofDrawing cards: [Card], inNext draws: Int) -> Double
     
     /**
      Adds the given cards to the top of the deck.
      - Parameters:
-     - cards: the cards being added to the top of th dcek.
-    */
-    func add(cards: [Card])
- }
+        - cards: the cards being added to the top of th dcek.
+     */
+    func add(cards: [Card]) -> ImmutableProbabilityDeck
+    
+    /**
+     Draws a card from the bottom of the deck.
+     - Returns: the card at the bottom of the deck.
+     */
+    func drawFromBottom() throws -> (deck: ImmutableProbabilityDeck, card: Card)
+}
 
 /**
- Class to handle the paritioned aspect of the infection pile.
- - Note: This class does not handle duplicate cards since it is not something
- that can happen in the infection pile.
+ Class to handle the partitioned aspect of the infection pile.
  */
-class PartitionedDeck: ProbabilityDeck
+struct ImmutablePartition: ImmutableProbabilityDeck
 {
     private var deck: [[Card]]
     
@@ -310,20 +348,36 @@ class PartitionedDeck: ProbabilityDeck
         return deck.reduce(0) { $0 + $1.count }
     }
     
-    /**
-     Draws the given number of cards from the top of the deck.
-     - Parameters:
-        -numberOfCards: the number of cards to be drawn
-    */
-    func draw(numberOfCards: Int) -> [Card]
-    {
-        return (0..<numberOfCards).compactMap { _ -> Card? in return removeOne() }
-            .reduce([]){ result, card -> [Card] in return result + [card] }
+    func draw(numberOfCards: Int) throws -> (deck: ImmutableProbabilityDeck, cards: [Card]) {
+        let newDeckComponents = try self.getCardsAndKeptArrays(numberOfCards: numberOfCards)
+        return (ImmutablePartition(piles: newDeckComponents.deckRemaining), newDeckComponents.drawnCards)
+    }
+    
+    func add(cards: [Card]) -> ImmutableProbabilityDeck {
+        return ImmutablePartition(piles: [cards] + deck)
+    }
+    
+    func drawFromBottom() throws -> (deck: ImmutableProbabilityDeck, card: Card) {
+        let untouchedDecks = Array(deck[0..<(deck.count - 1)])
+        let lastDeck = deck[deck.count - 1]
+        guard let card = lastDeck.last else
+        {
+            throw DeckError.invalidDraw
+        }
+        let newLastDeck = Array(lastDeck[0..<(lastDeck.count - 1)])
+        if !lastDeck.isEmpty
+        {
+            return (ImmutablePartition(piles: untouchedDecks + [newLastDeck]), card)
+        }
+        else
+        {
+            return (ImmutablePartition(piles: untouchedDecks), card)
+        }
     }
     
     /**
      If the card is not in the top deck then the probability is zero.
-    */
+     */
     func probability(ofDrawing card: Card) -> Double
     {
         if let deck = deck.first, deck.contains(card)
@@ -364,49 +418,27 @@ class PartitionedDeck: ProbabilityDeck
             return 0
         }
         cards.forEach
-        { card in
-            if !guaranteed.contains(card) && !probable.contains(card)
-            {
-                //Allows for escaping early if it gets zeroed out.
-                probability = 0
-                return
-            }
-            else if probable.contains(card)
-            {
-                probability = probability * pow(1 / Double(probable.count), Double(draws - guaranteed.count))
-            }
+            { card in
+                if !guaranteed.contains(card) && !probable.contains(card)
+                {
+                    //Allows for escaping early if it gets zeroed out.
+                    probability = 0
+                    return
+                }
+                else if probable.contains(card)
+                {
+                    probability = probability * pow(1 / Double(probable.count), Double(draws - guaranteed.count))
+                }
         }
         return probability
-    }
-    
-    func add(cards: [Card]) {
-        deck = [cards] + deck
-    }
-    
-    /**
-     Removes the first card of the deck and remeoves the first list if thee first list is empty.
-     - Returns: the first card of the deck if there is one.
-    */
-    private func removeOne() -> Card?
-    {
-        if deck.count > 0
-        {
-            let card = deck[0].removeFirst()
-            if deck[0].isEmpty
-            {
-                deck.removeFirst()
-            }
-            return card
-        }
-        return nil
     }
     
     /**
      Gets a list of cards that will be drawn for sure and a list of cards that might be drawn.
      - Parameters:
-        - numberOfCards: the number of cards that are going to be drawn
+     - numberOfCards: the number of cards that are going to be drawn
      - Returns: a tuple with the cards that will definitely be drawn and the cards that might be drawn.
-    */
+     */
     private func topCardPiles(numberOfCards: Int) -> (guaranteed: [Card], probabilistic: [Card])
     {
         //Initializing the list of piles to an empty array.
@@ -414,12 +446,12 @@ class PartitionedDeck: ProbabilityDeck
         //Keeping track of the total cards in all the piles combined.
         var count = 0
         deck.forEach
-        { pile in
-            if count < numberOfCards
-            {
-                piles.append(pile)
-                count += pile.count
-            }
+            { pile in
+                if count < numberOfCards
+                {
+                    piles.append(pile)
+                    count += pile.count
+                }
         }
         let last = piles.removeLast()
         let first = piles.reduce([]) { result, pile -> [Card] in return result + pile }
@@ -430,6 +462,61 @@ class PartitionedDeck: ProbabilityDeck
         else
         {
             return (first, last)
+        }
+    }
+    
+    /**
+     Gets the deck after removing the given number of cards and an array with those cards.
+     - Parameters:
+        - numberOfCards: the number of cards to be drawn from the deck
+     - Returns: a tuple with the deck after removing the cards and the cards that were removed from the deck.
+    */
+    private func getCardsAndKeptArrays(numberOfCards: Int) throws -> (deckRemaining: [[Card]], drawnCards: [Card])
+    {
+        var deckIndex = 0
+        var cardsLeft = numberOfCards
+        var drawnCards = [Card]()
+        var deckRemaining = [[Card]]()
+        while cardsLeft > 0
+        {
+            guard deckIndex < deck.count else
+            {
+                throw DeckError.invalidDraw
+            }
+            
+            let resultTuple = getNextFromArray(section: deck[deckIndex], numberOfCards: cardsLeft)
+            drawnCards.append(contentsOf: resultTuple.usedDeck)
+            cardsLeft = cardsLeft - resultTuple.usedDeck.count
+            if cardsLeft == 0
+            {
+                deckRemaining.append(contentsOf: Array(deck[(deckIndex + 1)..<deck.count]))
+                if !resultTuple.remainingDeck.isEmpty
+                {
+                    deckRemaining = [resultTuple.remainingDeck] + deckRemaining
+                }
+            }
+            deckIndex += 1
+        }
+        return (deckRemaining, drawnCards)
+    }
+    
+    /**
+     Gets as many cards from the given array of cards as it can and returns the cards it got, the amount it couldn't supply,
+     and any leftover cards.
+     - Parameters:
+        - section: the array of cards that is being drawn from.
+        -numberOfCards: the number of cards to be taken from the deck.
+     - Returns: the top cards from the deck, any cards that are remaining in the deck, and the number leftover from the request.
+    */
+    private func getNextFromArray(section: [Card], numberOfCards: Int) -> (usedDeck: [Card], remainingDeck: [Card], leftOver: Int)
+    {
+        if section.count <= numberOfCards
+        {
+            return (section, [], numberOfCards - section.count)
+        }
+        else
+        {
+            return (Array(section[0..<numberOfCards]), Array(section[numberOfCards..<section.count]), section.count - numberOfCards)
         }
     }
 }

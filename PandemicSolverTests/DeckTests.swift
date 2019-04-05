@@ -28,7 +28,7 @@ class DeckTests: XCTestCase {
         XCTAssertEqual(playerDeck.probability(ofDrawing: .epidemic), 0.5)
         XCTAssertEqual(playerDeck.probability(ofDrawing: deck.first!), 0.1)
         let drawn = try? playerDeck.drawCards(numberOfCards: 10)
-        let epidemics = drawn?.filter { $0 == .epidemic }
+        let epidemics = drawn?.cards.filter { $0 == .epidemic }
         XCTAssertEqual(epidemics?.count, 5)
     }
     
@@ -87,7 +87,7 @@ class DeckTests: XCTestCase {
         (0..<5).forEach
         { _ in
             let cards = try? playerDeck.drawCards(numberOfCards: 2)
-            XCTAssertEqual(cards!.filter { $0 == .epidemic }.count, 1)
+            XCTAssertEqual(cards!.cards.filter { $0 == .epidemic }.count, 1)
         }
     }
     
@@ -95,36 +95,49 @@ class DeckTests: XCTestCase {
     {
         let deck = GameStartHelper.generateCityCards()
         let playerDeck = PlayerDeck(deck: deck)
-        let cards1 = try? playerDeck.drawCards(numberOfCards: 2)
-        try? playerDeck.discard(cards: cards1!)
-        XCTAssertEqual(playerDeck.discardPile.count, 2)
-        cards1!.forEach{ card in XCTAssertTrue(playerDeck.discardPile.contains(card)) }
+        let drawResult1 = try! playerDeck.drawCards(numberOfCards: 2)
+        let cards1 = drawResult1.cards
+        let deck2 = drawResult1.deck
         
-        let card2 = (try? playerDeck.drawCards(numberOfCards: 1))?.first
-        try? playerDeck.discard(card: card2!)
-        XCTAssertEqual(playerDeck.discardPile.count, 3)
-        XCTAssertTrue(playerDeck.discardPile.contains(card2!))
+        //Add to the discard pile and check its there
+        let deck3 = (try? deck2.discard(cards: cards1))!
+        XCTAssertEqual(deck3.discardPile.count, 2)
+        cards1.forEach { card in XCTAssertTrue(deck3.discardPile.contains(card)) }
+        
+        //Testing adding just one cards
+        let drawResult2 = (try? deck3.drawCards(numberOfCards: 1))!
+        let card2 = drawResult2.cards.first!
+        let deck4 = drawResult2.deck
+        
+        let deck5 = (try? deck4.discard(card: card2))!
+        XCTAssertEqual(deck5.discardPile.count, 3)
+        XCTAssertTrue(deck5.discardPile.contains(card2))
     }
     
     func testNormalInfectionFlow()
     {
         let population = GameStartHelper.generateCityCards()
         let infectionPile = InfectionPile()
-        let cards = (try? infectionPile.drawCards(numberOfCards: 10))!
-        let notSelectedCards = population.filter{!cards.contains($0)}
-        XCTAssertEqual(infectionPile.probability(ofDrawing: notSelectedCards[0]), 1 / Double(notSelectedCards.count))
-        XCTAssertEqual(infectionPile.probability(ofDrawing: notSelectedCards[0], inNext: 2), pow(1 / Double(notSelectedCards.count), 2))
-        XCTAssertEqual(infectionPile.probability(ofDrawing: [notSelectedCards[0], notSelectedCards[1]], inNext: 2),
-                       pow(pow(1 / Double(notSelectedCards.count), 2), 2))
-        infectionPile.addCards(cards: cards)
-        XCTAssertEqual(infectionPile.probability(ofDrawing: notSelectedCards[0]), 0)
-        XCTAssertEqual(infectionPile.probability(ofDrawing: cards[0], inNext: 2), 1/Double(100), accuracy: 0.001)
-        XCTAssertEqual(infectionPile.probability(ofDrawing: [cards[0],cards[1]], inNext: 2), 1/Double(10000), accuracy: 0.0001)
-        XCTAssertEqual(infectionPile.probability(ofDrawing: [cards[0], notSelectedCards[0]], inNext: 2), 0)
+        let (infectionPile1, cards1) = (try? infectionPile.drawCards(numberOfCards: 10))!
+        let notSelectedCards = population.filter{!cards1.contains($0)}
         
-        let redrawn = (try? infectionPile.drawCards(numberOfCards: 8))!
-        let leftovers = cards.filter{!redrawn.contains($0)}
-        XCTAssertEqual(infectionPile.probability(ofDrawing: leftovers[0], inNext: 2), 1)
-        XCTAssertEqual(infectionPile.probability(ofDrawing: [leftovers[0], notSelectedCards[0]], inNext: 3), 1/Double(notSelectedCards.count))
+        
+        XCTAssertEqual(infectionPile1.probability(ofDrawing: notSelectedCards[0]), 1 / Double(notSelectedCards.count))
+        XCTAssertEqual(infectionPile1.probability(ofDrawing: notSelectedCards[0], inNext: 2), pow(1 / Double(notSelectedCards.count), 2))
+        XCTAssertEqual(infectionPile1.probability(ofDrawing: [notSelectedCards[0], notSelectedCards[1]], inNext: 2),
+                       pow(pow(1 / Double(notSelectedCards.count), 2), 2))
+        
+        //Adding the drawn cards back to the infection pile
+        let infectionPile2 = infectionPile1.add(cards: cards1)
+        XCTAssertEqual(infectionPile2.probability(ofDrawing: notSelectedCards[0]), 0)
+        XCTAssertEqual(infectionPile2.probability(ofDrawing: cards1[0], inNext: 2), 1/Double(100), accuracy: 0.001)
+        XCTAssertEqual(infectionPile2.probability(ofDrawing: [cards1[0], cards1[1]], inNext: 2), 1/Double(10000), accuracy: 0.0001)
+        XCTAssertEqual(infectionPile1.probability(ofDrawing: [cards1[0], notSelectedCards[0]], inNext: 2), 0)
+        
+        //Drawing all cards except 2 from top of the infection pile.
+        let (infectionPile3, cards2) = (try? infectionPile2.drawCards(numberOfCards: 8))!
+        let leftovers = cards1.filter{!cards2.contains($0)}
+        XCTAssertEqual(infectionPile3.probability(ofDrawing: leftovers[0], inNext: 2), 1)
+        XCTAssertEqual(infectionPile3.probability(ofDrawing: [leftovers[0], notSelectedCards[0]], inNext: 3), 1/Double(notSelectedCards.count))
     }
 }
