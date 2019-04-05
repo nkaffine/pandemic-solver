@@ -35,7 +35,7 @@ protocol GameState
     /**
      The number of cards that will be drawn from the infection pile after each player draws.
      */
-    var infectionRate: Int { get }
+    var infectionRate: InfectionRate { get }
     /**
      The number of outbreaks that have occurred in the game so far.
      */
@@ -150,7 +150,7 @@ struct GameBoard: GameState
     
     let infectionPile: Deck
     
-    let infectionRate: Int
+    let infectionRate: InfectionRate
     
     let outbreaksSoFar: Int
     
@@ -192,7 +192,7 @@ struct GameBoard: GameState
         self.pawnHands = pawnHands
         self.playerDeck = PlayerDeck(deck: cityCards)
         self.infectionPile = InfectionPile()
-        self.infectionRate = 2
+        self.infectionRate = .one
         self.outbreaksSoFar = 0
         self.maxOutbreaks = 7
         self.cubesRemaining = GameStartHelper.initialDiseaseCubeCount()
@@ -208,7 +208,7 @@ struct GameBoard: GameState
      Private initializer to allow for copying of game state.
     */
     private init(locationGraph: LocationGraphProtocol, pawnLocations: [Pawn: CityName], pawnHands: [Pawn: HandProtocol],
-                 pawns: [Pawn], playerDeck: Deck, infectionPile: Deck, infectionRate: Int, outbreaksSoFar: Int,
+                 pawns: [Pawn], playerDeck: Deck, infectionPile: Deck, infectionRate: InfectionRate, outbreaksSoFar: Int,
                  maxOutbreaks: Int, cubesRemaining: [DiseaseColor : Int], uncuredDiseases: [DiseaseColor],
                 curedDiseases: [DiseaseColor], gameStatus: GameStatus, currentPlayer: Pawn, actionsRemaining: Int)
     {
@@ -364,7 +364,7 @@ struct GameBoard: GameState
     
     private func drawInfectionCards() -> GameBoard
     {
-        guard let cards = try? infectionPile.drawCards(numberOfCards: infectionRate) else
+        guard let cards = try? infectionPile.drawCards(numberOfCards: infectionRate.cardsToDraw) else
         {
             return gameEnd(with: .loss)
         }
@@ -399,8 +399,21 @@ struct GameBoard: GameState
     private func epidemic() -> GameBoard
     {
         //TODO: Draw from button on infection pile.
-        //TODO: increment the infection rate.
-        return self
+        guard let drawResult = try? infectionPile.drawFromBottom() else
+        {
+            return gameEnd(with: .loss)
+        }
+        //TODO: add a function to card that returns an optional city card. Nil if epidemic.
+        switch drawResult.card
+        {
+            case .epidemic:
+                //TODO: Should something different here happen? Throw and error?
+                return gameEnd(with: .loss)
+            case .cityCard(let cityCard):
+                //TODO: Infect the city card.
+                let (outbreaks, newGraph) = locationGraph.place(.three, of: cityCard.city.color, on: cityCard.city.name)
+                return copy(locationGraph: newGraph, infectionRate: infectionRate.next(), outbreaksSoFar: outbreaksSoFar + outbreaks.count)
+        }
     }
     
     private func evaluateGameStatus() -> GameStatus
@@ -484,7 +497,7 @@ struct GameBoard: GameState
                       pawnLocations: [Pawn: CityName]? = nil,
                       pawnHands: [Pawn: HandProtocol]? = nil,
                       pawns: [Pawn]? = nil, playerDeck: Deck? = nil,
-                      infectionPile: Deck? = nil, infectionRate: Int? = nil,
+                      infectionPile: Deck? = nil, infectionRate: InfectionRate? = nil,
                       outbreaksSoFar: Int? = nil, maxOutbreaks: Int? = nil,
                       cubesRemaining: [DiseaseColor : Int]? = nil,
                       uncuredDiseases: [DiseaseColor]? = nil,

@@ -43,7 +43,7 @@ protocol Deck
      - Throws: `DeckError.invalidDiscard`
      - Returns: the card from the bottom of the deck
     */
-    func drawFromBottom() throws -> (Deck, Card)
+    func drawFromBottom() throws -> (deck: Deck, card: Card)
     /**
      Adds the given card to the discard pile of this deck.
      - Parameters:
@@ -176,7 +176,7 @@ struct PlayerDeck: Deck
         return prob
     }
     
-    func drawFromBottom() throws -> (Deck, Card) {
+    func drawFromBottom() throws -> (deck: Deck, card: Card) {
         guard let card = deck.last else
         {
             throw DeckError.invalidDraw
@@ -275,7 +275,7 @@ struct InfectionPile: Deck
         return InfectionPile(partitionDeck: deck.add(cards: cards), discardPile: discardPile)
     }
     
-    func drawFromBottom() throws -> (Deck, Card)
+    func drawFromBottom() throws -> (deck: Deck, card: Card)
     {
         let drawResult = try deck.drawFromBottom()
         return (InfectionPile(partitionDeck: drawResult.deck, discardPile: discardPile), drawResult.card)
