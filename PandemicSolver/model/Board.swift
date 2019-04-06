@@ -133,7 +133,7 @@ protocol GameState
      Does the first round of infecting and changes the game status to inProgress.
      - Returns: the new gameboard with the updated state.
     */
-    func startGame() -> GameBoard
+    func startGame() -> GameState
 }
 
 class GameBoard: GameState
@@ -275,6 +275,12 @@ class GameBoard: GameState
                 }
             case .general(let generalAction):
                 return try execute(action: generalAction, for: pawn)
+            case .drawAndInfect:
+                guard actionsRemaining == 0 else
+                {
+                    throw BoardError.invalidMove
+                }
+                return self.drawPlayerCards().drawInfectionCards()
         }
     }
     
@@ -400,28 +406,39 @@ class GameBoard: GameState
     }
     
     func legalActions() -> [Action] {
-        return legalActions(for: currentPlayer)
+        if actionsRemaining == 0
+        {
+            return [Action.drawAndInfect]
+        }
+        else
+        {
+             return legalActions(for: currentPlayer)
+        }
     }
     
     func execute(action: Action) throws -> GameState {
-        return try transition(pawn: currentPlayer, for: action)
+        return try (transition(pawn: currentPlayer, for: action) as! GameBoard).incrementTurn()
     }
     
+    /**
+     Increments the turn by one action. If the action switches to the next turn, the current player
+     is updated. Returns the gamestate after the turn has been incremented
+    */
     private func incrementTurn() -> GameState
     {
-        let actionsRemaining = self.actionsRemaining == 1 ? 4 : self.actionsRemaining - 1
+        let actionsRemaining = (self.actionsRemaining - 1) % 4
         var player = currentPlayer
-        var newBoard = self
         if actionsRemaining == 4
         {
-            player = pawns[(pawns.index(of: currentPlayer)! + 1) % 3]
-            newBoard = newBoard.drawPlayerCards().drawInfectionCards()
+            player = pawns[(pawns.index(of: currentPlayer)! + 1) % 4]
         }
-        return newBoard.copy(gameStatus: newBoard.evaluateGameStatus(),
-                             currentPlayer: player,
-                             actionsRemaining: actionsRemaining)
+        return copy(currentPlayer: player,
+                    actionsRemaining: actionsRemaining)
     }
     
+    /**
+     Handles the player card drawing step. Returns the gamestate after cards have been drawn.
+    */
     private func drawPlayerCards() -> GameBoard
     {
         guard let cards = try? playerDeck.drawCards(numberOfCards: 2) else
@@ -440,6 +457,9 @@ class GameBoard: GameState
         }
     }
     
+    /**
+     Handles the drawing of infection cards and subsequent infections. Returns the game board after being infected.
+    */
     private func drawInfectionCards() -> GameBoard
     {
         guard let cards = try? infectionPile.drawCards(numberOfCards: infectionRate.cardsToDraw) else
@@ -507,7 +527,7 @@ class GameBoard: GameState
         return hand
     }
     
-    func startGame() -> GameBoard
+    func startGame() -> GameState
     {
         guard let cities = try? self.infectionPile.drawCards(numberOfCards: 9), !cities.cards.contains(.epidemic) else
         {

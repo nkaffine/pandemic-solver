@@ -124,16 +124,18 @@ class RegularTransitionTests: XCTestCase {
             { action -> Bool in
                 switch action
                 {
-                case .dispatcher:
-                    return false
-                case .general(let generalAction):
-                    switch generalAction
-                    {
-                    case .charterFlight:
-                        return true
-                    default:
+                    case .dispatcher:
                         return false
-                    }
+                    case .general(let generalAction):
+                        switch generalAction
+                        {
+                        case .charterFlight:
+                            return true
+                        default:
+                            return false
+                        }
+                    case .drawAndInfect:
+                        return false
                 }
             }
             let newState1 = try! newState.transition(pawn: pawn, for: charterActions.randomElement()!)
@@ -168,16 +170,18 @@ class RegularTransitionTests: XCTestCase {
             { action -> Bool in
                 switch action
                 {
-                case .dispatcher:
-                    return false
-                case .general(let generalAction):
-                    switch generalAction
-                    {
-                    case .directFlight:
-                        return true
-                    default:
+                    case .dispatcher:
                         return false
-                    }
+                    case .general(let generalAction):
+                        switch generalAction
+                        {
+                        case .directFlight:
+                            return true
+                        default:
+                            return false
+                        }
+                    case .drawAndInfect:
+                        return false
                 }
             }
             let newState1 = try! newState.transition(pawn: pawn, for: directFlightAction.first!)
@@ -288,10 +292,6 @@ class RegularTransitionTests: XCTestCase {
         }
     }
     
-    //TODO: Test share knowledge and errors
-    
-    //TODO: Test curing and errors
-    
     /**
      Returns whether the given pawn is in a location that is in its hand.
      - Parameters:
@@ -324,6 +324,8 @@ class RegularTransitionTests: XCTestCase {
                     default:
                         return false
                     }
+                case .drawAndInfect:
+                    return false
             }
         }
         return try! state.transition(pawn: pawn, for: legalMoveActions.randomElement()!)
@@ -375,6 +377,8 @@ class RegularTransitionTests: XCTestCase {
                         default:
                             return false
                     }
+                case .drawAndInfect:
+                    return false
             }
         }.randomElement()!)
     }
@@ -395,6 +399,8 @@ class RegularTransitionTests: XCTestCase {
                         default:
                             return false
                     }
+                case .drawAndInfect:
+                    return false
             }
         }.isEmpty
     }

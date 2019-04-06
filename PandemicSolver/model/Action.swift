@@ -12,6 +12,7 @@ indirect enum Action: Equatable
 {
     case general(action: GeneralAction)
     case dispatcher(action: DispatcherAction)
+    case drawAndInfect
 }
 
 enum GeneralAction: Equatable

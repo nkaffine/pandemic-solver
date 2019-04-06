@@ -62,6 +62,9 @@ class DispatcherTransitionTests: XCTestCase {
                     }
                 case .dispatcher:
                     return false
+                case .drawAndInfect:
+                    
+                    return false
             }
         }.first!
         //Making sure the two pawns in the swap are not in the same city.
