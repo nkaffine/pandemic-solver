@@ -136,7 +136,7 @@ protocol GameState
     func startGame() -> GameState
 }
 
-class GameBoard: GameState
+class GameBoard: GameState, Simulator, GameStateFeatures
 {
     private let locationGraph: LocationGraphProtocol
     

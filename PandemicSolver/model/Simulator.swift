@@ -41,7 +41,7 @@ protocol Simulator
      Does the first round of infecting and changes the game status to inProgress.
      - Returns: the new gameboard with the updated state.
      */
-    func startGame() -> GameBoard
+    func startGame() -> GameState
 }
 
 protocol GameStateFeatures
