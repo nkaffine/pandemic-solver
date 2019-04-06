@@ -26,6 +26,8 @@ class RegularTransitionTests: XCTestCase {
     //  Test building research station error
     //  Test charter flight
     //  Test charter flight error
+    //  Test direct flight
+    //  Test direct flight error
     //  Test curring action
     //  Test treating action
     //  Test treet error
@@ -104,6 +106,106 @@ class RegularTransitionTests: XCTestCase {
         }
         let newState2 = try! newState.transition(pawn: pawn, for: Action.general(action: .buildResearchStation))
         XCTAssertTrue((try! newState2.hand(for: pawn)).cards.contains(Card(cityName: newState2.location(of: pawn).city.name)))
+    }
+    
+    func testCharterFlight()
+    {
+        try! sut.pawns.forEach
+        { pawn in
+            var newState = sut!
+            while !hasLocationInHand(pawn: pawn, state: newState)
+            {
+                newState = moveRandomLegalDirection(with: pawn, in: newState)
+            }
+            let charterActions = newState.legalActions(for: pawn).filter
+            { action -> Bool in
+                switch action
+                {
+                case .dispatcher:
+                    return false
+                case .general(let generalAction):
+                    switch generalAction
+                    {
+                    case .charterFlight:
+                        return true
+                    default:
+                        return false
+                    }
+                }
+            }
+            let newState1 = try! newState.transition(pawn: pawn, for: charterActions.randomElement()!)
+            XCTAssertNotEqual(try! newState1.hand(for: pawn).cards, try! newState.hand(for: pawn).cards)
+            XCTAssertFalse(try newState1.hand(for: pawn).cards.contains(Card(cityName: newState.location(of: pawn).city.name)))
+        }
+    }
+    
+    func testCharterFlightError()
+    {
+        sut.pawns.forEach
+        { pawn in
+            var newState = sut!
+            while hasLocationInHand(pawn: pawn, state: newState)
+            {
+                newState = moveRandomLegalDirection(with: pawn, in: newState)
+            }
+            XCTAssertNil(try? newState.transition(pawn: pawn, for: .general(action: .charterFlight(to: .algiers))))
+        }
+    }
+    
+    func testDirectFlight()
+    {
+        try! sut.pawns.forEach
+        { pawn in
+            var newState = sut!
+            while hasLocationInHand(pawn: pawn, state: newState)
+            {
+                newState = moveRandomLegalDirection(with: pawn, in: newState)
+            }
+            let directFlightAction = newState.legalActions(for: pawn).filter
+            { action -> Bool in
+                switch action
+                {
+                case .dispatcher:
+                    return false
+                case .general(let generalAction):
+                    switch generalAction
+                    {
+                    case .directFlight:
+                        return true
+                    default:
+                        return false
+                    }
+                }
+            }
+            let newState1 = try! newState.transition(pawn: pawn, for: directFlightAction.first!)
+            let cardDiscarded = (try! newState.hand(for: pawn)).cards
+                .filter{ !(try! newState1.hand(for: pawn)).cards.contains($0) }.first!
+            XCTAssertEqual(newState1.location(of: pawn).city.name, cardDiscarded.cityName!)
+            XCTAssertNotEqual(try! newState1.hand(for: pawn).cards, try! newState.hand(for: pawn).cards)
+            XCTAssertFalse(try newState1.hand(for: pawn).cards.contains(Card(cityName: newState1.location(of: pawn).city.name)))
+        }
+    }
+    
+    func testDirectFlightError()
+    {
+        let cityCards = GameStartHelper.generateCityCards()
+        sut.pawns.forEach
+        { pawn in
+            let nonLegalDirectFlights = cityCards.filter{!(try! sut.hand(for: pawn).cards.contains($0))}
+            XCTAssertNil(try? sut.transition(pawn: pawn, for: Action.general(action: .directFlight(to: nonLegalDirectFlights.randomElement()!.cityName!))))
+        }
+    }
+    
+    /**
+     Returns whether the given pawn is in a location that is in its hand.
+     - Parameters:
+        - pawn: the pawn whose location is being querried.
+        - state: the game state that is context for the query.
+     - Returns: the boolean whether the pawn is in a location that is in its hand.
+    */
+    private func hasLocationInHand(pawn: Pawn, state: GameState) -> Bool
+    {
+        return (try! state.hand(for: pawn)).cards.contains(Card(cityName: state.location(of: pawn).city.name))
     }
     
     /**

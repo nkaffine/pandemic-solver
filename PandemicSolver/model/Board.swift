@@ -315,13 +315,24 @@ class GameBoard: GameState
                 return move(pawn: pawn, to: city)
             
             //The cases where you move and discard a card
-            case .charterFlight(let city), .directFlight(let city):
-                guard let hand = pawnHands[pawn] else
+            case .directFlight(let city):
+                guard let hand = pawnHands[pawn], hand.cards.contains(Card(cityName: city)) else
                 {
                     throw BoardError.invalidMove
                 }
                 //TODO: Deal with hand limit stuff
                 let (atHandLimit, newHand) = hand.discard(card: Card(cityName: city))
+                let newHands = pawnHands.imutableUpdate(key: pawn, value: newHand)
+                return copy(pawnHands: newHands).move(pawn: pawn, to: city)
+            
+            case .charterFlight(let city):
+                guard let hand = pawnHands[pawn], let currentLocation = pawnLocations[pawn],
+                    hand.cards.contains(Card(cityName: currentLocation))  else
+                {
+                    throw BoardError.invalidMove
+                }
+                //TODO: Deal with hand limit stuff
+                let (atHandLimit, newHand) = hand.discard(card: Card(cityName: currentLocation))
                 let newHands = pawnHands.imutableUpdate(key: pawn, value: newHand)
                 return copy(pawnHands: newHands).move(pawn: pawn, to: city)
             

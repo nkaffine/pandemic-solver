@@ -46,6 +46,18 @@ enum Card: Equatable, CustomStringConvertible
                 return card.description
         }
     }
+    
+    var cityName: CityName?
+    {
+        switch self
+        {
+            case .epidemic:
+                return nil
+            case .cityCard(let cityCard):
+                return cityCard.city.name
+        }
+    }
+    
     case cityCard(card: CityCard)
     case epidemic
     
