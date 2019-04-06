@@ -25,11 +25,13 @@
 		ED51C89E2257E44C008C1E7D /* InfectionRate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED51C89D2257E44C008C1E7D /* InfectionRate.swift */; };
 		ED51C8A02257E5A0008C1E7D /* InfectionRateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED51C89F2257E5A0008C1E7D /* InfectionRateTests.swift */; };
 		ED85B4FF224E5F3C0046A03E /* Pawn.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED85B4FE224E5F3C0046A03E /* Pawn.swift */; };
-		ED9164F922543AAB0026AA6A /* BoardTransitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9164F822543AAB0026AA6A /* BoardTransitionTests.swift */; };
+		ED9164F922543AAB0026AA6A /* DispatcherTransitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9164F822543AAB0026AA6A /* DispatcherTransitionTests.swift */; };
 		ED9EC1DF224D41AF009D9BD9 /* Policy.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9EC1DE224D41AF009D9BD9 /* Policy.swift */; };
 		ED9EC1E1224D5669009D9BD9 /* PartitionedDeckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9EC1E0224D5669009D9BD9 /* PartitionedDeckTests.swift */; };
 		ED9EC1E3224D9496009D9BD9 /* LocationGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9EC1E2224D9496009D9BD9 /* LocationGraph.swift */; };
 		ED9EC1E5224DBD65009D9BD9 /* LocationGraphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9EC1E4224DBD65009D9BD9 /* LocationGraphTests.swift */; };
+		ED9EE0A722583531007FB6CE /* RegularTransitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9EE0A622583531007FB6CE /* RegularTransitionTests.swift */; };
+		ED9EE0A9225837CF007FB6CE /* Simulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9EE0A8225837CF007FB6CE /* Simulator.swift */; };
 		EDA4934E22357C2100BF77BF /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA4934D22357C2100BF77BF /* Action.swift */; };
 		EDAC5D972253245E008A0A2C /* GeneratingLegalMovesTessts.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAC5D962253245E008A0A2C /* GeneratingLegalMovesTessts.swift */; };
 		EDEAF57F224C1A3E007C2CC6 /* GameStartHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEAF57E224C1A3E007C2CC6 /* GameStartHelper.swift */; };
@@ -79,11 +81,13 @@
 		ED51C89D2257E44C008C1E7D /* InfectionRate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfectionRate.swift; sourceTree = "<group>"; };
 		ED51C89F2257E5A0008C1E7D /* InfectionRateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfectionRateTests.swift; sourceTree = "<group>"; };
 		ED85B4FE224E5F3C0046A03E /* Pawn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pawn.swift; sourceTree = "<group>"; };
-		ED9164F822543AAB0026AA6A /* BoardTransitionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardTransitionTests.swift; sourceTree = "<group>"; };
+		ED9164F822543AAB0026AA6A /* DispatcherTransitionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatcherTransitionTests.swift; sourceTree = "<group>"; };
 		ED9EC1DE224D41AF009D9BD9 /* Policy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Policy.swift; sourceTree = "<group>"; };
 		ED9EC1E0224D5669009D9BD9 /* PartitionedDeckTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartitionedDeckTests.swift; sourceTree = "<group>"; };
 		ED9EC1E2224D9496009D9BD9 /* LocationGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationGraph.swift; sourceTree = "<group>"; };
 		ED9EC1E4224DBD65009D9BD9 /* LocationGraphTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationGraphTests.swift; sourceTree = "<group>"; };
+		ED9EE0A622583531007FB6CE /* RegularTransitionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegularTransitionTests.swift; sourceTree = "<group>"; };
+		ED9EE0A8225837CF007FB6CE /* Simulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Simulator.swift; sourceTree = "<group>"; };
 		EDA4934D22357C2100BF77BF /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		EDAC5D962253245E008A0A2C /* GeneratingLegalMovesTessts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneratingLegalMovesTessts.swift; sourceTree = "<group>"; };
 		EDEAF57E224C1A3E007C2CC6 /* GameStartHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStartHelper.swift; sourceTree = "<group>"; };
@@ -167,9 +171,10 @@
 				ED0C03ED2252914B00B9C40C /* HandTests.swift */,
 				ED0C03F12252BAF400B9C40C /* GameBoardTests.swift */,
 				EDAC5D962253245E008A0A2C /* GeneratingLegalMovesTessts.swift */,
-				ED9164F822543AAB0026AA6A /* BoardTransitionTests.swift */,
+				ED9164F822543AAB0026AA6A /* DispatcherTransitionTests.swift */,
 				ED51C89F2257E5A0008C1E7D /* InfectionRateTests.swift */,
 				01660BE92230D28200FD400A /* Info.plist */,
+				ED9EE0A622583531007FB6CE /* RegularTransitionTests.swift */,
 			);
 			path = PandemicSolverTests;
 			sourceTree = "<group>";
@@ -178,6 +183,7 @@
 			isa = PBXGroup;
 			children = (
 				01660BF32230D47200FD400A /* Card.swift */,
+				ED9EE0A8225837CF007FB6CE /* Simulator.swift */,
 				EDEAF591224C671F007C2CC6 /* Disease.swift */,
 				EDEAF58D224C6630007C2CC6 /* City.swift */,
 				01660BF52230D85200FD400A /* Decks.swift */,
@@ -328,6 +334,7 @@
 				EDEAF596224C6A6B007C2CC6 /* MutableCollectionExtensio.swift in Sources */,
 				EDA4934E22357C2100BF77BF /* Action.swift in Sources */,
 				ED3C827F224FBC1D006417FB /* BoardLocation.swift in Sources */,
+				ED9EE0A9225837CF007FB6CE /* Simulator.swift in Sources */,
 				EDEAF594224C6758007C2CC6 /* Hand.swift in Sources */,
 				01660BD52230D28100FD400A /* ViewController.swift in Sources */,
 				01660BF82230E00E00FD400A /* Board.swift in Sources */,
@@ -355,11 +362,12 @@
 				ED9EC1E1224D5669009D9BD9 /* PartitionedDeckTests.swift in Sources */,
 				ED0C03EE2252914B00B9C40C /* HandTests.swift in Sources */,
 				EDEAF59A224C8097007C2CC6 /* CardTests.swift in Sources */,
+				ED9EE0A722583531007FB6CE /* RegularTransitionTests.swift in Sources */,
 				ED3C827B224EEB1A006417FB /* DictionaryTests.swift in Sources */,
 				ED0C03F22252BAF400B9C40C /* GameBoardTests.swift in Sources */,
 				EDAC5D972253245E008A0A2C /* GeneratingLegalMovesTessts.swift in Sources */,
 				EDEAF590224C665F007C2CC6 /* CityTest.swift in Sources */,
-				ED9164F922543AAB0026AA6A /* BoardTransitionTests.swift in Sources */,
+				ED9164F922543AAB0026AA6A /* DispatcherTransitionTests.swift in Sources */,
 				ED51C8A02257E5A0008C1E7D /* InfectionRateTests.swift in Sources */,
 				ED3D6321224E883B00F51DCF /* TestCubeCount.swift in Sources */,
 				01660BE82230D28200FD400A /* PandemicSolverTests.swift in Sources */,

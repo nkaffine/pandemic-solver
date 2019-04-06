@@ -136,7 +136,7 @@ protocol GameState
     func startGame() -> GameBoard
 }
 
-struct GameBoard: GameState
+class GameBoard: GameState
 {
     private let locationGraph: LocationGraphProtocol
     
@@ -235,8 +235,8 @@ struct GameBoard: GameState
         return locationGraph.locations[city]!
     }
     
-    func legalActions(for pawn: Pawn) -> [Action] {
-        //TODO: return a real list of legal actions
+    func legalActions(for pawn: Pawn) -> [Action]
+    {
         guard let pawnCity = pawnLocations[pawn], let currentLocation = locationGraph.locations[pawnCity],
             let currentHand = pawnHands[pawn] else
         {
@@ -248,16 +248,25 @@ struct GameBoard: GameState
                                   pawnHands: pawnHands)
     }
     
-    func transition(pawn: Pawn, for action: Action) throws -> GameState {
+    func transition(pawn: Pawn, for action: Action) throws -> GameState
+    {
         switch action
         {
             case .dispatcher(let dispactherAction):
+                if pawn.role != .dispatcher
+                {
+                    throw BoardError.invalidMove
+                }
                 switch dispactherAction
                 {
                     case .control(let newPawn, let newAction):
                         return try transition(pawn: newPawn, for: newAction)
                     case .snap(let pawn1, let pawn2):
                         //Move pawn 1 to pawn2
+                        if !pawns.contains(pawn1) || !pawns.contains(pawn2)
+                        {
+                            throw BoardError.invalidMove
+                        }
                         guard let city = pawnLocations[pawn2] else
                         {
                             throw BoardError.invalidMove
@@ -282,18 +291,68 @@ struct GameBoard: GameState
         switch action
         {
             case .buildResearchStation:
-                guard let city = pawnLocations[pawn] else
+                guard let city = pawnLocations[pawn], let hand = pawnHands[pawn],
+                    (hand.cards.contains(Card(cityName: city)) || pawn.role == .operationsExpert) else
                 {
                     throw BoardError.invalidMove
                 }
-                return copy(with: locationGraph.addResearchStation(to: city), and: gameStatus)
+                
+                //The operations expert doesn't discard a card when building a research station.
+                if pawn.role != .operationsExpert
+                {
+                    //TODO: Deal with hand limit stuff
+                    let (atHandLimit, newHand) = hand.discard(card: Card(cityName: city))
+                    let newHands = pawnHands.imutableUpdate(key: pawn, value: newHand)
+                    return copy(locationGraph: locationGraph.addResearchStation(to: city), pawnHands: newHands)
+                }
+                else
+                {
+                    return copy(locationGraph: locationGraph.addResearchStation(to: city))
+                }
             
-            case .charterFlight(let city), .directFlight(let city), .shuttleFlight(let city), .drive(let city):
+            //The cases where you move and don't discard a card
+            case .shuttleFlight(let city), .drive(let city):
                 return move(pawn: pawn, to: city)
             
+            //The cases where you move and discard a card
+            case .charterFlight(let city), .directFlight(let city):
+                guard let hand = pawnHands[pawn] else
+                {
+                    throw BoardError.invalidMove
+                }
+                //TODO: Deal with hand limit stuff
+                let (atHandLimit, newHand) = hand.discard(card: Card(cityName: city))
+                let newHands = pawnHands.imutableUpdate(key: pawn, value: newHand)
+                return copy(pawnHands: newHands).move(pawn: pawn, to: city)
+            
             case .cure(let disease):
+                guard let hand = pawnHands[pawn] else
+                {
+                    throw BoardError.invalidMove
+                }
+                let cardsToDiscard = Array(hand.cards.compactMap
+                { card -> Card? in
+                    switch card
+                    {
+                        case .epidemic:
+                            return nil
+                        case .cityCard(let cityCard):
+                            if cityCard.city.color == disease
+                            {
+                                return Card.cityCard(card: cityCard)
+                            }
+                            else
+                            {
+                                return nil
+                            }
+                        }
+                }[0..<5])
+                //TODO: Do stuff with hand limits
+                let (atHandLimit, newHand) = hand.discard(cards: cardsToDiscard)
+                let newHands = pawnHands.imutableUpdate(key: pawn, value: newHand)
                 let newCuredDisease = self.curedDiseases + [disease]
-                return copy(uncuredDiseases: uncuredDiseases.filter { $0 != disease },
+                return copy(pawnHands: newHands,
+                            uncuredDiseases: uncuredDiseases.filter { $0 != disease },
                             curedDiseases: newCuredDisease,
                             gameStatus: newCuredDisease.count == 4 ? .win : .inProgress)
             

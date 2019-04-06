@@ -53,7 +53,7 @@ struct Pawn: Hashable, CaseIterable
             case .epidemic:
                 return false
             }
-        })
+        }) || role == .operationsExpert
         {
             actions.append(.general(action: .buildResearchStation))
         }

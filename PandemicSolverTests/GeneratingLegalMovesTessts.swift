@@ -478,6 +478,41 @@ class GeneratingLegalMovesTessts: XCTestCase {
         }
     }
     
+    func testBuildingResearchStations()
+    {
+        var hands = [Pawn: HandProtocol]()
+        let hand = Hand(card1: Card(cityName: .atlanta), card2: Card(cityName: .baghdad))
+        var otherPawnLocation = [Pawn: CityName]()
+        Pawn.allCases.forEach
+        { pawn in
+            hands[pawn] = Hand(card1: Card(cityName: .atlanta), card2: Card(cityName: .baghdad))
+            otherPawnLocation[pawn] = .atlanta
+        }
+        let locationGraph = LocationGraph()
+        let currentLocation = BoardLocation(city: City(name: .atlanta))
+        
+        //Check that they all can when they are in the city where their card is
+        Pawn.allCases.forEach
+        { pawn in
+            XCTAssertTrue(pawn.getLegalMoves(for: locationGraph, with: hand, currentLocation: currentLocation, otherPawnLocations: otherPawnLocation, pawnHands: hands).contains(.general(action: .buildResearchStation)))
+        }
+        
+        //Check that they all cannot when they are not in the city with their card (except ops expert)
+        Pawn.allCases.filter{ $0.role != .operationsExpert }.forEach
+        { pawn in
+            XCTAssertFalse(pawn.getLegalMoves(for: locationGraph, with: hand,
+                                              currentLocation: BoardLocation(city: City(name: .bangkok)),
+                                              otherPawnLocations: otherPawnLocation,
+                                              pawnHands: hands).contains(.general(action: .buildResearchStation)))
+        }
+        
+        //Check that the ops expert can build a research station without a card in his hand
+        XCTAssertTrue(Pawn(role: .operationsExpert).getLegalMoves(for: locationGraph, with: hand,
+                                                                  currentLocation: BoardLocation(city: City(name: .cairo)),
+                                                                  otherPawnLocations: otherPawnLocation,
+                                                                  pawnHands: hands).contains(.general(action: .buildResearchStation)))
+    }
+    
     private func assertCanDrive(from currentLocation: BoardLocation, to cities: [CityName], on locationGraph: LocationGraph)
     {
         Role.allCases.forEach
