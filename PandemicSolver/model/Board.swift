@@ -310,8 +310,16 @@ class GameBoard: GameState
                     return copy(locationGraph: locationGraph.addResearchStation(to: city))
                 }
             
+            case .drive(let city):
+                //TODO: check that they are in an adjacent city probably.
+                return move(pawn: pawn, to: city)
+            
             //The cases where you move and don't discard a card
-            case .shuttleFlight(let city), .drive(let city):
+            case .shuttleFlight(let city):
+                guard let location = locationGraph.locations[city], location.hasResearchStation else
+                {
+                    throw BoardError.invalidMove
+                }
                 return move(pawn: pawn, to: city)
             
             //The cases where you move and discard a card
@@ -337,7 +345,7 @@ class GameBoard: GameState
                 return copy(pawnHands: newHands).move(pawn: pawn, to: city)
             
             case .cure(let disease):
-                guard let hand = pawnHands[pawn] else
+                guard let hand = pawnHands[pawn], hand.cards.count >= (pawn.role == .scientist ? 4 : 5) else
                 {
                     throw BoardError.invalidMove
                 }

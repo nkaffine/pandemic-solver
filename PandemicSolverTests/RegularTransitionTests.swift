@@ -27,10 +27,13 @@ class RegularTransitionTests: XCTestCase {
     //  Test charter flight
     //  Test charter flight error
     //  Test direct flight
+    //  Test shuttle flight
     //  Test direct flight error
+    //  Save the curring for when there is a draw and infect action.
     //  Test curring action
+    //  Test curring error
+    
     //  Test treating action
-    //  Test treet error
     //  Test pass
     //  Test share knowledge
     //  Test share knoweldge error
@@ -195,6 +198,99 @@ class RegularTransitionTests: XCTestCase {
             XCTAssertNil(try? sut.transition(pawn: pawn, for: Action.general(action: .directFlight(to: nonLegalDirectFlights.randomElement()!.cityName!))))
         }
     }
+    
+    func testShuttleFlight()
+    {
+        let pawn = Pawn(role: .operationsExpert)
+        var researchStations = [CityName]()
+        researchStations.append(sut.location(of: pawn).city.name)
+        let sut2 = try! sut.transition(pawn: pawn, for: .general(action: .buildResearchStation))
+        let sut3 = try! moveRandomLegalDirection(with: pawn, in: sut2)
+            .transition(pawn: pawn, for: .general(action: .buildResearchStation))
+        researchStations.append(sut3.location(of: pawn).city.name)
+        sut.pawns.filter{ $0.role != .operationsExpert }.forEach
+        { pawn in
+            XCTAssertTrue(sut3.legalActions(for: pawn).contains(.general(action: .shuttleFlight(to: researchStations[1]))))
+            let sut4 = try! sut3.transition(pawn: pawn, for: .general(action: .shuttleFlight(to: researchStations[1])))
+            XCTAssertEqual(sut4.location(of: pawn).city.name, researchStations[1])
+        }
+        XCTAssertTrue(sut3.legalActions(for: pawn).contains(.general(action: .shuttleFlight(to: researchStations[0]))))
+        let sut4 = try! sut3.transition(pawn: pawn, for: .general(action: .shuttleFlight(to: researchStations[0])))
+        XCTAssertEqual(sut4.location(of: pawn).city.name, researchStations[0])
+    }
+    
+    func testShuttleFlightError()
+    {
+        sut.pawns.forEach
+        { pawn in
+            XCTAssertNil(try? sut.transition(pawn: pawn, for: .general(action: .shuttleFlight(to: .atlanta))))
+        }
+    }
+    
+    func testTreatingAction()
+    {
+        sut = sut.startGame()
+        let infected = sut.locations.filter{ $0.cubes.black > .zero || $0.cubes.red > .zero
+            || $0.cubes.blue > .zero || $0.cubes.yellow > .zero}
+        sut.pawns.forEach
+        { pawn in
+            var currentState = sut!
+            while !infected.contains(currentState.location(of: pawn))
+            {
+                currentState = moveRandomLegalDirection(with: pawn, in: currentState)
+            }
+            let currentLocation = currentState.location(of: pawn)
+            switch currentLocation.city.color
+            {
+                case .red:
+                    let newState = try! currentState.transition(pawn: pawn, for: .general(action: .treat(disease: .red)))
+                    XCTAssertTrue(newState.locations.first(where: { $0 == currentLocation })!.cubes.red <
+                        currentState.locations.first(where: { $0 == currentLocation })!.cubes.red)
+                case .yellow:
+                    let newState = try! currentState.transition(pawn: pawn, for: .general(action: .treat(disease: .yellow)))
+                    XCTAssertTrue(newState.locations.first(where: { $0 == currentLocation })!.cubes.yellow <
+                        currentState.locations.first(where: { $0 == currentLocation })!.cubes.yellow)
+                case .black:
+                    let newState = try! currentState.transition(pawn: pawn, for: .general(action: .treat(disease: .black)))
+                    XCTAssertTrue(newState.locations.first(where: { $0 == currentLocation })!.cubes.black <
+                        currentState.locations.first(where: { $0 == currentLocation })!.cubes.black)
+                case .blue:
+                    let newState = try! currentState.transition(pawn: pawn, for: .general(action: .treat(disease: .blue)))
+                    XCTAssertTrue(newState.locations.first(where: { $0 == currentLocation })!.cubes.blue <
+                        currentState.locations.first(where: { $0 == currentLocation })!.cubes.blue)
+            }
+        }
+    }
+    
+    func testPassAction()
+    {
+        sut.pawns.forEach
+        { pawn in
+            let newSut = try! sut.transition(pawn: pawn, for: .general(action: .pass))
+            XCTAssertEqual(newSut.actionsRemaining, sut.actionsRemaining)
+            XCTAssertEqual(newSut.cubesRemaining, sut.cubesRemaining)
+            XCTAssertEqual(newSut.curedDiseases, sut.curedDiseases)
+            XCTAssertEqual(newSut.currentPlayer, sut.currentPlayer)
+            XCTAssertEqual(newSut.gameStatus, sut.gameStatus)
+            sut.pawns.forEach
+            { pawn1 in
+                XCTAssertEqual(try! newSut.hand(for: pawn).cards, try! sut.hand(for: pawn).cards)
+                XCTAssertEqual(newSut.location(of: pawn), sut.location(of: pawn))
+            }
+            XCTAssertEqual(newSut.infectionPile.count, sut.infectionPile.count)
+            XCTAssertEqual(newSut.infectionRate, sut.infectionRate)
+            XCTAssertEqual(newSut.locations, sut.locations)
+            XCTAssertEqual(newSut.maxOutbreaks, sut.maxOutbreaks)
+            XCTAssertEqual(newSut.outbreaksSoFar, sut.outbreaksSoFar)
+            XCTAssertEqual(newSut.pawns, sut.pawns)
+            XCTAssertEqual(newSut.playerDeck.count, sut.playerDeck.count)
+            XCTAssertEqual(newSut.uncuredDiseases, sut.uncuredDiseases)
+        }
+    }
+    
+    //TODO: Test share knowledge and errors
+    
+    //TODO: Test curing and errors
     
     /**
      Returns whether the given pawn is in a location that is in its hand.
