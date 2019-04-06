@@ -351,7 +351,8 @@ class GameBoard: GameState
                 return copy(pawnHands: newHands).move(pawn: pawn, to: city)
             
             case .cure(let disease):
-                guard let hand = pawnHands[pawn], hand.cards.count >= (pawn.role == .scientist ? 4 : 5) else
+                let threshold = pawn.role == .scientist ? 4 : 5
+                guard let hand = pawnHands[pawn], hand.cards.count >= threshold else
                 {
                     throw BoardError.invalidMove
                 }
@@ -371,7 +372,7 @@ class GameBoard: GameState
                                 return nil
                             }
                         }
-                }[0..<5])
+                }[0..<threshold])
                 //TODO: Do stuff with hand limits
                 let (atHandLimit, newHand) = hand.discard(cards: cardsToDiscard)
                 let newHands = pawnHands.imutableUpdate(key: pawn, value: newHand)

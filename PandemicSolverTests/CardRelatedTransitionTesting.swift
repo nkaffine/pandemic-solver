@@ -28,6 +28,7 @@ class CardRelatedTransitionTesting: XCTestCase {
             while !hasFiveOfSameColor(hand: try! currentState.hand(for: currentState.currentPlayer))
             {
                 currentState = makeRandomMovingMove(state: currentState)
+                //TODO: just restart the test if the game is lost.
                 XCTAssertNotEqual(currentState.gameStatus, .loss)
             }
             while !currentState.legalActions().contains(where:
