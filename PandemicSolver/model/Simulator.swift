@@ -63,6 +63,10 @@ protocol GameStateFeatures
      */
     var maxOutbreaks: Int { get }
     /**
+     Gets the player deck.
+     */
+    var playerDeck: Deck { get }
+    /**
      A dictinoary of disease cubes to the number of cubes of that color that
      can be placed on the board.
      */

@@ -8,6 +8,11 @@
 
 import Foundation
 
+/*Added to make this work on my machine */
+ protocol PawnProtocol
+ {
+ var role: Role { get }
+ }
 enum Role: CaseIterable
 {
     case medic, operationsExpert, dispatcher, scientist, researcher
@@ -18,7 +23,7 @@ enum Role: CaseIterable
  the amount of testing required to test all of the helper functions through that main function,
  I am going to leave that as a big TODO.
  */
-struct Pawn: Hashable, CaseIterable
+struct Pawn: Hashable, CaseIterable, PawnProtocol
 {
     typealias AllCases = [Pawn]
     

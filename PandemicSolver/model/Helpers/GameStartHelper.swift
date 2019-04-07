@@ -21,7 +21,8 @@ class GameStartHelper
     static func selectPawns() -> [Pawn]
     {
         let availablePawns  = Role.allCases.map { role -> Pawn in return Pawn(role: role) }
-        return availablePawns.shuffled().dropLast(availablePawns.count - 4)
+        //Needed to wrap in am array to get this to build (return a Pawn, not an Array Slice
+        return Array(availablePawns.shuffled().dropLast(availablePawns.count - 4))
     }
     
     /**
