@@ -44,7 +44,7 @@ enum CubeCount: Int, Comparable, CaseIterable
 
 typealias Outbreak = [DiseaseColor]
 
-protocol CubeDistributionProtocol
+protocol CubeDistributionProtocol: CustomStringConvertible
 {
     /**
      The number of red cubes in the distribution.
@@ -62,6 +62,15 @@ protocol CubeDistributionProtocol
      The number of black cubes in the distribution.
      */
     var black: CubeCount { get }
+    /**
+     The max number of cubes of one color.
+    */
+    var maxCount: Int { get }
+    /**
+     TODO: test this
+     Whether or not there are any cubes of any color in the distribution.
+    */
+    var isInfected: Bool { get }
     
     /**
      Adds the given cubes to the distribution.
@@ -103,10 +112,40 @@ protocol CubeDistributionProtocol
 
 struct CubeDistribution: CubeDistributionProtocol
 {
+    var maxCount: Int
+    {
+        return max(red, yellow, blue, black).rawValue
+    }
+    
+    var description: String
+    {
+        var string = ""
+        if red > .zero
+        {
+            string += "red: \(red) "
+        }
+        if yellow > .zero
+        {
+            string += "yellow: \(yellow) "
+        }
+        if blue > .zero
+        {
+            string += "blue: \(blue) "
+        }
+        if black > .zero
+        {
+            string += "black: \(black) "
+        }
+        return string
+    }
     var red: CubeCount
     var yellow: CubeCount
     var blue: CubeCount
     var black: CubeCount
+    var isInfected: Bool
+    {
+        return red > .zero || yellow > .zero || blue > .zero || black > .zero
+    }
     
     init()
     {

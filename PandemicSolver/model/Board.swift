@@ -67,12 +67,12 @@ protocol GameState
     var locations: [BoardLocation] { get }
     
     /**
-     The pawn who is currently executing their turn.
+     The pawn who is currently executing their turn and how many actions they have left.
     */
     var currentPlayer: Pawn { get }
     
     /**
-     The numnber of actions the current player has remaining in their turn.
+     The number of actions remaining in this turn.
     */
     var actionsRemaining: Int { get }
     
@@ -136,13 +136,15 @@ protocol GameState
     func startGame() -> GameState
 }
 
-class GameBoard: GameState, Simulator, GameStateFeatures
+class GameBoard: GameState, Simulator, GameStateFeatures, CustomStringConvertible
 {
     private let locationGraph: LocationGraphProtocol
     
     private let pawnLocations: [Pawn: CityName]
     
     private let pawnHands: [Pawn: HandProtocol]
+    
+    private let currentTurn: CurrentTurn
     
     let pawns: [Pawn]
     
@@ -156,7 +158,19 @@ class GameBoard: GameState, Simulator, GameStateFeatures
     
     let maxOutbreaks: Int
     
-    let cubesRemaining: [DiseaseColor : Int]
+    var cubesRemaining: [DiseaseColor : Int]
+    {
+        //TODO: put this on the location graph and test it
+        var remaining: [DiseaseColor : Int] = [.red:24,.yellow:24,.blue:24,.black:24]
+        locations.filter{$0.cubes.isInfected}.forEach
+        { location in
+            remaining.updateValue(remaining[.red]! - location.cubes.red.rawValue, forKey: .red)
+            remaining.updateValue(remaining[.yellow]! - location.cubes.yellow.rawValue, forKey: .yellow)
+            remaining.updateValue(remaining[.blue]! - location.cubes.blue.rawValue, forKey: .blue)
+            remaining.updateValue(remaining[.black]! - location.cubes.black.rawValue, forKey: .black)
+        }
+        return remaining
+    }
     
     let uncuredDiseases: [DiseaseColor]
     
@@ -164,13 +178,31 @@ class GameBoard: GameState, Simulator, GameStateFeatures
     
     let gameStatus: GameStatus
     
-    let currentPlayer: Pawn
-    
-    let actionsRemaining: Int
-    
     var locations: [BoardLocation]
     {
         return locationGraph.locations.values.reduce([]) {$0 + [$1]}
+    }
+    
+    var currentPlayer: Pawn
+    {
+        return currentTurn.currentPawn
+    }
+    
+    var actionsRemaining: Int
+    {
+        return currentTurn.actionsLeft
+    }
+    
+    var description: String
+    {
+        return "Pawns: \(pawns)\nPawn Locations: \(pawnLocations)\nInfection Rate: \(infectionRate)\nOutbreaks "
+            + "So Far: \(outbreaksSoFar)\nCubes Remaining: \(cubesRemaining)\nUncured Diseases: \(uncuredDiseases)"
+            + "\nCured Disease: \(curedDiseases)\nGame Status: \(gameStatus)\nPlayer Deck Count: \(playerDeck.count)\nCubes:\n"
+            + locations.filter{$0.isInfected}.sorted(by:
+            { location1, location2 -> Bool in
+                location2.cubes.maxCount < location1.cubes.maxCount
+            }).map({ location -> String in return "\t" + location.description + "\n" })
+                .reduce("", {$0 + $1})
     }
     
     /**
@@ -195,13 +227,11 @@ class GameBoard: GameState, Simulator, GameStateFeatures
         self.infectionRate = .one
         self.outbreaksSoFar = 0
         self.maxOutbreaks = 7
-        self.cubesRemaining = GameStartHelper.initialDiseaseCubeCount()
         self.uncuredDiseases = DiseaseColor.allCases
         self.curedDiseases = []
         self.gameStatus = .notStarted
         //This should always be non-nil
-        self.currentPlayer = self.pawns.randomElement()!
-        self.actionsRemaining = 4
+        self.currentTurn = CurrentTurn(pawns: pawns)
     }
     
     /**
@@ -209,8 +239,8 @@ class GameBoard: GameState, Simulator, GameStateFeatures
     */
     private init(locationGraph: LocationGraphProtocol, pawnLocations: [Pawn: CityName], pawnHands: [Pawn: HandProtocol],
                  pawns: [Pawn], playerDeck: Deck, infectionPile: Deck, infectionRate: InfectionRate, outbreaksSoFar: Int,
-                 maxOutbreaks: Int, cubesRemaining: [DiseaseColor : Int], uncuredDiseases: [DiseaseColor],
-                curedDiseases: [DiseaseColor], gameStatus: GameStatus, currentPlayer: Pawn, actionsRemaining: Int)
+                 maxOutbreaks: Int, uncuredDiseases: [DiseaseColor],
+                curedDiseases: [DiseaseColor], gameStatus: GameStatus, currentPlayer: CurrentTurn)
     {
         self.locationGraph = locationGraph
         self.pawnLocations = pawnLocations
@@ -221,12 +251,10 @@ class GameBoard: GameState, Simulator, GameStateFeatures
         self.infectionRate = infectionRate
         self.outbreaksSoFar = outbreaksSoFar
         self.maxOutbreaks = maxOutbreaks
-        self.cubesRemaining = cubesRemaining
         self.uncuredDiseases = uncuredDiseases
         self.curedDiseases = curedDiseases
         self.gameStatus = gameStatus
-        self.currentPlayer = currentPlayer
-        self.actionsRemaining = actionsRemaining
+        self.currentTurn = currentPlayer
     }
     
     func location(of pawn: Pawn) -> BoardLocation {
@@ -276,7 +304,7 @@ class GameBoard: GameState, Simulator, GameStateFeatures
             case .general(let generalAction):
                 return try execute(action: generalAction, for: pawn)
             case .drawAndInfect:
-                guard actionsRemaining == 0 else
+                guard currentTurn.actionsLeft == 0 else
                 {
                     throw BoardError.invalidMove
                 }
@@ -330,7 +358,13 @@ class GameBoard: GameState, Simulator, GameStateFeatures
             
             //The cases where you move and discard a card
             case .directFlight(let city):
-                guard let hand = pawnHands[pawn], hand.cards.contains(Card(cityName: city)) else
+                //TODO: make it check if the card is in the pawns hand but keep in mind the dispatcher can also
+                //cause the move to happen
+//                guard let hand = pawnHands[pawn], hand.cards.contains(Card(cityName: city)) else
+//                {
+//                    throw BoardError.invalidMove
+//                }
+                guard let hand = pawnHands[pawn] else
                 {
                     throw BoardError.invalidMove
                 }
@@ -340,8 +374,14 @@ class GameBoard: GameState, Simulator, GameStateFeatures
                 return copy(pawnHands: newHands).move(pawn: pawn, to: city)
             
             case .charterFlight(let city):
-                guard let hand = pawnHands[pawn], let currentLocation = pawnLocations[pawn],
-                    hand.cards.contains(Card(cityName: currentLocation))  else
+                //TODO: Make it check if the card is in the pawns hand but keep in mind that the dispatcher
+                //can also cause the move to happpen.
+//                guard let hand = pawnHands[pawn], let currentLocation = pawnLocations[pawn],
+//                    hand.cards.contains(Card(cityName: currentLocation))  else
+//                {
+//                    throw BoardError.invalidMove
+//                }
+                guard let hand = pawnHands[pawn], let currentLocation = pawnLocations[pawn] else
                 {
                     throw BoardError.invalidMove
                 }
@@ -407,18 +447,18 @@ class GameBoard: GameState, Simulator, GameStateFeatures
     }
     
     func legalActions() -> [Action] {
-        if actionsRemaining == 0
+        if currentTurn.actionsLeft == 0
         {
             return [Action.drawAndInfect]
         }
         else
         {
-             return legalActions(for: currentPlayer)
+             return legalActions(for: currentTurn.currentPawn)
         }
     }
     
     func execute(action: Action) throws -> GameState {
-        return try (transition(pawn: currentPlayer, for: action) as! GameBoard).incrementTurn()
+        return try (transition(pawn: currentTurn.currentPawn, for: action) as! GameBoard).incrementTurn()
     }
     
     /**
@@ -427,14 +467,7 @@ class GameBoard: GameState, Simulator, GameStateFeatures
     */
     private func incrementTurn() -> GameState
     {
-        let actionsRemaining = (self.actionsRemaining - 1) % 4
-        var player = currentPlayer
-        if actionsRemaining == 4
-        {
-            player = pawns[(pawns.index(of: currentPlayer)! + 1) % 4]
-        }
-        return copy(currentPlayer: player,
-                    actionsRemaining: actionsRemaining)
+        return copy(currentPlayer: currentTurn.next())
     }
     
     /**
@@ -447,14 +480,16 @@ class GameBoard: GameState, Simulator, GameStateFeatures
             return gameEnd(with: .loss)
         }
         //TODO: Handle disscarding cards
-        let newHand = pawnHands[currentPlayer]!.draw(cards: cards.cards.filter { $0 != .epidemic }).1
+        let newHand = pawnHands[currentTurn.currentPawn]!.draw(cards: cards.cards.filter { $0 != .epidemic }).1
         if cards.cards.contains(.epidemic)
         {
-            return copy(pawnHands: pawnHands.imutableUpdate(key: currentPlayer, value: newHand), playerDeck: cards.deck).epidemic()
+            return copy(pawnHands: pawnHands.imutableUpdate(key: currentTurn.currentPawn, value: newHand),
+                        playerDeck: cards.deck).epidemic()
         }
         else
         {
-            return copy(pawnHands: pawnHands.imutableUpdate(key: currentPlayer, value: newHand), playerDeck: cards.deck)
+            return copy(pawnHands: pawnHands.imutableUpdate(key: currentTurn.currentPawn, value: newHand),
+                        playerDeck: cards.deck)
         }
     }
     
@@ -563,9 +598,9 @@ class GameBoard: GameState, Simulator, GameStateFeatures
         return GameBoard(locationGraph: self.locationGraph, pawnLocations: self.pawnLocations,
                          pawnHands: self.pawnHands, pawns: self.pawns, playerDeck: self.playerDeck,
                          infectionPile: self.infectionPile, infectionRate: self.infectionRate,
-                         outbreaksSoFar: self.outbreaksSoFar, maxOutbreaks: self.maxOutbreaks, cubesRemaining: self.cubesRemaining,
+                         outbreaksSoFar: self.outbreaksSoFar, maxOutbreaks: self.maxOutbreaks,
                          uncuredDiseases: self.uncuredDiseases, curedDiseases: self.curedDiseases, gameStatus: status,
-                         currentPlayer: currentPlayer, actionsRemaining: actionsRemaining)
+                         currentPlayer: currentTurn)
     }
     
     private func copy(with newGraph: LocationGraphProtocol, and status: GameStatus) -> GameBoard
@@ -574,9 +609,8 @@ class GameBoard: GameState, Simulator, GameStateFeatures
                          pawnHands: pawnHands, pawns: pawns, playerDeck: playerDeck,
                          infectionPile: infectionPile, infectionRate: infectionRate,
                          outbreaksSoFar: outbreaksSoFar, maxOutbreaks: maxOutbreaks,
-                         cubesRemaining: cubesRemaining, uncuredDiseases: uncuredDiseases,
-                         curedDiseases: curedDiseases, gameStatus: status, currentPlayer: currentPlayer,
-                         actionsRemaining: actionsRemaining)
+                         uncuredDiseases: uncuredDiseases,
+                         curedDiseases: curedDiseases, gameStatus: status, currentPlayer: currentTurn)
     }
     
     private func move(pawn: Pawn, to city: CityName) -> GameBoard
@@ -586,10 +620,9 @@ class GameBoard: GameState, Simulator, GameStateFeatures
                          pawnHands: pawnHands, pawns: pawns,
                          playerDeck: playerDeck, infectionPile: infectionPile,
                          infectionRate: infectionRate, outbreaksSoFar: outbreaksSoFar,
-                         maxOutbreaks: maxOutbreaks, cubesRemaining: cubesRemaining,
+                         maxOutbreaks: maxOutbreaks,
                          uncuredDiseases: uncuredDiseases, curedDiseases: curedDiseases,
-                         gameStatus: gameStatus, currentPlayer: currentPlayer,
-                         actionsRemaining: actionsRemaining)
+                         gameStatus: gameStatus, currentPlayer: currentTurn)
     }
     
     private func copy(locationGraph: LocationGraphProtocol? = nil,
@@ -598,12 +631,10 @@ class GameBoard: GameState, Simulator, GameStateFeatures
                       pawns: [Pawn]? = nil, playerDeck: Deck? = nil,
                       infectionPile: Deck? = nil, infectionRate: InfectionRate? = nil,
                       outbreaksSoFar: Int? = nil, maxOutbreaks: Int? = nil,
-                      cubesRemaining: [DiseaseColor : Int]? = nil,
                       uncuredDiseases: [DiseaseColor]? = nil,
                       curedDiseases: [DiseaseColor]? = nil,
                       gameStatus: GameStatus? = nil,
-                      currentPlayer: Pawn? = nil,
-                      actionsRemaining: Int? = nil) -> GameBoard
+                      currentPlayer: CurrentTurn? = nil) -> GameBoard
     {
         return GameBoard(locationGraph: locationGraph ?? self.locationGraph,
                          pawnLocations: pawnLocations ?? self.pawnLocations,
@@ -614,11 +645,9 @@ class GameBoard: GameState, Simulator, GameStateFeatures
                          infectionRate: infectionRate ?? self.infectionRate,
                          outbreaksSoFar: outbreaksSoFar ?? self.outbreaksSoFar,
                          maxOutbreaks: maxOutbreaks ?? self.maxOutbreaks,
-                         cubesRemaining: cubesRemaining ?? self.cubesRemaining,
                          uncuredDiseases: uncuredDiseases ?? self.uncuredDiseases,
                          curedDiseases: curedDiseases ?? self.curedDiseases,
                          gameStatus: gameStatus ?? self.gameStatus,
-                         currentPlayer: currentPlayer ?? self.currentPlayer,
-                         actionsRemaining: actionsRemaining ?? self.actionsRemaining)
+                         currentPlayer: currentPlayer ?? self.currentTurn)
     }
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum Role: CaseIterable
+enum Role: String, CaseIterable
 {
     case medic, operationsExpert, dispatcher, scientist, researcher
 }
@@ -18,8 +18,13 @@ enum Role: CaseIterable
  the amount of testing required to test all of the helper functions through that main function,
  I am going to leave that as a big TODO.
  */
-struct Pawn: Hashable, CaseIterable
+struct Pawn: Hashable, CaseIterable, CustomStringConvertible
 {
+    var description: String
+    {
+        return role.rawValue
+    }
+    
     typealias AllCases = [Pawn]
     
     static var allCases: [Pawn]

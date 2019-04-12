@@ -66,6 +66,7 @@ class DeckTests: XCTestCase {
         let cityCard = Card.cityCard(card: CityCard(city: City(name: .algiers)))
         XCTAssertEqual(playerDeck.probability(ofDrawing: [.epidemic, cityCard], inNext: 2), 0)
         //Checking when there aren't that many epidemics
+        //TODO: fix this
         XCTAssertEqual(playerDeck.probability(ofDrawing: [.epidemic, .epidemic, .epidemic, .epidemic, .epidemic, .epidemic],
                                               inNext: 6), 0)
         //Checking when the number of cards exceeds inNext
