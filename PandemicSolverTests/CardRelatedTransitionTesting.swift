@@ -29,7 +29,7 @@ class CardRelatedTransitionTesting: XCTestCase {
             {
                 currentState = makeRandomMovingMove(state: currentState)
                 //TODO: just restart the test if the game is lost.
-                XCTAssertNotEqual(currentState.gameStatus, .loss)
+                XCTAssertNotEqual(currentState.gameStatus, GameStatus.loss(reason: "random reason"))
             }
             while !currentState.legalActions().contains(where:
                 { action -> Bool in
@@ -51,7 +51,7 @@ class CardRelatedTransitionTesting: XCTestCase {
             })
             {
                 currentState = tryToCureInAtlanta(state: currentState)
-                XCTAssertNotEqual(currentState.gameStatus, .loss)
+                XCTAssertNotEqual(currentState.gameStatus, GameStatus.loss(reason: "random reason"))
             }
             let newState = try! currentState.execute(action: currentState.legalActions().filter({ action -> Bool in
                 switch action

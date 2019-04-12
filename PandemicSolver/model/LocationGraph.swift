@@ -19,7 +19,8 @@ protocol LocationGraphProtocol
 {
     var locations: [CityName: BoardLocation] { get }
     var edges: [CityName : [CityName]] { get }
- 
+    var cubesRemaining: [DiseaseColor: Int] { get }
+    var hasValidCubeCount: Bool { get }
     /**
      Places the given number of the given disease color on the given city.
      - Parameters:
@@ -68,7 +69,29 @@ struct LocationGraph: LocationGraphProtocol
 {
     let locations: [CityName: BoardLocation]
     let edges: [CityName: [CityName]]
-    
+    var cubesRemaining: [DiseaseColor : Int]
+    {
+        //TODO: Test this
+        var remaining: [DiseaseColor : Int] = [.red:24,.yellow:24,.blue:24,.black:24]
+        locations.values.filter{$0.cubes.isInfected}.forEach
+        { location in
+            remaining.updateValue(remaining[.red]! - location.cubes.red.rawValue, forKey: .red)
+            remaining.updateValue(remaining[.yellow]! - location.cubes.yellow.rawValue, forKey: .yellow)
+            remaining.updateValue(remaining[.blue]! - location.cubes.blue.rawValue, forKey: .blue)
+            remaining.updateValue(remaining[.black]! - location.cubes.black.rawValue, forKey: .black)
+        }
+        return remaining
+    }
+    var hasValidCubeCount: Bool
+    {
+        //TODO: test this
+        //saving local variable to only compute it once
+        let cubeCount = cubesRemaining
+        return DiseaseColor.allCases.reduce(true)
+        { hasValidCubeCount, disease -> Bool in
+            hasValidCubeCount && (cubeCount[disease]! > 0)
+        }
+    }
     /**
      Initializes the location graph with all of the board locations and all of the edges.
     */

@@ -144,6 +144,7 @@ class RegularTransitionTests: XCTestCase {
         }
     }
     
+    //TODO: This no longer throws an error because it was causing issues with the dispatcher.
     func testCharterFlightError()
     {
         sut.pawns.forEach
@@ -193,6 +194,7 @@ class RegularTransitionTests: XCTestCase {
         }
     }
     
+    //TODO: This is no longer throwing an error because it was causing issues with the dispatcher.
     func testDirectFlightError()
     {
         let cityCards = GameStartHelper.generateCityCards()

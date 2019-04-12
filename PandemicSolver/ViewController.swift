@@ -10,17 +10,25 @@ import UIKit
 
 class ViewController: UIViewController {
     private var gameRunner: GameBoard!
+    @IBOutlet weak private (set) var runButton: UIButton!
+    @IBOutlet weak private (set) var outputView: UITextView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.gameRunner = GameBoard().startGame() as! GameBoard
-        while gameRunner.gameStatus == .inProgress
+    }
+    
+    private func resetGame()
+    {
+        gameRunner = GameBoard().startGame() as! GameBoard
+    }
+    
+    private func runGame()
+    {
+        while gameRunner.gameStatus.isInProgress
         {
             let legalActions = gameRunner.legalActions()
             let action = legalActions.randomElement()!
-            let currentPawn = gameRunner.currentPlayer
-            let oldGameRunner = gameRunner
-//            gameRunner = try? gameRunner.execute(action: action) as! GameBoard
             let theGameRunner = try? gameRunner.execute(action: action) as! GameBoard
             if theGameRunner != nil
             {
@@ -28,10 +36,22 @@ class ViewController: UIViewController {
             }
             else
             {
-                try? oldGameRunner?.execute(action: action)
+                //try? oldGameRunner?.execute(action: action)
+                print("Something borked")
             }
         }
-        print(gameRunner!)
+    }
+    
+    private func updateOutputView()
+    {
+        outputView.text = gameRunner.description
+    }
+    
+    @IBAction func runGameTapped(_ sender: UIButton)
+    {
+        resetGame()
+        runGame()
+        updateOutputView()
     }
 }
 
