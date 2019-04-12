@@ -226,7 +226,6 @@ struct InfectionPile: Deck
        return deck.count
     }
     
-    //TODO: Create a better datastructure for this
     private let deck: ImmutableProbabilityDeck
     let discardPile: [Card]
     

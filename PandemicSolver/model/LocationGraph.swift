@@ -71,7 +71,6 @@ struct LocationGraph: LocationGraphProtocol
     let edges: [CityName: [CityName]]
     var cubesRemaining: [DiseaseColor : Int]
     {
-        //TODO: Test this
         var remaining: [DiseaseColor : Int] = [.red:24,.yellow:24,.blue:24,.black:24]
         locations.values.filter{$0.cubes.isInfected}.forEach
         { location in
@@ -84,7 +83,6 @@ struct LocationGraph: LocationGraphProtocol
     }
     var hasValidCubeCount: Bool
     {
-        //TODO: test this
         //saving local variable to only compute it once
         let cubeCount = cubesRemaining
         return DiseaseColor.allCases.reduce(true)

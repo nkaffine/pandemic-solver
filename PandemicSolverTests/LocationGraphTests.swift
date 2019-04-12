@@ -297,6 +297,121 @@ class LocationGraphTests: XCTestCase {
         }
     }
     
+    func testCubesRemaining()
+    {
+        XCTAssertEqual(sut.cubesRemaining[.red]!, 24)
+        XCTAssertEqual(sut.cubesRemaining[.yellow]!, 24)
+        XCTAssertEqual(sut.cubesRemaining[.blue]!, 24)
+        XCTAssertEqual(sut.cubesRemaining[.black]!, 24)
+        
+        sut = sut.place(.one, of: .blue, on: .madrid).graph
+        XCTAssertEqual(sut.cubesRemaining[.red]!, 24)
+        XCTAssertEqual(sut.cubesRemaining[.yellow]!, 24)
+        XCTAssertEqual(sut.cubesRemaining[.blue]!, 23)
+        XCTAssertEqual(sut.cubesRemaining[.black]!, 24)
+        
+        sut = sut.place(.three, of: .yellow, on: .saoPaulo).graph
+        XCTAssertEqual(sut.cubesRemaining[.red]!, 24)
+        XCTAssertEqual(sut.cubesRemaining[.yellow]!, 21)
+        XCTAssertEqual(sut.cubesRemaining[.blue]!, 23)
+        XCTAssertEqual(sut.cubesRemaining[.black]!, 24)
+        
+        sut = sut.place(.two, of: .black, on: .karachi).graph
+        XCTAssertEqual(sut.cubesRemaining[.red]!, 24)
+        XCTAssertEqual(sut.cubesRemaining[.yellow]!, 21)
+        XCTAssertEqual(sut.cubesRemaining[.blue]!, 23)
+        XCTAssertEqual(sut.cubesRemaining[.black]!, 22)
+        
+        sut = sut.place(.two, of: .red, on: .tokyo).graph
+        XCTAssertEqual(sut.cubesRemaining[.red]!, 22)
+        XCTAssertEqual(sut.cubesRemaining[.yellow]!, 21)
+        XCTAssertEqual(sut.cubesRemaining[.blue]!, 23)
+        XCTAssertEqual(sut.cubesRemaining[.black]!, 22)
+        
+        sut = sut.place(.three, of: .blue, on: .washington).graph
+        XCTAssertEqual(sut.cubesRemaining[.red]!, 22)
+        XCTAssertEqual(sut.cubesRemaining[.yellow]!, 21)
+        XCTAssertEqual(sut.cubesRemaining[.blue]!, 20)
+        XCTAssertEqual(sut.cubesRemaining[.black]!, 22)
+        
+        sut = sut.removeCubes(.two, of: .blue, on: .washington)
+        XCTAssertEqual(sut.cubesRemaining[.red]!, 22)
+        XCTAssertEqual(sut.cubesRemaining[.yellow]!, 21)
+        XCTAssertEqual(sut.cubesRemaining[.blue]!, 22)
+        XCTAssertEqual(sut.cubesRemaining[.black]!, 22)
+        
+        sut = sut.removeCubes(.one, of: .red, on: .tokyo)
+        XCTAssertEqual(sut.cubesRemaining[.red]!, 23)
+        XCTAssertEqual(sut.cubesRemaining[.yellow]!, 21)
+        XCTAssertEqual(sut.cubesRemaining[.blue]!, 22)
+        XCTAssertEqual(sut.cubesRemaining[.black]!, 22)
+        
+        sut = sut.removeCubes(.two, of: .yellow, on: .saoPaulo)
+        XCTAssertEqual(sut.cubesRemaining[.red]!, 23)
+        XCTAssertEqual(sut.cubesRemaining[.yellow]!, 23)
+        XCTAssertEqual(sut.cubesRemaining[.blue]!, 22)
+        XCTAssertEqual(sut.cubesRemaining[.black]!, 22)
+        
+        sut = sut.removeCubes(.two, of: .black, on: .karachi)
+        XCTAssertEqual(sut.cubesRemaining[.red]!, 23)
+        XCTAssertEqual(sut.cubesRemaining[.yellow]!, 23)
+        XCTAssertEqual(sut.cubesRemaining[.blue]!, 22)
+        XCTAssertEqual(sut.cubesRemaining[.black]!, 24)
+    }
+    
+    func testHasValidCubeCount()
+    {
+        XCTAssertTrue(sut.hasValidCubeCount)
+        
+        var newSut = sut.place(.three, of: .blue, on: .washington).graph
+        newSut = newSut.place(.three, of: .blue, on: .newYork).graph
+        newSut = newSut.place(.three, of: .blue, on: .chicago).graph
+        newSut = newSut.place(.three, of: .blue, on: .sanFrancisco).graph
+        newSut = newSut.place(.three, of: .blue, on: .madrid).graph
+        newSut = newSut.place(.three, of: .blue, on: .london).graph
+        newSut = newSut.place(.three, of: .blue, on: .stPetersburg).graph
+        newSut = newSut.place(.three, of: .blue, on: .toronto).graph
+        
+        XCTAssertEqual(newSut.cubesRemaining[.blue]!, 0)
+        XCTAssertFalse(newSut.hasValidCubeCount)
+        
+        newSut = sut.place(.three, of: .yellow, on: .saoPaulo).graph
+        newSut = newSut.place(.three, of: .yellow, on: .buenosAres).graph
+        newSut = newSut.place(.three, of: .yellow, on: .losAngeles).graph
+        newSut = newSut.place(.three, of: .yellow, on: .santiago).graph
+        newSut = newSut.place(.three, of: .yellow, on: .johannesburg).graph
+        newSut = newSut.place(.three, of: .yellow, on: .khartoum).graph
+        newSut = newSut.place(.three, of: .yellow, on: .lima).graph
+        newSut = newSut.place(.three, of: .yellow, on: .lagos).graph
+        
+        XCTAssertEqual(newSut.cubesRemaining[.yellow]!, 0)
+        XCTAssertFalse(newSut.hasValidCubeCount)
+        
+        newSut = sut.place(.three, of: .red, on: .tokyo).graph
+        newSut = newSut.place(.three, of: .red, on: .beijing).graph
+        newSut = newSut.place(.three, of: .red, on: .shanghai).graph
+        newSut = newSut.place(.three, of: .red, on: .hongKong).graph
+        newSut = newSut.place(.three, of: .red, on: .manila).graph
+        newSut = newSut.place(.three, of: .red, on: .sydney).graph
+        newSut = newSut.place(.three, of: .red, on: .jakarta).graph
+        newSut = newSut.place(.three, of: .red, on: .bangkok).graph
+        
+        XCTAssertEqual(newSut.cubesRemaining[.red]!, 0)
+        XCTAssertFalse(newSut.hasValidCubeCount)
+        
+        newSut = sut.place(.three, of: .black, on: .baghdad).graph
+        newSut = newSut.place(.three, of: .black, on: .algiers).graph
+        newSut = newSut.place(.three, of: .black, on: .moscow).graph
+        newSut = newSut.place(.three, of: .black, on: .tehran).graph
+        newSut = newSut.place(.three, of: .black, on: .karachi).graph
+        newSut = newSut.place(.three, of: .black, on: .delhi).graph
+        newSut = newSut.place(.three, of: .black, on: .chennai).graph
+        newSut = newSut.place(.three, of: .black, on: .riyadh).graph
+        
+        XCTAssertEqual(newSut.cubesRemaining[.black]!, 0)
+        XCTAssertFalse(newSut.hasValidCubeCount)
+    }
+    
     private func assertDiseaseCounts(of boardLocation: BoardLocation, red: CubeCount = .zero,
                                      yellow: CubeCount = .zero,
                                      blue: CubeCount = .zero,

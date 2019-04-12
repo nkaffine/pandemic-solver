@@ -244,21 +244,6 @@ class GameBoard: GameState, Simulator, GameStateFeatures, CustomStringConvertibl
     }
 }
 
-//MARK: feature extraction utilties
-extension GameBoard
-{
-    private var hasValidCubeCount: Bool
-    {
-        //TODO: test this
-        //Creating local variable to not compute it 4 times
-        let cubeCount = cubesRemaining
-        return DiseaseColor.allCases.reduce(true)
-        { hasValidCubeCount, disease -> Bool in
-            hasValidCubeCount && (cubeCount[disease]! > 0)
-        }
-    }
-}
-
 //MARK: action execution utilities
 extension GameBoard
 {
