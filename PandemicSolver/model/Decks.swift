@@ -357,6 +357,7 @@ struct ImmutablePartition: ImmutableProbabilityDeck
     }
     
     func drawFromBottom() throws -> (deck: ImmutableProbabilityDeck, card: Card) {
+        //TODO: this throws an exception when there are no more cards left in the deck.
         let untouchedDecks = Array(deck[0..<(deck.count - 1)])
         let lastDeck = deck[deck.count - 1]
         guard let card = lastDeck.last else

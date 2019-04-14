@@ -63,6 +63,15 @@ protocol LocationGraphProtocol
      - Returns: the location graph with the updated state.
     */
     func addResearchStation(to city: CityName) -> LocationGraph
+    
+    /**
+     Returns whether the given two cities are adjacent to eachother.
+     - Parameters:
+        - city1: the first city being checked for adjacency.
+        - city2: the second city being check for adjacency.
+     - Returns: a bool whether they are adjacent.
+    */
+    func isAdjacent(_ city1: CityName, to city2: CityName) -> Bool
 }
 
 struct LocationGraph: LocationGraphProtocol
@@ -191,5 +200,10 @@ struct LocationGraph: LocationGraphProtocol
         var location = locations[city]!
         location = location.addResearchStation()
         return LocationGraph(locations: locations.imutableUpdate(key: city, value: location), edges: edges)
+    }
+    
+    func isAdjacent(_ city1: CityName, to city2: CityName) -> Bool
+    {
+        return edges[city1]!.contains(city2)
     }
 }

@@ -257,6 +257,7 @@ extension GameBoard
      */
     private func execute(action: GeneralAction, for pawn: Pawn) throws -> GameState
     {
+        //TODO: Break these out into helper functions
         switch action
         {
         case .buildResearchStation:
@@ -280,7 +281,10 @@ extension GameBoard
             }
             
         case .drive(let city):
-            //TODO: check that they are in an adjacent city probably.
+            guard locationGraph.isAdjacent(pawnLocations[pawn]!, to: city) else
+            {
+                throw BoardError.invalidMove
+            }
             return move(pawn: pawn, to: city)
             
         //The cases where you move and don't discard a card

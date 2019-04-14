@@ -412,6 +412,25 @@ class LocationGraphTests: XCTestCase {
         XCTAssertFalse(newSut.hasValidCubeCount)
     }
     
+    func testAdjacentCities()
+    {
+        XCTAssertTrue(sut.isAdjacent(.atlanta, to: .washington))
+        XCTAssertTrue(sut.isAdjacent(.chennai, to: .bangkok))
+        XCTAssertTrue(sut.isAdjacent(.algiers, to: .paris))
+        XCTAssertTrue(sut.isAdjacent(.khartoum, to: .cairo))
+        XCTAssertTrue(sut.isAdjacent(.miami, to: .washington))
+        XCTAssertTrue(sut.isAdjacent(.sydney, to: .losAngeles))
+        XCTAssertTrue(sut.isAdjacent(.manila, to: .sanFrancisco))
+        
+        XCTAssertFalse(sut.isAdjacent(.sanFrancisco, to: .mexicoCity))
+        XCTAssertFalse(sut.isAdjacent(.algiers, to: .khartoum))
+        XCTAssertFalse(sut.isAdjacent(.london, to: .chicago))
+        XCTAssertFalse(sut.isAdjacent(.bogota, to: .lagos))
+        XCTAssertFalse(sut.isAdjacent(.riyadh, to: .delhi))
+        XCTAssertFalse(sut.isAdjacent(.santiago, to: .buenosAres))
+        XCTAssertFalse(sut.isAdjacent(.jakarta, to: .manila))
+    }
+    
     private func assertDiseaseCounts(of boardLocation: BoardLocation, red: CubeCount = .zero,
                                      yellow: CubeCount = .zero,
                                      blue: CubeCount = .zero,
