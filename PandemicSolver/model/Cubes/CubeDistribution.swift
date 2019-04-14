@@ -67,7 +67,6 @@ protocol CubeDistributionProtocol: CustomStringConvertible
     */
     var maxCount: Int { get }
     /**
-     TODO: test this
      Whether or not there are any cubes of any color in the distribution.
     */
     var isInfected: Bool { get }

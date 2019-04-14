@@ -77,9 +77,8 @@ class RegularTransitionTests: XCTestCase {
         //Ops expert shouldn't discard a card
         XCTAssertEqual(try! newSut.hand(for: operationsExpert).cards, try! sut.hand(for: operationsExpert).cards)
         
-        //Should still be able to build a research station for now.
-        //TODO: remove building research station from the list if there is alread a research station.
-        XCTAssertTrue(newSut.legalActions(for: operationsExpert).contains(buildResearchStation))
+        //Should not be able to build a research station because one already exists.
+        XCTAssertFalse(newSut.legalActions(for: operationsExpert).contains(buildResearchStation))
         
         //Should be able to build after moving as well
         let newSut2 = moveRandomLegalDirection(with: operationsExpert, in: newSut)
@@ -88,8 +87,8 @@ class RegularTransitionTests: XCTestCase {
         //Ops expert shouldn't discard card.
         XCTAssertEqual(try! newSut3.hand(for: operationsExpert).cards, try! sut.hand(for: operationsExpert).cards)
         
-        //Should still be able to build a research station for now.
-        XCTAssertTrue(newSut3.legalActions(for: operationsExpert).contains(buildResearchStation))
+        //Should not be able to build a research station because one already exists.
+        XCTAssertFalse(newSut3.legalActions(for: operationsExpert).contains(buildResearchStation))
         
         //No other pawn in any scenario should be able to build at this point.
         let newSut4 = moveRandomLegalDirection(with: operationsExpert, in: newSut3)
@@ -113,38 +112,64 @@ class RegularTransitionTests: XCTestCase {
     
     func testCharterFlight()
     {
-        try! sut.pawns.forEach
-        { pawn in
-            var newState = sut!
-            while !hasLocationInHand(pawn: pawn, state: newState)
-            {
-                newState = moveRandomLegalDirection(with: pawn, in: newState)
-            }
-            let charterActions = newState.legalActions(for: pawn).filter
+        var haveDoneCharterActions: [Pawn : Bool] = [:]
+        while !(sut.pawns.reduce(true,
+        { result, pawn -> Bool in
+            return result && (haveDoneCharterActions[pawn] ?? false)
+        }))
+        {
+            let legalActions = sut.legalActions()
+            let charterActions = legalActions.filter
             { action -> Bool in
                 switch action
                 {
-                    case .dispatcher:
-                        return false
                     case .general(let generalAction):
                         switch generalAction
                         {
-                        case .charterFlight:
-                            return true
-                        default:
+                            case .charterFlight:
+                                return true
+                            default:
+                                return false
+                        }
+                    case .dispatcher(action: let dispatcherAction):
+                        switch dispatcherAction
+                        {
+                        case .control(_, let action):
+                            switch action
+                            {
+                                case .general(action: .charterFlight):
+                                    return true
+                                default:
+                                    return false
+                            }
+                        case .snap:
                             return false
                         }
                     case .drawAndInfect:
                         return false
                 }
             }
-            let newState1 = try! newState.transition(pawn: pawn, for: charterActions.randomElement()!)
-            XCTAssertNotEqual(try! newState1.hand(for: pawn).cards, try! newState.hand(for: pawn).cards)
-            XCTAssertFalse(try newState1.hand(for: pawn).cards.contains(Card(cityName: newState.location(of: pawn).city.name)))
+            if !charterActions.isEmpty
+            {
+                let oldState = sut!
+                let currentPlayer = sut.currentPlayer
+                sut = try! sut.execute(action: charterActions.randomElement()!)
+                XCTAssertNotEqual(try! sut.hand(for: currentPlayer).cards, try! oldState.hand(for: currentPlayer).cards)
+                XCTAssertFalse(try sut.hand(for: currentPlayer)
+                    .cards.contains(Card(cityName: oldState.location(of: currentPlayer).city.name)))
+                haveDoneCharterActions[currentPlayer] = true
+            }
+            else
+            {
+                sut = try! sut.execute(action: legalActions.randomElement()!)
+            }
+            if !sut.gameStatus.isInProgress
+            {
+                sut = GameBoard().startGame()
+            }
         }
     }
     
-    //TODO: This no longer throws an error because it was causing issues with the dispatcher.
     func testCharterFlightError()
     {
         sut.pawns.forEach
@@ -160,41 +185,84 @@ class RegularTransitionTests: XCTestCase {
     
     func testDirectFlight()
     {
-        try! sut.pawns.forEach
-        { pawn in
-            var newState = sut!
-            while hasLocationInHand(pawn: pawn, state: newState)
-            {
-                newState = moveRandomLegalDirection(with: pawn, in: newState)
-            }
-            let directFlightAction = newState.legalActions(for: pawn).filter
+        var haveDoneDirectFlights: [Pawn : Bool] = [:]
+        while !(sut.pawns.reduce(true,
+                                 { result, pawn -> Bool in
+                                    return result && (haveDoneDirectFlights[pawn] ?? false)
+        }))
+        {
+            let legalActions = sut.legalActions()
+            let directFlightActions = legalActions.filter
             { action -> Bool in
                 switch action
                 {
-                    case .dispatcher:
+                case .general(let generalAction):
+                    switch generalAction
+                    {
+                    case .directFlight:
+                        return true
+                    default:
                         return false
-                    case .general(let generalAction):
-                        switch generalAction
+                    }
+                case .dispatcher(action: let dispatcherAction):
+                    switch dispatcherAction
+                    {
+                    case .control(_, let action):
+                        switch action
                         {
-                        case .directFlight:
-                            return true
-                        default:
-                            return false
+                            case .general(action: .directFlight):
+                                return true
+                            default:
+                                return false
                         }
-                    case .drawAndInfect:
+                    case .snap:
                         return false
+                    }
+                case .drawAndInfect:
+                    return false
                 }
             }
-            let newState1 = try! newState.transition(pawn: pawn, for: directFlightAction.first!)
-            let cardDiscarded = (try! newState.hand(for: pawn)).cards
-                .filter{ !(try! newState1.hand(for: pawn)).cards.contains($0) }.first!
-            XCTAssertEqual(newState1.location(of: pawn).city.name, cardDiscarded.cityName!)
-            XCTAssertNotEqual(try! newState1.hand(for: pawn).cards, try! newState.hand(for: pawn).cards)
-            XCTAssertFalse(try newState1.hand(for: pawn).cards.contains(Card(cityName: newState1.location(of: pawn).city.name)))
+            if !directFlightActions.isEmpty
+            {
+                let oldState = sut!
+                let currentPlayer = sut.currentPlayer
+                let action = directFlightActions.randomElement()!
+                let movingPawn =
+                { () -> Pawn in
+                    switch action
+                    {
+                        case .dispatcher(let dispatcherAction):
+                            switch dispatcherAction
+                            {
+                                case .control(let pawn, _):
+                                    return pawn
+                                default:
+                                    return currentPlayer
+                            }
+                        default:
+                            return currentPlayer
+                    }
+                }()
+                sut = try! sut.execute(action: action)
+                let cardDiscarded = (try! oldState.hand(for: currentPlayer)).cards
+                    .filter{ !(try! sut.hand(for: currentPlayer)).cards.contains($0) }.first!
+                XCTAssertEqual(sut.location(of: movingPawn).city.name, cardDiscarded.cityName!)
+                XCTAssertNotEqual(try! sut.hand(for: currentPlayer).cards, try! oldState.hand(for: currentPlayer).cards)
+                XCTAssertFalse(try sut.hand(for: currentPlayer).cards
+                    .contains(Card(cityName: sut.location(of: movingPawn).city.name)))
+                haveDoneDirectFlights[currentPlayer] = true
+            }
+            else
+            {
+                sut = try! sut.execute(action: legalActions.randomElement()!)
+            }
+            if !sut.gameStatus.isInProgress
+            {
+                sut = GameBoard().startGame()
+            }
         }
     }
     
-    //TODO: This is no longer throwing an error because it was causing issues with the dispatcher.
     func testDirectFlightError()
     {
         let cityCards = GameStartHelper.generateCityCards()

@@ -297,36 +297,24 @@ extension GameBoard
             
         //The cases where you move and discard a card
         case .directFlight(let city):
-            //TODO: make it check if the card is in the pawns hand but keep in mind the dispatcher can also
-            //cause the move to happen
-            //                guard let hand = pawnHands[pawn], hand.cards.contains(Card(cityName: city)) else
-            //                {
-            //                    throw BoardError.invalidMove
-            //                }
-            guard let hand = pawnHands[pawn] else
+            guard let hand = pawnHands[currentPlayer], hand.cards.contains(Card(cityName: city)) else
             {
                 throw BoardError.invalidMove
             }
             //TODO: Deal with hand limit stuff
             let (atHandLimit, newHand) = hand.discard(card: Card(cityName: city))
-            let newHands = pawnHands.imutableUpdate(key: pawn, value: newHand)
+            let newHands = pawnHands.imutableUpdate(key: currentPlayer, value: newHand)
             return copy(pawnHands: newHands).move(pawn: pawn, to: city)
             
         case .charterFlight(let city):
-            //TODO: Make it check if the card is in the pawns hand but keep in mind that the dispatcher
-            //can also cause the move to happpen.
-            //                guard let hand = pawnHands[pawn], let currentLocation = pawnLocations[pawn],
-            //                    hand.cards.contains(Card(cityName: currentLocation))  else
-            //                {
-            //                    throw BoardError.invalidMove
-            //                }
-            guard let hand = pawnHands[pawn], let currentLocation = pawnLocations[pawn] else
+            guard let hand = pawnHands[currentPlayer], let currentLocation = pawnLocations[pawn],
+                hand.cards.contains(Card(cityName: currentLocation))  else
             {
                 throw BoardError.invalidMove
             }
             //TODO: Deal with hand limit stuff
             let (atHandLimit, newHand) = hand.discard(card: Card(cityName: currentLocation))
-            let newHands = pawnHands.imutableUpdate(key: pawn, value: newHand)
+            let newHands = pawnHands.imutableUpdate(key: currentPlayer, value: newHand)
             return copy(pawnHands: newHands).move(pawn: pawn, to: city)
             
         case .cure(let disease):
