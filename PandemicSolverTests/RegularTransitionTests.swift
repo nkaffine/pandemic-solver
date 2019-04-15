@@ -172,14 +172,43 @@ class RegularTransitionTests: XCTestCase {
     
     func testCharterFlightError()
     {
-        sut.pawns.forEach
-        { pawn in
-            var newState = sut!
-            while hasLocationInHand(pawn: pawn, state: newState)
+        //Start the game and perform an illegal charter flight action for each pawn when it is their turn in the game.
+        sut = sut.startGame()
+        var haveHadCharterFlightError: [Pawn : Bool] = [:]
+        //Keep simulating turns until they have all thrown errors
+        while !sut.pawns.reduce(true, { result, pawn -> Bool in
+            result && (haveHadCharterFlightError[pawn] ?? false)
+        })
+        {
+            if haveHadCharterFlightError[sut.currentPlayer] ?? false
             {
-                newState = moveRandomLegalDirection(with: pawn, in: newState)
+                //Take any random action
+                sut = try! sut.execute(action: sut.legalActions().randomElement()!)
             }
-            XCTAssertNil(try? newState.transition(pawn: pawn, for: .general(action: .charterFlight(to: .algiers))))
+            else
+            {
+                //Try to take an incorrect charter action
+                //Check to see if they are in a city that they have a card in their hand for.
+                let currentHand = try! sut.hand(for: sut.currentPlayer)
+                let currentLocation = sut.location(of: sut.currentPlayer)
+                if (currentHand.cards.contains(Card(cityName: currentLocation.city.name)))
+                {
+                    //Just do a random action and don't update the dictionary
+                    sut = try! sut.execute(action: sut.legalActions().randomElement()!)
+                }
+                else
+                {
+                    //Take a charter flight that should be an error.
+                    XCTAssertNil(try? sut.execute(action: .general(action: .charterFlight(to: currentLocation.city.name))))
+                    haveHadCharterFlightError[sut.currentPlayer] = true
+                    sut = try! sut.execute(action: sut.legalActions().randomElement()!)
+                }
+            }
+            //Check if the game is over and then restart it if it is.
+            if !sut.gameStatus.isInProgress
+            {
+                sut = GameBoard().startGame()
+            }
         }
     }
     
@@ -265,11 +294,34 @@ class RegularTransitionTests: XCTestCase {
     
     func testDirectFlightError()
     {
-        let cityCards = GameStartHelper.generateCityCards()
-        sut.pawns.forEach
-        { pawn in
-            let nonLegalDirectFlights = cityCards.filter{!(try! sut.hand(for: pawn).cards.contains($0))}
-            XCTAssertNil(try? sut.transition(pawn: pawn, for: Action.general(action: .directFlight(to: nonLegalDirectFlights.randomElement()!.cityName!))))
+        //Start the game and perform an illegal direct flight action for each pawn when it is their turn in the game.
+        sut = sut.startGame()
+        var directFlightErrors: [Pawn : Bool] = [:]
+        while sut.pawns.reduce(true, { result, pawn -> Bool in
+            result && (directFlightErrors[pawn] ?? false)
+        })
+        {
+            //Check to see if the error has been observed
+            if directFlightErrors[sut.currentPlayer] ?? false
+            {
+                //The error has already been observed, just act randomly
+                sut = try! sut.execute(action: sut.legalActions().randomElement()!)
+            }
+            else
+            {
+                //The error has not already been observed so cause it.
+                let currentHand = try! sut.hand(for: sut.currentPlayer)
+                let nonLegalDirectFlights = CityName.allCases.filter { !currentHand.cards.contains(Card(cityName: $0)) }
+                nonLegalDirectFlights.forEach
+                { city in
+                    XCTAssertNil(try? sut.execute(action: .general(action: .directFlight(to: city))))
+                }
+                sut = try! sut.execute(action: sut.legalActions().randomElement()!)
+            }
+            if !sut.gameStatus.isInProgress
+            {
+                sut = GameBoard().startGame()
+            }
         }
     }
     
@@ -377,7 +429,7 @@ class RegularTransitionTests: XCTestCase {
     /**
      Takes the current state and moves the given pawn one direction randomly and returns the resulting gamestate.
     */
-    private func moveRandomLegalDirection(with pawn: Pawn, in state: GameState) -> GameState
+    private func moveRandomLegalDirection(with pawn: Pawn, in state: GameState, not avoidCity: CityName? = nil) -> GameState
     {
         let legalAction = state.legalActions(for: pawn)
         let legalMoveActions = legalAction.filter
@@ -389,10 +441,17 @@ class RegularTransitionTests: XCTestCase {
                 case .general(let generalAction):
                     switch generalAction
                     {
-                    case .drive:
-                        return true
-                    default:
-                        return false
+                        case .drive(let city):
+                            if let avoid = avoidCity, city == avoid
+                            {
+                                return false
+                            }
+                            else
+                            {
+                                return true
+                            }
+                        default:
+                            return false
                     }
                 case .drawAndInfect:
                     return false

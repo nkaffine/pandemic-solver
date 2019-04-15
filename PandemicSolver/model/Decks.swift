@@ -141,23 +141,57 @@ struct PlayerDeck: Deck
     //TODO: The probability of the epidemic can be more detailed
     //such that it is dependent on the current pile being drawn from.
     func probability(ofDrawing card: Card) -> Double {
-        guard !discardPile.contains(card) else
+        //Check probability when the deck is empty.
+        guard deck.count > 0 else
         {
             return 0
         }
-        let cards = deck.filter { $0 == card }
-        return Double(cards.count) / Double(deck.count)
+        //There is only one version of each card in the deck except for epidemics
+        switch card
+        {
+            case .epidemic:
+                //The deck needs to be set up such that it is partitioned but
+                //I should be able to do this with some math for now.
+                //Each section of the deck has 9 cards
+                let numLeftInSection = deck.count % 9 == 0 ? 9 : deck.count % 9
+                if Array(deck[0..<numLeftInSection]).contains(.epidemic)
+                {
+                    return 1 / Double(numLeftInSection)
+                }
+                else
+                {
+                    return 0
+                }
+            case .cityCard:
+                let cards = deck.filter { $0 == card }
+                return Double(cards.count) / Double(deck.count)
+        }
     }
     
     func probability(ofDrawing card: Card, inNext draws: Int) -> Double {
-        //Get the probability of drawing the card.
-        let probOfDrawing = probability(ofDrawing: card)
-        //Get the probability of not drawing the card.
-        let probOfNotDrawing = 1 - probOfDrawing
-        //Get the probability of now drawing the card in the next x turns.
-        let probOfNotDrawingInTurns = pow(probOfNotDrawing, Double(draws))
-        //Return 1 - probability of not drawing in next x turns.
-        return 1 - probOfNotDrawingInTurns
+        switch card
+        {
+            case .epidemic:
+                let numLeftInSection = deck.count % 9 == 0 ? 9 : deck.count % 9
+                if deck[0..<numLeftInSection].contains(.epidemic)
+                {
+                    let probOfNotDrawingEpidemic = Double(numLeftInSection - 1) / Double(numLeftInSection)
+                    return 1 - pow(probOfNotDrawingEpidemic, Double(draws))
+                }
+                else
+                {
+                    return 0
+                }
+            case .cityCard:
+                //Get the probability of drawing the card.
+                let probOfDrawing = probability(ofDrawing: card)
+                //Get the probability of not drawing the card.
+                let probOfNotDrawing = 1 - probOfDrawing
+                //Get the probability of now drawing the card in the next x turns.
+                let probOfNotDrawingInTurns = pow(probOfNotDrawing, Double(draws))
+                //Return 1 - probability of not drawing in next x turns.
+                return 1 - probOfNotDrawingInTurns
+        }
     }
     
     func probability(ofDrawing cards: [Card], inNext draws: Int) -> Double {
@@ -169,11 +203,53 @@ struct PlayerDeck: Deck
         //TODO: Check to see if the combination is possible, right now
         //the probability of getting 6 epidemics is > 0 which is shouldn't
         //be because there are only ever 5 in the deck.
-        let prob = cards.reduce(1)
-        { result, card -> Double in
-            result * probability(ofDrawing: card, inNext: draws)
+        let epidemic = cards.filter { $0 == .epidemic }
+        if epidemic.count > 1
+        {
+            if probability(ofDrawing: .epidemic) == 1
+            {
+                //Checking to see that all cards are in the deck
+                let newCards = cards.filter { $0 != .epidemic } + [.epidemic]
+                if newCards.reduce(true,
+                                { result, card -> Bool in
+                                    return result && deck.contains(card)
+                })
+                {
+                    let prob = newCards.reduce(1)
+                    { result, card -> Double in
+                        result * probability(ofDrawing: card, inNext: draws)
+                    }
+                    return prob
+                }
+                else
+                {
+                    return 0
+                }
+            }
+            else
+            {
+                return 0
+            }
         }
-        return prob
+        else
+        {
+            //Checking to see that all cards are in the deck
+            if cards.reduce(true,
+                            { result, card -> Bool in
+                                return result && deck.contains(card)
+            })
+            {
+                let prob = cards.reduce(1)
+                { result, card -> Double in
+                    result * probability(ofDrawing: card, inNext: draws)
+                }
+                return prob
+            }
+            else
+            {
+                return 0
+            }
+        }
     }
     
     func drawFromBottom() throws -> (deck: Deck, card: Card) {

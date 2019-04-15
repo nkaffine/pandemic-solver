@@ -10,31 +10,56 @@ import XCTest
 @testable import PandemicSolver
 
 class DeckTests: XCTestCase {
-    func testEmptyPartitioning()
+    func testBasicPartitioning()
     {
-        let cityCard = CityCard(city: City(name: .atlanta))
-        let deck = [Card]()
-        let playerDeck = PlayerDeck(deck: deck)
-        XCTAssertEqual(playerDeck.probability(ofDrawing: .epidemic), 1)
-        XCTAssertEqual(playerDeck.probability(ofDrawing: .cityCard(card: cityCard)), 0)
+        var cards = GameStartHelper.generateCityCards()
+        var removedCards = [Card]()
+        (0..<8).forEach
+        { _ in
+            removedCards.append(cards.removeFirst())
+        }
+        let playerDeck = PlayerDeck(deck: cards)
+        XCTAssertEqual(playerDeck.probability(ofDrawing: .epidemic), 1 / 9)
+        XCTAssertEqual(playerDeck.probability(ofDrawing: removedCards.first!), 0)
     }
     
     func testSomePartitioning()
     {
-        var deck = GameStartHelper.generateCityCards()
-        deck = [deck[0]] + [deck[1]] + [deck[2]] + [deck[3]] + [deck[4]]
-        let playerDeck = PlayerDeck(deck: deck)
+        var cards = GameStartHelper.generateCityCards()
+        var removedCards = [Card]()
+        (0..<8).forEach
+            { _ in
+                removedCards.append(cards.removeFirst())
+        }
+        var playerDeck = PlayerDeck(deck: cards)
         
-        XCTAssertEqual(playerDeck.probability(ofDrawing: .epidemic), 0.5)
-        XCTAssertEqual(playerDeck.probability(ofDrawing: deck.first!), 0.1)
-        let drawn = try? playerDeck.drawCards(numberOfCards: 10)
-        let epidemics = drawn?.cards.filter { $0 == .epidemic }
-        XCTAssertEqual(epidemics?.count, 5)
+        var hasDrawnEpidemic = false
+        var drawnCards: [Card] = []
+        (0..<9).forEach
+        { iteration in
+            if !hasDrawnEpidemic
+            {
+                XCTAssertEqual(playerDeck.probability(ofDrawing: .epidemic), 1/Double((9 - iteration)))
+            }
+            else
+            {
+                XCTAssertEqual(playerDeck.probability(ofDrawing: .epidemic), 0)
+            }
+            (playerDeck, drawnCards) = try! playerDeck.drawCards(numberOfCards: 1) as! (PlayerDeck, [Card])
+            if drawnCards.first! == .epidemic
+            {
+                hasDrawnEpidemic = true
+            }
+        }
     }
     
     func testPlayerDeckInit()
     {
-        let cards = GameStartHelper.generateCityCards()
+        var cards = GameStartHelper.generateCityCards()
+        (0..<8).forEach
+        { _ in
+            cards.removeFirst()
+        }
         let playerDeck = PlayerDeck(deck: cards)
         XCTAssertEqual(playerDeck.discardPile, [])
         XCTAssertEqual(playerDeck.probability(ofDrawing: .epidemic), 5 / Double(cards.count + 5))
@@ -42,18 +67,17 @@ class DeckTests: XCTestCase {
     
     func testProbabilities()
     {
-        let cards = GameStartHelper.generateCityCards()
+        var cards = GameStartHelper.generateCityCards()
+        (0..<8).forEach
+            { _ in
+                cards.removeFirst()
+        }
         let playerDeck = PlayerDeck(deck: cards)
-        let deckSize = cards.count + 5
-        //TODO: this will need to be updated with the new epidemic probabilities
-        //Currently 1 - deck-size/deck-size + epidemics ^ 2
-        let probabilityOfEpidemicIn2Turns = 1 - pow(Double(cards.count) / Double(deckSize), 2)
+        let probabilityOfEpidemicIn2Turns = 1 - pow(8 / Double(9), 2)
         XCTAssertEqual(playerDeck.probability(ofDrawing: .epidemic, inNext: 2), probabilityOfEpidemicIn2Turns)
         
-        //Testing regular card that only has one instance in deck
-        //Currently 1 - deck-size + epidemics - 1/deck-size + epidemics
-        let probabilityOf1In2Turns = 1 - pow(Double(deckSize - 1) / Double(deckSize), 2)
-        let cityCard = Card.cityCard(card: CityCard(city: City(name: .algiers)))
+        let probabilityOf1In2Turns = 1 - pow(Double(playerDeck.count - 1) / Double(playerDeck.count), 2)
+        let cityCard = cards.first { card -> Bool in card != .epidemic }!
         XCTAssertEqual(playerDeck.probability(ofDrawing: cityCard, inNext: 2), probabilityOf1In2Turns)
         
         //Testing probability of getting an epidemic and a specific card on the next two draws
@@ -62,22 +86,49 @@ class DeckTests: XCTestCase {
     
     func testWhenProbabilityIsZero()
     {
-        let playerDeck = PlayerDeck(deck: [])
-        let cityCard = Card.cityCard(card: CityCard(city: City(name: .algiers)))
-        XCTAssertEqual(playerDeck.probability(ofDrawing: [.epidemic, cityCard], inNext: 2), 0)
+        var cards = GameStartHelper.generateCityCards()
+        var removedCards: [Card] = []
+        (0..<8).forEach
+        { _ in
+            removedCards.append(cards.removeFirst())
+        }
+        let playerDeck = PlayerDeck(deck: cards)
+        let cityCard = cards.filter { !removedCards.contains($0) }.randomElement()!
+        
+        let probabilityOfEpidemicIn2 = 1 - pow(8/Double(9), 2)
+        let probabilityOfNormalCard = 1 - pow(44/Double(45), 2)
+        
+        XCTAssertEqual(playerDeck.probability(ofDrawing: [.epidemic, cityCard], inNext: 2),
+                       probabilityOfNormalCard * probabilityOfEpidemicIn2)
+        
         //Checking when there aren't that many epidemics
-        //TODO: fix this
         XCTAssertEqual(playerDeck.probability(ofDrawing: [.epidemic, .epidemic, .epidemic, .epidemic, .epidemic, .epidemic],
                                               inNext: 6), 0)
+        
         //Checking when the number of cards exceeds inNext
         XCTAssertEqual(playerDeck.probability(ofDrawing: [.epidemic, .epidemic], inNext: 1), 0)
+    }
+    
+    func testProbabilityWhenDeckIsLow()
+    {
+        var cards = GameStartHelper.generateCityCards()
+        var removedCards: [Card] = []
+        (0..<8).forEach
+            { _ in
+                removedCards.append(cards.removeFirst())
+        }
+        var playerDeck = PlayerDeck(deck: cards)
         
-        let playerDeck2 = PlayerDeck(deck: [cityCard])
-        //Checking when the number of cards is less than the number of drwas
-        //I think it should be 1 - 5/6^5 * 1 - 1/6 ^ 5
-        let probabilityOfEpidemic = Double(1) - pow(5/6, 5)
-        let probabilityOfCard = Double(1) - pow(1/6, 5)
-        XCTAssertEqual(playerDeck2.probability(ofDrawing: [.epidemic, cityCard], inNext: 5), probabilityOfEpidemic * probabilityOfCard)
+        //This should draw all except the last cards
+        var drawnCards = [Card]()
+        (playerDeck, drawnCards) = try! playerDeck.drawCards(numberOfCards: 36) as! (PlayerDeck, [Card])
+        
+        let cityCard = cards.filter { !(removedCards.contains($0) || drawnCards.contains($0)) }.randomElement()!
+        
+        //There should be 9 cards left now
+        let probabilityOfEpidemicAndCityCard = Double(1) - pow(8/9, 5)
+        XCTAssertEqual(playerDeck.probability(ofDrawing: [.epidemic, cityCard], inNext: 5),
+                       probabilityOfEpidemicAndCityCard * probabilityOfEpidemicAndCityCard)
     }
     
     func testEpidemicsSpreadOut()
