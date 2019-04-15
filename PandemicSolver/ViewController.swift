@@ -25,10 +25,12 @@ class ViewController: UIViewController {
     
     private func runGame()
     {
+        var actionsTaken = [(Pawn, Action)]()
         while gameRunner.gameStatus.isInProgress
         {
             let legalActions = gameRunner.legalActions()
             let action = legalActions.randomElement()!
+            actionsTaken.append((gameRunner.currentPlayer, action))
             let theGameRunner = try? gameRunner.execute(action: action) as! GameBoard
             if theGameRunner != nil
             {
@@ -40,6 +42,11 @@ class ViewController: UIViewController {
                 print("Something borked")
             }
         }
+        actionsTaken.forEach
+        { (pawn, action) in
+            print("\(pawn): \(action)")
+        }
+        print("total turns: \(actionsTaken.count / 4)")
     }
     
     private func updateOutputView()

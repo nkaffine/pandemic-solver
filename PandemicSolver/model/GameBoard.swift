@@ -410,16 +410,17 @@ extension GameBoard
             return gameEnd(with: .loss(reason: "Could not draw infection cards"))
         }
         var newState = copy(infectionPile: cards.deck)
-        cards.cards.compactMap
-            { card -> CityCard? in
-                switch card
-                {
-                case .epidemic:
-                    return nil
-                case .cityCard(let cityCard):
-                    return cityCard
-                }
-            }.forEach
+        let cityCards = cards.cards.compactMap
+        { card -> CityCard? in
+            switch card
+            {
+            case .epidemic:
+                return nil
+            case .cityCard(let cityCard):
+                return cityCard
+            }
+        }
+        cityCards.forEach
             { cityCard in
                 if newState.gameStatus.isInProgress
                 {
@@ -438,7 +439,12 @@ extension GameBoard
                     }
                 }
         }
-        return newState
+        guard let newInfectionPile = try? cards.deck.discard(cards: cards.cards) else
+        {
+            return gameEnd(with: .loss(reason: "Could not discard infection cards"))
+        }
+        
+        return newState.copy(infectionPile: newInfectionPile)
     }
     
     private func epidemic() -> GameBoard
@@ -450,12 +456,17 @@ extension GameBoard
         //TODO: add a function to card that returns an optional city card. Nil if epidemic.
         switch drawResult.card
         {
-        case .epidemic:
+            case .epidemic:
                 //TODO: Should something different here happen? Throw and error?
                 return gameEnd(with: .loss(reason: "Drew an epidemic from the infection pile, this should not happen."))
             case .cityCard(let cityCard):
                 let (outbreaks, newGraph) = locationGraph.place(.three, of: cityCard.city.color, on: cityCard.city.name)
-                return copy(locationGraph: newGraph, infectionRate: infectionRate.next(), outbreaksSoFar: outbreaksSoFar + outbreaks.count)
+                //Add the cards from the discard pile of the infection deck to the top of the deck shuffled
+                let discardPile = drawResult.deck.discardPile + [drawResult.card]
+                let newDeck = drawResult.deck.add(cards: discardPile.shuffled()).clearDiscardPile()
+                return copy(locationGraph: newGraph,infectionPile: newDeck,
+                            infectionRate: infectionRate.next(),
+                            outbreaksSoFar: outbreaksSoFar + outbreaks.count)
         }
     }
 }

@@ -89,6 +89,13 @@ protocol Deck
      - cards: the cards being added to the top of th dcek.
      */
     func add(cards: [Card]) -> Deck
+    
+    //TODO: Test this
+    /**
+     Removes all the cards in the discard pile.
+     - Returns: the state of the deck after removing discard pile.
+    */
+    func clearDiscardPile() -> Deck
 }
 
 /**
@@ -293,6 +300,10 @@ struct PlayerDeck: Deck
         //Do nothing because it is not allowed
         return self
     }
+    
+    func clearDiscardPile() -> Deck {
+        return PlayerDeck(deck: deck, discardPile: [])
+    }
 }
 
 struct InfectionPile: Deck
@@ -354,6 +365,10 @@ struct InfectionPile: Deck
     {
         let drawResult = try deck.drawFromBottom()
         return (InfectionPile(partitionDeck: drawResult.deck, discardPile: discardPile), drawResult.card)
+    }
+    
+    func clearDiscardPile() -> Deck {
+        return InfectionPile(partitionDeck: self.deck, discardPile: [])
     }
 }
 
