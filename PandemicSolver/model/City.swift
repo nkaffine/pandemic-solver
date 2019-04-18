@@ -11,8 +11,13 @@ import Foundation
 /**
  There are finite number of cities in the game
  */
-enum CityName: String, CaseIterable
+enum CityName: String, CaseIterable, CustomStringConvertible
 {
+    var description: String
+    {
+        return self.rawValue
+    }
+    
     case sanFrancisco, chicago, toronto, newYork, losAngeles,
     atlanta, washington, mexicoCity, miami, bogota, lima, saoPaulo,
     santiago, buenosAres, london, essen, stPetersburg, madrid, paris, milan,
@@ -44,8 +49,13 @@ enum CityName: String, CaseIterable
  A city represents a unique location which is attached to cards and locations on the board. Each
  city has a color and a name associated with it.
  */
-struct City: Equatable, Hashable
+struct City: Equatable, Hashable, CustomStringConvertible
 {
+    var description: String
+    {
+        return name.rawValue
+    }
+    
     ///The color of the city
     let color: DiseaseColor
     ///The name of the city

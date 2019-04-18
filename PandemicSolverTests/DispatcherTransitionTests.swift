@@ -23,9 +23,13 @@ class DispatcherTransitionTests: XCTestCase {
     
     func testDispatcherControlAction()
     {
+        while !sut.pawns.contains(Pawn(role: .dispatcher))
+        {
+            sut = DispatcherMockBoard()
+        }
         let pawn1 = Pawn(role: .dispatcher)
-        let pawn2 = Pawn(role: .medic)
-        let controlAction = Action.general(action: .drive(to: .atlanta))
+        let pawn2 = sut.pawns.filter{ $0.role != .dispatcher }.randomElement()!
+        let controlAction = Action.general(action: .drive(to: .washington))
         let action = Action.dispatcher(action: .control(pawn: pawn2, action: controlAction))
         let _ = try! sut.transition(pawn: pawn1, for: action)
         XCTAssertEqual(sut.transitions[0].0, pawn1)

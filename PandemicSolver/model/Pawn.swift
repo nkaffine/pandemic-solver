@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum Role: CaseIterable
+enum Role: String, CaseIterable
 {
     case medic, operationsExpert, dispatcher, scientist, researcher
 }
@@ -18,8 +18,13 @@ enum Role: CaseIterable
  the amount of testing required to test all of the helper functions through that main function,
  I am going to leave that as a big TODO.
  */
-struct Pawn: Hashable, CaseIterable
+struct Pawn: Hashable, CaseIterable, CustomStringConvertible
 {
+    var description: String
+    {
+        return role.rawValue
+    }
+    
     typealias AllCases = [Pawn]
     
     static var allCases: [Pawn]
@@ -44,7 +49,7 @@ struct Pawn: Hashable, CaseIterable
                        otherPawnLocations: [Pawn: CityName], pawnHands: [Pawn: HandProtocol]) -> [Action]
     {
         var actions = [Action.general(action: .pass)]
-        if currentHand.cards.contains(where:
+        if (currentHand.cards.contains(where:
         { card -> Bool in
             switch card
             {
@@ -53,7 +58,7 @@ struct Pawn: Hashable, CaseIterable
             case .epidemic:
                 return false
             }
-        }) || role == .operationsExpert
+        }) || role == .operationsExpert) && !currentLocation.hasResearchStation
         {
             actions.append(.general(action: .buildResearchStation))
         }
@@ -228,23 +233,25 @@ struct Pawn: Hashable, CaseIterable
                 }
         }
         var actions = [Action]()
-        if red >= threshold
+        if currentLocation.hasResearchStation
         {
-            actions.append(Action.general(action: .cure(disease: .red)))
+            if red >= threshold
+            {
+                actions.append(Action.general(action: .cure(disease: .red)))
+            }
+            if yellow >= threshold
+            {
+                actions.append(Action.general(action: .cure(disease: .yellow)))
+            }
+            if blue >= threshold
+            {
+                actions.append(Action.general(action: .cure(disease: .blue)))
+            }
+            if black >= threshold
+            {
+                actions.append(Action.general(action: .cure(disease: .black)))
+            }
         }
-        if yellow >= threshold
-        {
-            actions.append(Action.general(action: .cure(disease: .yellow)))
-        }
-        if blue >= threshold
-        {
-            actions.append(Action.general(action: .cure(disease: .blue)))
-        }
-        if black >= threshold
-        {
-            actions.append(Action.general(action: .cure(disease: .black)))
-        }
-        //TODO: need to check if they are in a research station.
         return actions
     }
     
