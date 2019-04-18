@@ -30,11 +30,15 @@
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="iiL-aA-HYQ"/>
                                     <constraint firstAttribute="height" constant="50" id="xbQ-Qk-ElB"/>
                                 </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                 <state key="normal" title="Run Game"/>
                                 <connections>
                                     <action selector="runGameTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="yvj-CP-fNp"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="qn2-tO-mo9">
+                                <rect key="frame" x="197" y="443" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -44,11 +48,14 @@
                             <constraint firstItem="pxe-U5-fTr" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="dLn-pE-eGj"/>
                             <constraint firstItem="pyQ-xg-jeu" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="jQ2-AR-s0X"/>
                             <constraint firstItem="pyQ-xg-jeu" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="32" id="jwF-hS-RuZ"/>
+                            <constraint firstItem="qn2-tO-mo9" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="tvh-mU-wTX"/>
                             <constraint firstItem="pxe-U5-fTr" firstAttribute="top" secondItem="pyQ-xg-jeu" secondAttribute="bottom" constant="8" symbolic="YES" id="u0k-lb-yuL"/>
+                            <constraint firstItem="qn2-tO-mo9" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="udW-5u-gNb"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="qn2-tO-mo9" id="F0N-ZU-1qx"/>
                         <outlet property="outputView" destination="pyQ-xg-jeu" id="aUH-3v-8kW"/>
                         <outlet property="runButton" destination="pxe-U5-fTr" id="DmZ-Ml-b7w"/>
                     </connections>

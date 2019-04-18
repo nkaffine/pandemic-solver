@@ -10,8 +10,13 @@ import UIKit
 
 class ViewController: UIViewController {
     private var gameRunner: GameBoard!
+    private var simulator: PlanningSimulator = PlanningSimulator(planner: BasicPlanner(utility: RandomUtility()))
+    private var gameState: GameState?
+    private var startTime: Date?
+    private var endTime: Date?
     @IBOutlet weak private (set) var runButton: UIButton!
     @IBOutlet weak private (set) var outputView: UITextView!
+    @IBOutlet weak private (set) var activityIndicator: UIActivityIndicatorView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,9 +61,30 @@ class ViewController: UIViewController {
     
     @IBAction func runGameTapped(_ sender: UIButton)
     {
-        resetGame()
-        runGame()
-        updateOutputView()
+        simulate()
+        outputSimulationResults()
+    }
+}
+
+///MARK: Simualator stuff
+extension ViewController
+{
+    private func simulate()
+    {
+        simulator.reset()
+        activityIndicator.startAnimating()
+        startTime = Date()
+        self.gameState = simulator.simulateGame()
+        endTime = Date()
+        activityIndicator.stopAnimating()
+    }
+    
+    private func outputSimulationResults()
+    {
+        if let gameState = gameState, let startTime = startTime, let endTime = endTime
+        {
+            outputView.text = "Time taken: \(endTime.timeIntervalSince(startTime))\n\n" + (gameState as! GameBoard).description
+        }
     }
 }
 
