@@ -15,18 +15,23 @@
 		01660BE82230D28200FD400A /* PandemicSolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BE72230D28200FD400A /* PandemicSolverTests.swift */; };
 		01660BF42230D47200FD400A /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF32230D47200FD400A /* Card.swift */; };
 		01660BF62230D85200FD400A /* Decks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF52230D85200FD400A /* Decks.swift */; };
-		01660BF82230E00E00FD400A /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF72230E00E00FD400A /* Board.swift */; };
+		01660BF82230E00E00FD400A /* GameBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF72230E00E00FD400A /* GameBoard.swift */; };
 		4EBD7D752258FB0500F0CFF0 /* UtilityFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBD7D742258FB0500F0CFF0 /* UtilityFunction.swift */; };
 		4EBD7D772258FB3B00F0CFF0 /* WeightedUtilityFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBD7D762258FB3B00F0CFF0 /* WeightedUtilityFunction.swift */; };
 		4EBD7D79225903CA00F0CFF0 /* Simulation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBD7D78225903CA00F0CFF0 /* Simulation.swift */; };
 		4EBD7D7B2259166A00F0CFF0 /* SimulationsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBD7D7A2259166A00F0CFF0 /* SimulationsTests.swift */; };
 		4EBD7D7F22592C5B00F0CFF0 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBD7D7E22592C5B00F0CFF0 /* Utility.swift */; };
-		01660BF82230E00E00FD400A /* GameBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF72230E00E00FD400A /* GameBoard.swift */; };
 		ED0C03EE2252914B00B9C40C /* HandTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0C03ED2252914B00B9C40C /* HandTests.swift */; };
 		ED0C03F22252BAF400B9C40C /* GameBoardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0C03F12252BAF400B9C40C /* GameBoardTests.swift */; };
 		ED15A33D225FDF58000E75E4 /* CurrentTurn.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED15A33C225FDF58000E75E4 /* CurrentTurn.swift */; };
 		ED15A33F225FE484000E75E4 /* CurrentPlayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED15A33E225FE484000E75E4 /* CurrentPlayerTests.swift */; };
 		ED15A34122612953000E75E4 /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED15A34022612953000E75E4 /* GameState.swift */; };
+		ED20B25D226906200017512D /* BasicPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED20B25A226906200017512D /* BasicPlanner.swift */; };
+		ED20B25E226906200017512D /* Planner.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED20B25B226906200017512D /* Planner.swift */; };
+		ED20B25F226906200017512D /* PlanningSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED20B25C226906200017512D /* PlanningSimulator.swift */; };
+		ED20B263226907790017512D /* Trainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED20B262226907790017512D /* Trainer.swift */; };
+		ED20B265226918010017512D /* LocationSearchHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED20B264226918010017512D /* LocationSearchHelper.swift */; };
+		ED20B26722691C540017512D /* LocationSearchHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED20B26622691C540017512D /* LocationSearchHelperTests.swift */; };
 		ED3C827B224EEB1A006417FB /* DictionaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3C827A224EEB1A006417FB /* DictionaryTests.swift */; };
 		ED3C827D224FAEF0006417FB /* BoardLocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3C827C224FAEF0006417FB /* BoardLocationTests.swift */; };
 		ED3C827F224FBC1D006417FB /* BoardLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3C827E224FBC1D006417FB /* BoardLocation.swift */; };
@@ -81,18 +86,23 @@
 		01660BE92230D28200FD400A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		01660BF32230D47200FD400A /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		01660BF52230D85200FD400A /* Decks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decks.swift; sourceTree = "<group>"; };
-		01660BF72230E00E00FD400A /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
+		01660BF72230E00E00FD400A /* GameBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBoard.swift; sourceTree = "<group>"; };
 		4EBD7D742258FB0500F0CFF0 /* UtilityFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UtilityFunction.swift; path = MachineLearning/UtilityFunction.swift; sourceTree = SOURCE_ROOT; };
 		4EBD7D762258FB3B00F0CFF0 /* WeightedUtilityFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WeightedUtilityFunction.swift; path = MachineLearning/WeightedUtilityFunction.swift; sourceTree = SOURCE_ROOT; };
 		4EBD7D78225903CA00F0CFF0 /* Simulation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Simulation.swift; path = MachineLearning/Simulation.swift; sourceTree = SOURCE_ROOT; };
 		4EBD7D7A2259166A00F0CFF0 /* SimulationsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulationsTests.swift; sourceTree = "<group>"; };
 		4EBD7D7E22592C5B00F0CFF0 /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Utility.swift; path = MachineLearning/Utility.swift; sourceTree = SOURCE_ROOT; };
-		01660BF72230E00E00FD400A /* GameBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBoard.swift; sourceTree = "<group>"; };
 		ED0C03ED2252914B00B9C40C /* HandTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandTests.swift; sourceTree = "<group>"; };
 		ED0C03F12252BAF400B9C40C /* GameBoardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBoardTests.swift; sourceTree = "<group>"; };
 		ED15A33C225FDF58000E75E4 /* CurrentTurn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentTurn.swift; sourceTree = "<group>"; };
 		ED15A33E225FE484000E75E4 /* CurrentPlayerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentPlayerTests.swift; sourceTree = "<group>"; };
 		ED15A34022612953000E75E4 /* GameState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameState.swift; sourceTree = "<group>"; };
+		ED20B25A226906200017512D /* BasicPlanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicPlanner.swift; sourceTree = "<group>"; };
+		ED20B25B226906200017512D /* Planner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Planner.swift; sourceTree = "<group>"; };
+		ED20B25C226906200017512D /* PlanningSimulator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlanningSimulator.swift; sourceTree = "<group>"; };
+		ED20B262226907790017512D /* Trainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trainer.swift; sourceTree = "<group>"; };
+		ED20B264226918010017512D /* LocationSearchHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchHelper.swift; sourceTree = "<group>"; };
+		ED20B26622691C540017512D /* LocationSearchHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchHelperTests.swift; sourceTree = "<group>"; };
 		ED3C827A224EEB1A006417FB /* DictionaryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryTests.swift; sourceTree = "<group>"; };
 		ED3C827C224FAEF0006417FB /* BoardLocationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardLocationTests.swift; sourceTree = "<group>"; };
 		ED3C827E224FBC1D006417FB /* BoardLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardLocation.swift; sourceTree = "<group>"; };
@@ -165,9 +175,11 @@
 			children = (
 				4EBD7D732258FA5200F0CFF0 /* ML */,
 				01660BD22230D28100FD400A /* AppDelegate.swift */,
+				ED20B2612269076B0017512D /* training */,
 				EDEAF58B224C65C5007C2CC6 /* Utilities */,
 				01660BF22230D29400FD400A /* model */,
 				01660BD42230D28100FD400A /* ViewController.swift */,
+				ED20B2602269062A0017512D /* plan */,
 				01660BD62230D28100FD400A /* Main.storyboard */,
 				01660BD92230D28200FD400A /* Assets.xcassets */,
 				01660BDB2230D28200FD400A /* LaunchScreen.storyboard */,
@@ -181,6 +193,7 @@
 			children = (
 				01660BE72230D28200FD400A /* PandemicSolverTests.swift */,
 				EDEAF587224C5AD9007C2CC6 /* CubeDistributionTests.swift */,
+				ED20B26622691C540017512D /* LocationSearchHelperTests.swift */,
 				EDEAF58F224C665F007C2CC6 /* CityTest.swift */,
 				EDEAF599224C8097007C2CC6 /* CardTests.swift */,
 				EDEAF597224C7F7F007C2CC6 /* DeckTests.swift */,
@@ -240,6 +253,24 @@
 			path = "New Group";
 			sourceTree = "<group>";
 		};
+		ED20B2602269062A0017512D /* plan */ = {
+			isa = PBXGroup;
+			children = (
+				ED20B25A226906200017512D /* BasicPlanner.swift */,
+				ED20B25B226906200017512D /* Planner.swift */,
+				ED20B25C226906200017512D /* PlanningSimulator.swift */,
+			);
+			path = plan;
+			sourceTree = "<group>";
+		};
+		ED20B2612269076B0017512D /* training */ = {
+			isa = PBXGroup;
+			children = (
+				ED20B262226907790017512D /* Trainer.swift */,
+			);
+			path = training;
+			sourceTree = "<group>";
+		};
 		EDEAF58A224C61B7007C2CC6 /* Cubes */ = {
 			isa = PBXGroup;
 			children = (
@@ -261,6 +292,7 @@
 			isa = PBXGroup;
 			children = (
 				EDEAF57E224C1A3E007C2CC6 /* GameStartHelper.swift */,
+				ED20B264226918010017512D /* LocationSearchHelper.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -366,18 +398,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ED20B25E226906200017512D /* Planner.swift in Sources */,
 				EDEAF586224C5AAB007C2CC6 /* CubeDistribution.swift in Sources */,
 				EDEAF584224C250A007C2CC6 /* Diseases.swift in Sources */,
 				01660BF62230D85200FD400A /* Decks.swift in Sources */,
 				EDEAF596224C6A6B007C2CC6 /* MutableCollectionExtensio.swift in Sources */,
 				ED15A33D225FDF58000E75E4 /* CurrentTurn.swift in Sources */,
+				ED20B265226918010017512D /* LocationSearchHelper.swift in Sources */,
 				EDA4934E22357C2100BF77BF /* Action.swift in Sources */,
 				ED3C827F224FBC1D006417FB /* BoardLocation.swift in Sources */,
 				ED9EE0A9225837CF007FB6CE /* Simulator.swift in Sources */,
+				ED20B263226907790017512D /* Trainer.swift in Sources */,
 				EDEAF594224C6758007C2CC6 /* Hand.swift in Sources */,
 				01660BD52230D28100FD400A /* ViewController.swift in Sources */,
 				01660BF82230E00E00FD400A /* GameBoard.swift in Sources */,
 				ED9EC1DF224D41AF009D9BD9 /* Policy.swift in Sources */,
+				ED20B25F226906200017512D /* PlanningSimulator.swift in Sources */,
 				ED9EC1E3224D9496009D9BD9 /* LocationGraph.swift in Sources */,
 				ED51C89E2257E44C008C1E7D /* InfectionRate.swift in Sources */,
 				4EBD7D772258FB3B00F0CFF0 /* WeightedUtilityFunction.swift in Sources */,
@@ -385,6 +421,7 @@
 				01660BD32230D28100FD400A /* AppDelegate.swift in Sources */,
 				4EBD7D79225903CA00F0CFF0 /* Simulation.swift in Sources */,
 				EDEAF58E224C6630007C2CC6 /* City.swift in Sources */,
+				ED20B25D226906200017512D /* BasicPlanner.swift in Sources */,
 				ED85B4FF224E5F3C0046A03E /* Pawn.swift in Sources */,
 				01660BF42230D47200FD400A /* Card.swift in Sources */,
 				4EBD7D7F22592C5B00F0CFF0 /* Utility.swift in Sources */,
@@ -403,6 +440,7 @@
 				EDEAF598224C7F7F007C2CC6 /* DeckTests.swift in Sources */,
 				EDEAF588224C5AD9007C2CC6 /* CubeDistributionTests.swift in Sources */,
 				ED9EC1E5224DBD65009D9BD9 /* LocationGraphTests.swift in Sources */,
+				ED20B26722691C540017512D /* LocationSearchHelperTests.swift in Sources */,
 				4EBD7D7B2259166A00F0CFF0 /* SimulationsTests.swift in Sources */,
 				ED3C827D224FAEF0006417FB /* BoardLocationTests.swift in Sources */,
 				ED9EC1E1224D5669009D9BD9 /* PartitionedDeckTests.swift in Sources */,

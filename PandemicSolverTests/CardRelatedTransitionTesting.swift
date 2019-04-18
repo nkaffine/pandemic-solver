@@ -220,7 +220,7 @@ class CardRelatedTransitionTesting: XCTestCase {
     //TODO: Test share knowledge and errors
 }
 
-private struct StupidHelper
+struct StupidHelper
 {
     static func bestDistanceToAtlanta(from city: CityName) -> Int
     {
@@ -287,7 +287,7 @@ private struct StupidHelper
         case .mumbai:
             return 6
         case .kolkata:
-            return 6
+            return 5
         case .chennai:
             return 5
         case .lagos:
