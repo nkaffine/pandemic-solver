@@ -11,7 +11,12 @@ import Foundation
 /**
  There are 4 colors of cards in the game, each representing a different disease.
  */
-enum DiseaseColor: CaseIterable
+enum DiseaseColor: String, CaseIterable, CustomStringConvertible
 {
+    var description: String
+    {
+        return self.rawValue
+    }
+    
     case red, black, blue, yellow
 }

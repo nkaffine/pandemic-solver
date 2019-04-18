@@ -148,6 +148,41 @@ class CubeDistributionTests: XCTestCase {
         XCTAssertEqual(distribution.black, .zero)
     }
     
+    func testIsInfected()
+    {
+        XCTAssertFalse(distribution.isInfected)
+        
+        let (_, distribution1) = distribution.add(cubes: .one, of: .red)
+        let (_, distribution2) = distribution.add(cubes: .one, of: .yellow)
+        let (_, distribution3) = distribution.add(cubes: .one, of: .blue)
+        let (_, distribution4) = distribution.add(cubes: .one, of: .black)
+        
+        XCTAssertTrue(distribution1.isInfected)
+        XCTAssertTrue(distribution2.isInfected)
+        XCTAssertTrue(distribution3.isInfected)
+        XCTAssertTrue(distribution4.isInfected)
+        
+        let (_, distribution5) = distribution1.add(cubes: .one, of: .red)
+        let (_, distribution6) = distribution2.add(cubes: .one, of: .yellow)
+        let (_, distribution7) = distribution3.add(cubes: .one, of: .blue)
+        let (_, distribution8) = distribution4.add(cubes: .one, of: .black)
+        
+        XCTAssertTrue(distribution5.isInfected)
+        XCTAssertTrue(distribution6.isInfected)
+        XCTAssertTrue(distribution7.isInfected)
+        XCTAssertTrue(distribution8.isInfected)
+        
+        let (_, distribution9) = distribution5.add(cubes: .one, of: .red)
+        let (_, distribution10) = distribution6.add(cubes: .one, of: .yellow)
+        let (_, distribution11) = distribution7.add(cubes: .one, of: .blue)
+        let (_, distribution12) = distribution8.add(cubes: .one, of: .black)
+        
+        XCTAssertTrue(distribution9.isInfected)
+        XCTAssertTrue(distribution10.isInfected)
+        XCTAssertTrue(distribution11.isInfected)
+        XCTAssertTrue(distribution12.isInfected)
+    }
+    
     private func setUpFullDistribution()
     {
         (outbreak, distribution) = distribution.add(cubes: [.red: .three, .yellow: .three, .black: .three, .blue: .three])

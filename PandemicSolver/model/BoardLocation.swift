@@ -8,11 +8,20 @@
 
 import Foundation
 
-struct BoardLocation: Hashable, Equatable
+struct BoardLocation: Hashable, Equatable, CustomStringConvertible
 {
+    var description: String
+    {
+        return "\(city.name): \n\t\t\(cubes)"
+    }
+    
     let city: City
     let cubes: CubeDistributionProtocol
     let hasResearchStation: Bool
+    var isInfected: Bool
+    {
+        return cubes.isInfected
+    }
     
     init(city: City)
     {

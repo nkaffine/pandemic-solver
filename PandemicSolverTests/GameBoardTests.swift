@@ -41,7 +41,7 @@ class GameBoardTests: XCTestCase {
         }
         XCTAssertEqual(sut.playerDeck.count, 45)
         //TODO: This should be fixed when the probability function is fixed
-        XCTAssertEqual(sut.playerDeck.probability(ofDrawing: .epidemic), 1/Double(5))
+        XCTAssertEqual(sut.playerDeck.probability(ofDrawing: .epidemic), 1 / Double(9))
         XCTAssertEqual(sut.infectionPile.count, 48)
         XCTAssertEqual(sut.infectionRate, .one)
         XCTAssertEqual(sut.outbreaksSoFar, 0)

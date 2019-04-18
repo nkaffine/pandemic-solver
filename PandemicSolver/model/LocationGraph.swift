@@ -19,7 +19,8 @@ protocol LocationGraphProtocol
 {
     var locations: [CityName: BoardLocation] { get }
     var edges: [CityName : [CityName]] { get }
- 
+    var cubesRemaining: [DiseaseColor: Int] { get }
+    var hasValidCubeCount: Bool { get }
     /**
      Places the given number of the given disease color on the given city.
      - Parameters:
@@ -62,13 +63,42 @@ protocol LocationGraphProtocol
      - Returns: the location graph with the updated state.
     */
     func addResearchStation(to city: CityName) -> LocationGraph
+    
+    /**
+     Returns whether the given two cities are adjacent to eachother.
+     - Parameters:
+        - city1: the first city being checked for adjacency.
+        - city2: the second city being check for adjacency.
+     - Returns: a bool whether they are adjacent.
+    */
+    func isAdjacent(_ city1: CityName, to city2: CityName) -> Bool
 }
 
 struct LocationGraph: LocationGraphProtocol
 {
     let locations: [CityName: BoardLocation]
     let edges: [CityName: [CityName]]
-    
+    var cubesRemaining: [DiseaseColor : Int]
+    {
+        var remaining: [DiseaseColor : Int] = [.red:24,.yellow:24,.blue:24,.black:24]
+        locations.values.filter{$0.cubes.isInfected}.forEach
+        { location in
+            remaining.updateValue(remaining[.red]! - location.cubes.red.rawValue, forKey: .red)
+            remaining.updateValue(remaining[.yellow]! - location.cubes.yellow.rawValue, forKey: .yellow)
+            remaining.updateValue(remaining[.blue]! - location.cubes.blue.rawValue, forKey: .blue)
+            remaining.updateValue(remaining[.black]! - location.cubes.black.rawValue, forKey: .black)
+        }
+        return remaining
+    }
+    var hasValidCubeCount: Bool
+    {
+        //saving local variable to only compute it once
+        let cubeCount = cubesRemaining
+        return DiseaseColor.allCases.reduce(true)
+        { hasValidCubeCount, disease -> Bool in
+            hasValidCubeCount && (cubeCount[disease]! > 0)
+        }
+    }
     /**
      Initializes the location graph with all of the board locations and all of the edges.
     */
@@ -170,5 +200,10 @@ struct LocationGraph: LocationGraphProtocol
         var location = locations[city]!
         location = location.addResearchStation()
         return LocationGraph(locations: locations.imutableUpdate(key: city, value: location), edges: edges)
+    }
+    
+    func isAdjacent(_ city1: CityName, to city2: CityName) -> Bool
+    {
+        return edges[city1]!.contains(city2)
     }
 }
