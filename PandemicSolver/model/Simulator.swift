@@ -152,6 +152,12 @@ protocol PandemicSimulatorProtocol
     var curedDiseases: [DiseaseColor] { get }
     
     /**
+     A list of the cities that are currentlty infected and a list of disease
+     colors and count tuples representing infections on the city.
+    */
+    var infectedCities: [(city: CityName, [(disease: DiseaseColor, count: Int)])] { get }
+    
+    /**
      Get all the legal moves for the current state of the game.
      - Returns: a list of legal actions for the current state.
      - Note: these actions are for the pawn whose turn it is currently.
@@ -267,6 +273,31 @@ class PandemicSimulator: PandemicSimulatorProtocol
     var curedDiseases: [DiseaseColor]
     {
         return board.curedDiseases
+    }
+    
+    var infectedCities: [(city: CityName, [(disease: DiseaseColor, count: Int)])]
+    {
+        return self.board.locations.filter { $0.isInfected }.map
+        { location -> (city: CityName, [(disease: DiseaseColor, count: Int)]) in
+            var infections: [(disease: DiseaseColor, count: Int)] = []
+            if location.cubes.red > .zero
+            {
+                infections.append((.red, location.cubes.red.rawValue))
+            }
+            if location.cubes.black > .zero
+            {
+                infections.append((.black, location.cubes.black.rawValue))
+            }
+            if location.cubes.blue > .zero
+            {
+                infections.append((.blue, location.cubes.blue.rawValue))
+            }
+            if location.cubes.yellow > .zero
+            {
+                infections.append((.yellow, location.cubes.yellow.rawValue))
+            }
+            return (location.city.name, infections)
+        }
     }
     
     func location(of pawn: Pawn) -> BoardLocation
