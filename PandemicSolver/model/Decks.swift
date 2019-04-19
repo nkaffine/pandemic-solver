@@ -96,6 +96,13 @@ protocol Deck
      - Returns: the state of the deck after removing discard pile.
     */
     func clearDiscardPile() -> Deck
+    
+    /**
+     Returns a deck with all of the same cards as the current deck in a random
+     different order.
+     - Returns: a deck containing the same cards in a random new order.
+    */
+    func shuffled() -> Deck
 }
 
 /**
@@ -107,7 +114,7 @@ struct PlayerDeck: Deck
      The deck of cards that the players draw from.
      Note: The deck is stored where the last index is the top of the deck.
     */
-    private let deck: [Card]
+    private let deck: ImmutableProbabilityDeck
     let discardPile: [Card]
     var count: Int
     {
@@ -117,24 +124,19 @@ struct PlayerDeck: Deck
     init(deck: [Card])
     {
         //Generate all the cards for the deck without epidemics
-        self.deck = PlayerDeck.generatePartitionedEpidemicDecks(from: deck).reduce([], { $0 + $1 })
+        self.deck = ImmutablePartition(piles: PlayerDeck.generatePartitionedEpidemicDecks(from: deck))
         self.discardPile = []
     }
     
-    private init(deck: [Card], discardPile: [Card])
+    private init(deck: ImmutableProbabilityDeck, discardPile: [Card])
     {
         self.deck = deck
         self.discardPile = discardPile
     }
     
     func drawCards(numberOfCards: Int) throws -> (deck: Deck, cards: [Card]) {
-        guard numberOfCards <= deck.count else
-        {
-            throw DeckError.invalidDraw
-        }
-        let drawn = Array(deck[0..<numberOfCards])
-        let leftover = Array(deck[numberOfCards..<deck.count])
-        return (PlayerDeck(deck: leftover, discardPile: discardPile), drawn)
+        let (deck, drawn) = try self.deck.draw(numberOfCards: numberOfCards)
+        return (PlayerDeck(deck: deck, discardPile: discardPile), drawn)
     }
     
     func discard(card: Card) throws -> Deck {
@@ -161,17 +163,24 @@ struct PlayerDeck: Deck
                 //I should be able to do this with some math for now.
                 //Each section of the deck has 9 cards
                 let numLeftInSection = deck.count % 9 == 0 ? 9 : deck.count % 9
-                if Array(deck[0..<numLeftInSection]).contains(.epidemic)
+                if deck.probability(ofDrawing: .epidemic, inNext: numLeftInSection) != 0
                 {
-                    return 1 / Double(numLeftInSection)
+                    return Double(1) / Double(numLeftInSection)
                 }
                 else
                 {
                     return 0
                 }
+            
             case .cityCard:
-                let cards = deck.filter { $0 == card }
-                return Double(cards.count) / Double(deck.count)
+                if deck.contains(card)
+                {
+                    return Double(1) / Double(deck.count)
+                }
+                else
+                {
+                    return 0
+                }
         }
     }
     
@@ -180,7 +189,7 @@ struct PlayerDeck: Deck
         {
             case .epidemic:
                 let numLeftInSection = deck.count % 9 == 0 ? 9 : deck.count % 9
-                if deck[0..<numLeftInSection].contains(.epidemic)
+                if deck.probability(ofDrawing: .epidemic, inNext: numLeftInSection) != 0
                 {
                     let probOfNotDrawingEpidemic = Double(numLeftInSection - 1) / Double(numLeftInSection)
                     return 1 - pow(probOfNotDrawingEpidemic, Double(draws))
@@ -260,12 +269,8 @@ struct PlayerDeck: Deck
     }
     
     func drawFromBottom() throws -> (deck: Deck, card: Card) {
-        guard let card = deck.last else
-        {
-            throw DeckError.invalidDraw
-        }
-        let remainingDeck = Array(deck[0..<(deck.count - 1)])
-        return (PlayerDeck(deck: remainingDeck, discardPile: discardPile), card)
+        let (newDeck, card) = try self.deck.drawFromBottom()
+        return (PlayerDeck(deck: newDeck, discardPile: self.discardPile), card)
     }
     
     /**
@@ -303,6 +308,12 @@ struct PlayerDeck: Deck
     
     func clearDiscardPile() -> Deck {
         return PlayerDeck(deck: deck, discardPile: [])
+    }
+    
+    func shuffled() -> Deck
+    {
+        //This is going to require switching over to the partition deck
+        return self
     }
 }
 
@@ -370,6 +381,11 @@ struct InfectionPile: Deck
     func clearDiscardPile() -> Deck {
         return InfectionPile(partitionDeck: self.deck, discardPile: [])
     }
+    
+    func shuffled() -> Deck
+    {
+        return InfectionPile(partitionDeck: deck.shuffled(), discardPile: discardPile)
+    }
 }
 
 protocol ImmutableProbabilityDeck
@@ -420,6 +436,22 @@ protocol ImmutableProbabilityDeck
      - Returns: the card at the bottom of the deck.
      */
     func drawFromBottom() throws -> (deck: ImmutableProbabilityDeck, card: Card)
+    
+    /**
+     Returns a deck with all of the same cards as the current deck in a random
+     different order preserving the cards in each pile.
+     - Returns: a deck containing the same cards in a random new order preserving cards in each pile.
+     */
+    func shuffled() -> ImmutableProbabilityDeck
+    
+    /**
+     Returns a deck with all of the same cards as the current deck but in a random new
+     order not keeping cards in the correct pile but ensuring that there is an epidemic
+     per pile.
+    */
+    func superShuffle() -> ImmutableProbabilityDeck
+    
+    func contains(_ element: Card) -> Bool
 }
 
 /**
@@ -526,6 +558,46 @@ struct ImmutablePartition: ImmutableProbabilityDeck
                 }
         }
         return probability
+    }
+    
+    func shuffled() -> ImmutableProbabilityDeck
+    {
+        let newDeck = self.deck.map
+        { cardList -> [Card] in
+            cardList.shuffled()
+        }
+        return ImmutablePartition(piles: newDeck)
+    }
+    
+    func superShuffle() -> ImmutableProbabilityDeck
+    {
+        var allPlayerCards = deck.reduce([]) { $0 + $1 }.filter
+        { card -> Bool in
+            switch card
+            {
+                case .cityCard:
+                    return true
+                case .epidemic:
+                    return false
+            }
+        }
+        allPlayerCards.shuffle()
+        let newDeck = deck.map
+        { cards -> [Card] in
+            let numCityCards = cards.contains(.epidemic) ? cards.count - 1 : cards.count
+            let newCards = (Array(allPlayerCards[0..<numCityCards]) + (cards.contains(.epidemic) ? [.epidemic] : [])).shuffled()
+            allPlayerCards = Array(allPlayerCards[numCityCards...])
+            return newCards
+        }
+        return ImmutablePartition(piles: newDeck)
+    }
+    
+    func contains(_ element: Card) -> Bool
+    {
+        return deck.reduce(false,
+        { result, list -> Bool in
+            result || list.contains(element)
+        })
     }
     
     /**
