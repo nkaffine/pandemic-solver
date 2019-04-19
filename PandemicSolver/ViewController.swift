@@ -17,10 +17,20 @@ class ViewController: UIViewController {
     @IBOutlet weak private (set) var runButton: UIButton!
     @IBOutlet weak private (set) var outputView: UITextView!
     @IBOutlet weak private (set) var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var timeOutput: UITextView!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.gameRunner = GameBoard().startGame() as! GameBoard
+    }
+    
+    @IBAction func timeCheck(_ sender: Any)
+    {
+        if let startTime = startTime
+        {
+            self.timeOutput.text = "\(Date().timeIntervalSince(startTime))"
+        }
     }
     
     private func resetGame()
@@ -62,7 +72,6 @@ class ViewController: UIViewController {
     @IBAction func runGameTapped(_ sender: UIButton)
     {
         simulate()
-        outputSimulationResults()
     }
 }
 
@@ -72,18 +81,34 @@ extension ViewController
     private func simulate()
     {
         simulator.reset()
+        outputView.text = "Players: \(simulator.startingState.pawns)"
         activityIndicator.startAnimating()
+        runButton.isEnabled = false
         startTime = Date()
-        self.gameState = simulator.simulateGame()
+        DispatchQueue.global(qos: .userInitiated).async
+        {
+            self.gameState = self.simulator.simulateGame()
+            DispatchQueue.main.async
+            {
+                self.finishSimulation()
+            }
+        }
+    }
+    
+    private func finishSimulation()
+    {
         endTime = Date()
         activityIndicator.stopAnimating()
+        runButton.isEnabled = true
+        outputSimulationResults()
     }
     
     private func outputSimulationResults()
     {
         if let gameState = gameState, let startTime = startTime, let endTime = endTime
         {
-            outputView.text = "Time taken: \(endTime.timeIntervalSince(startTime))\n\n" + (gameState as! GameBoard).description
+            timeOutput.text = "Time taken: \(endTime.timeIntervalSince(startTime))"
+            outputView.text = (gameState as! GameBoard).description
         }
     }
 }

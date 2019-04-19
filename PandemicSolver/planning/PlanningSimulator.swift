@@ -13,10 +13,13 @@ class PlanningSimulator
     private var planner: PlannerProtocol
     private var gameState: GameState
     
+    var startingState: GameState
+    
     init(planner: PlannerProtocol)
     {
         self.planner = planner
         gameState = GameBoard()
+        startingState = gameState
     }
     
     func simulateGame() -> GameState

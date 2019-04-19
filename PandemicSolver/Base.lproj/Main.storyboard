@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="pyQ-xg-jeu">
-                                <rect key="frame" x="16" y="76" width="382" height="696"/>
+                                <rect key="frame" x="16" y="128" width="382" height="644"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -39,18 +39,44 @@
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="qn2-tO-mo9">
                                 <rect key="frame" x="197" y="443" width="20" height="20"/>
                             </activityIndicatorView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lyq-Se-6KS">
+                                <rect key="frame" x="294" y="44" width="104" height="36"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="104" id="tnU-ZR-YkG"/>
+                                    <constraint firstAttribute="height" constant="36" id="v8x-tp-IUL"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <state key="normal" title="Time Check"/>
+                                <connections>
+                                    <action selector="timeCheck:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7vG-sU-DQv"/>
+                                </connections>
+                            </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="XTp-9t-uoh">
+                                <rect key="frame" x="16" y="88" width="382" height="32"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="32" id="Mjq-vr-BiQ"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="pxe-U5-fTr" secondAttribute="bottom" constant="32" id="0IJ-33-2yn"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="XTp-9t-uoh" secondAttribute="trailing" constant="16" id="698-nk-5dp"/>
+                            <constraint firstItem="XTp-9t-uoh" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="7ff-KM-m1h"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="pxe-U5-fTr" secondAttribute="trailing" id="HJ8-Gd-DIs"/>
+                            <constraint firstAttribute="trailing" secondItem="Lyq-Se-6KS" secondAttribute="trailing" constant="16" id="Jrz-mp-eAw"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="pyQ-xg-jeu" secondAttribute="trailing" constant="16" id="V9C-6s-ghF"/>
+                            <constraint firstItem="Lyq-Se-6KS" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="cDR-sG-fpu"/>
                             <constraint firstItem="pxe-U5-fTr" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="dLn-pE-eGj"/>
                             <constraint firstItem="pyQ-xg-jeu" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="jQ2-AR-s0X"/>
-                            <constraint firstItem="pyQ-xg-jeu" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="32" id="jwF-hS-RuZ"/>
+                            <constraint firstItem="XTp-9t-uoh" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="44" id="kNC-qg-OGv"/>
                             <constraint firstItem="qn2-tO-mo9" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="tvh-mU-wTX"/>
                             <constraint firstItem="pxe-U5-fTr" firstAttribute="top" secondItem="pyQ-xg-jeu" secondAttribute="bottom" constant="8" symbolic="YES" id="u0k-lb-yuL"/>
                             <constraint firstItem="qn2-tO-mo9" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="udW-5u-gNb"/>
+                            <constraint firstItem="pyQ-xg-jeu" firstAttribute="top" secondItem="XTp-9t-uoh" secondAttribute="bottom" constant="8" symbolic="YES" id="yam-OU-KNG"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
@@ -58,6 +84,7 @@
                         <outlet property="activityIndicator" destination="qn2-tO-mo9" id="F0N-ZU-1qx"/>
                         <outlet property="outputView" destination="pyQ-xg-jeu" id="aUH-3v-8kW"/>
                         <outlet property="runButton" destination="pxe-U5-fTr" id="DmZ-Ml-b7w"/>
+                        <outlet property="timeOutput" destination="XTp-9t-uoh" id="11Z-h2-frJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

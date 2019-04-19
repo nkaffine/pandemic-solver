@@ -24,6 +24,7 @@
 		ED20B2552268BE540017512D /* Planner.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED20B2542268BE540017512D /* Planner.swift */; };
 		ED20B2572268BF4F0017512D /* BasicPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED20B2562268BF4F0017512D /* BasicPlanner.swift */; };
 		ED20B2592268C4E20017512D /* PlanningSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED20B2582268C4E20017512D /* PlanningSimulator.swift */; };
+		ED20B26922694A3B0017512D /* MonteCarloPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED20B26822694A3B0017512D /* MonteCarloPlanner.swift */; };
 		ED3C827B224EEB1A006417FB /* DictionaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3C827A224EEB1A006417FB /* DictionaryTests.swift */; };
 		ED3C827D224FAEF0006417FB /* BoardLocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3C827C224FAEF0006417FB /* BoardLocationTests.swift */; };
 		ED3C827F224FBC1D006417FB /* BoardLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3C827E224FBC1D006417FB /* BoardLocation.swift */; };
@@ -87,6 +88,7 @@
 		ED20B2542268BE540017512D /* Planner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Planner.swift; sourceTree = "<group>"; };
 		ED20B2562268BF4F0017512D /* BasicPlanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicPlanner.swift; sourceTree = "<group>"; };
 		ED20B2582268C4E20017512D /* PlanningSimulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanningSimulator.swift; sourceTree = "<group>"; };
+		ED20B26822694A3B0017512D /* MonteCarloPlanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonteCarloPlanner.swift; sourceTree = "<group>"; };
 		ED3C827A224EEB1A006417FB /* DictionaryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryTests.swift; sourceTree = "<group>"; };
 		ED3C827C224FAEF0006417FB /* BoardLocationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardLocationTests.swift; sourceTree = "<group>"; };
 		ED3C827E224FBC1D006417FB /* BoardLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardLocation.swift; sourceTree = "<group>"; };
@@ -227,6 +229,7 @@
 				ED20B2542268BE540017512D /* Planner.swift */,
 				ED20B2562268BF4F0017512D /* BasicPlanner.swift */,
 				ED20B2582268C4E20017512D /* PlanningSimulator.swift */,
+				ED20B26822694A3B0017512D /* MonteCarloPlanner.swift */,
 			);
 			path = planning;
 			sourceTree = "<group>";
@@ -374,6 +377,7 @@
 				ED51C89E2257E44C008C1E7D /* InfectionRate.swift in Sources */,
 				EDEAF592224C671F007C2CC6 /* Disease.swift in Sources */,
 				01660BD32230D28100FD400A /* AppDelegate.swift in Sources */,
+				ED20B26922694A3B0017512D /* MonteCarloPlanner.swift in Sources */,
 				EDEAF58E224C6630007C2CC6 /* City.swift in Sources */,
 				ED20B2552268BE540017512D /* Planner.swift in Sources */,
 				ED20B2592268C4E20017512D /* PlanningSimulator.swift in Sources */,
