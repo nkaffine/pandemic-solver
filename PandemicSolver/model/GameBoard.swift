@@ -550,3 +550,16 @@ extension GameBoard
                          currentPlayer: currentPlayer ?? self.currentTurn)
     }
 }
+
+///MARK: Monte Carlo Tree Search Additional Functionality
+extension GameBoard
+{
+    /**
+     Re-shuffles the deck appropriately such that the stochastic
+     aspect of the future is not fixed at start.
+    */
+    func createSimulationBranch() -> GameBoard
+    {
+        return copy(playerDeck: playerDeck.shuffled(), infectionPile: infectionPile.shuffled())
+    }
+}

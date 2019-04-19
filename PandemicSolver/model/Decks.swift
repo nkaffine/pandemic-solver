@@ -313,7 +313,7 @@ struct PlayerDeck: Deck
     func shuffled() -> Deck
     {
         //This is going to require switching over to the partition deck
-        return self
+        return PlayerDeck(deck: deck.superShuffle(), discardPile: discardPile)
     }
 }
 

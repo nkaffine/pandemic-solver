@@ -112,4 +112,107 @@ class PartitionedDeckTests: XCTestCase
         let deckResult = (try? deck1.draw(numberOfCards: 1))!
         XCTAssertEqual(deckResult.cards.first, .epidemic)
     }
+    
+    func testShuffled()
+    {
+        let deck = ImmutablePartition(piles: [GameStartHelper.generateCityCards()])
+        let newDeck = deck.shuffled()
+        XCTAssertEqual(deck.count, newDeck.count)
+        XCTAssertNotEqual(try! deck.draw(numberOfCards: 48).cards, try! newDeck.draw(numberOfCards: 48).cards)
+        
+        let cityCards = GameStartHelper.generateCityCards()
+        let deck2 = ImmutablePartition(piles: [Array(cityCards[0..<12]), Array(cityCards[12..<24]),
+                                               Array(cityCards[24..<36]), Array(cityCards[36..<48])])
+        let newDeck2 = deck2.shuffled()
+        XCTAssertEqual(deck2.count, newDeck2.count)
+        let (drawDeck1, draw1) = try! deck2.draw(numberOfCards: 12)
+        let (drawDeck2, draw2) = try! drawDeck1.draw(numberOfCards: 12)
+        let (drawDeck3, draw3) = try! drawDeck2.draw(numberOfCards: 12)
+        let (drawDeck4, draw4) = try! drawDeck3.draw(numberOfCards: 12)
+        
+        let (newDrawDeck1, newDraw1) = try! newDeck2.draw(numberOfCards: 12)
+        let (newDrawDeck2, newDraw2) = try! newDrawDeck1.draw(numberOfCards: 12)
+        let (newDrawDeck3, newDraw3) = try! newDrawDeck2.draw(numberOfCards: 12)
+        let (newDrawDeck4, newDraw4) = try! newDrawDeck3.draw(numberOfCards: 12)
+        
+        XCTAssertNotEqual(draw1, newDraw1)
+        XCTAssertNotEqual(draw2, newDraw2)
+        XCTAssertNotEqual(draw3, newDraw3)
+        XCTAssertNotEqual(draw4, newDraw4)
+        
+        XCTAssertEqual(drawDeck1.count, newDrawDeck1.count)
+        XCTAssertEqual(drawDeck2.count, newDrawDeck2.count)
+        XCTAssertEqual(drawDeck3.count, newDrawDeck3.count)
+        XCTAssertEqual(drawDeck4.count, newDrawDeck4.count)
+        
+        draw1.forEach
+        { card in
+            XCTAssertTrue(newDraw1.contains(card), "\(card)\n\(newDraw1)")
+        }
+        draw2.forEach
+        { card in
+                XCTAssertTrue(newDraw2.contains(card), "\(card)\n\(newDraw2)")
+        }
+        draw3.forEach
+        { card in
+                XCTAssertTrue(newDraw3.contains(card), "\(card)\(newDraw3)")
+        }
+        draw4.forEach
+        { card in
+                XCTAssertTrue(newDraw4.contains(card), "\(card)\(newDraw4)")
+        }
+    }
+    
+    func testSuperShuffled()
+    {
+        let deck = ImmutablePartition(piles: [GameStartHelper.generateCityCards()])
+        let newDeck = deck.superShuffle()
+        XCTAssertEqual(deck.count, newDeck.count)
+        XCTAssertNotEqual(try! deck.draw(numberOfCards: 48).cards, try! newDeck.draw(numberOfCards: 48).cards)
+        
+        let cityCards = GameStartHelper.generateCityCards()
+        let deck2 = ImmutablePartition(piles: [Array(cityCards[0..<12]), Array(cityCards[12..<24]),
+                                               Array(cityCards[24..<36]), Array(cityCards[36..<48])])
+        let newDeck2 = deck2.superShuffle()
+        XCTAssertEqual(deck2.count, newDeck2.count)
+        let (drawDeck1, draw1) = try! deck2.draw(numberOfCards: 12)
+        let (drawDeck2, draw2) = try! drawDeck1.draw(numberOfCards: 12)
+        let (drawDeck3, draw3) = try! drawDeck2.draw(numberOfCards: 12)
+        let (drawDeck4, draw4) = try! drawDeck3.draw(numberOfCards: 12)
+        
+        let (newDrawDeck1, newDraw1) = try! newDeck2.draw(numberOfCards: 12)
+        let (newDrawDeck2, newDraw2) = try! newDrawDeck1.draw(numberOfCards: 12)
+        let (newDrawDeck3, newDraw3) = try! newDrawDeck2.draw(numberOfCards: 12)
+        let (newDrawDeck4, newDraw4) = try! newDrawDeck3.draw(numberOfCards: 12)
+        
+        XCTAssertNotEqual(draw1, newDraw1)
+        XCTAssertNotEqual(draw2, newDraw2)
+        XCTAssertNotEqual(draw3, newDraw3)
+        XCTAssertNotEqual(draw4, newDraw4)
+        
+        XCTAssertEqual(drawDeck1.count, newDrawDeck1.count)
+        XCTAssertEqual(drawDeck2.count, newDrawDeck2.count)
+        XCTAssertEqual(drawDeck3.count, newDrawDeck3.count)
+        XCTAssertEqual(drawDeck4.count, newDrawDeck4.count)
+        
+        XCTAssertTrue(draw1.reduce(false)
+        { result, card -> Bool in
+            result || !newDraw1.contains(card)
+        })
+        
+        XCTAssertTrue(draw2.reduce(false)
+        { result, card -> Bool in
+            result || !newDraw2.contains(card)
+        })
+        
+        XCTAssertTrue(draw3.reduce(false)
+        { result, card -> Bool in
+            result || !newDraw3.contains(card)
+        })
+        
+        XCTAssertTrue(draw4.reduce(false)
+        { result, card -> Bool in
+            result || !newDraw4.contains(card)
+        })
+    }
 }
