@@ -17,6 +17,7 @@ class Trainer
     {
         simulator = PandemicSimulator(missingRule: nil)
         self.utility = utility
+       
     }
     
     func train()
@@ -29,26 +30,49 @@ class Trainer
             /**
              This will just run the same game every time, Nick will write something to easily reset it.
              */
+            simulator = simulator.startGame()
+            print(simulator.gameStatus)
             while simulator.gameStatus.isInProgress
             {
+                //var updatedState: Simulator
+                
+             // let actions = simulator.legalActions()
+                /*for action in actions {
+                    print(action)
+                }*/
+                //let countActions = actions.count
+               // let actionNumber  = Int.random(in: 0 ..< countActions)
+               // print(actionNumber)
+               //  print(actions[actionNumber])
+                
+                //try! updatedState = simulator.execute(action: actions[actionNumber])
+                //simulator = try! simulator.execute(action: actions[actionNumber])
                 /**
                  Maps a list of legal actions to the gamestate that would result from executing them.
                  */
                 let gameStates = simulator.legalActions().map
-                { action -> PandemicSimulatorProtocol in
+               
+              { action -> PandemicSimulatorProtocol in
+                    print(action.description)
                     return try! simulator.execute(action: action)
                 }
+               
                 let maxGameState = gameStates.max(by:
+                   
                 { (gameState1, gameState2) -> Bool in
                     self.utility.calculateUtilityWithWeights(currentGameState: gameState1, currentWeights: utility.weights)
                         < utility.calculateUtilityWithWeights(currentGameState: gameState2, currentWeights: utility.weights)
                 })
                 //Assuming just greedy
-                simulator = (maxGameState! as! Simulator)
-            }
+                print (self.utility.calculateUtilityWithWeights(currentGameState:maxGameState!, currentWeights: utility.weights))
+                
+        }
+            
+            print(simulator.gameStatus)
             simulator = simulator.reset()
             //TODO: Calculate distance between two locations
             //Use LocationSearchHelper
         }
     }
+    
 }

@@ -40,7 +40,7 @@ protocol WeightedUtilityFunction
      - currentGameState: the currentGameState
      - currentWeights: the current weights
      */
-    func calculateUtilityWithWeights(currentGameState: GameState,
+    func calculateUtilityWithWeights(currentGameState: PandemicSimulatorProtocol,
                           currentWeights:Dictionary<String, Float> ) -> Float
     
     /**

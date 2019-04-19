@@ -77,7 +77,7 @@ class Simulation {
             print("\(updatedState.location(of:pawn).city.name),\(updatedState.location(of:pawn).cubes.black)\(updatedState.location(of:pawn).cubes.blue),\(updatedState.location(of:pawn).cubes.red), \(updatedState.location(of:pawn).cubes.yellow)")
            
         }
-        let util = utility.calculateUtility(currentGameState: updatedState)
+        let util = utility.calculateUtility(currentGameState: updatedState as! PandemicSimulatorProtocol)
         print("Util: \(util)")
        
        

@@ -14,6 +14,8 @@ class Utility: WeightedUtilityFunction, UtilityFunction {
     
     
     
+    
+    
     /** the current value of the game state
      */
     var utility: Float
@@ -42,14 +44,14 @@ class Utility: WeightedUtilityFunction, UtilityFunction {
    
     init() {
         weights = [
-            "cubesOnBoard" : 1,
-            "cubesRemaining" : 1,
+            "cubesOnBoard" : -1,
+            "cubesRemaining" : -1,
             "curedDiseases" : 1,
-            "infectionRate" : 1,
-            "maxOutbreaks" : 1,
-            "playerDeckCount" : 1,
-            "uncuredDiseases" : 1,
-            "outbreaksSoFar" : 1,
+            "infectionRate" : -1,
+            "maxOutbreaks" : -1,
+            "playerDeckCount" : -1,
+            "uncuredDiseases" : -1,
+            "outbreaksSoFar" : -1,
             
             
         ]
@@ -65,7 +67,7 @@ class Utility: WeightedUtilityFunction, UtilityFunction {
      - Returns
      - utility
      */
-    func calculateUtility(currentGameState: GameState) -> Float{
+    func calculateUtility(currentGameState: PandemicSimulatorProtocol) -> Float{
         var total: Float
         
         
@@ -84,7 +86,7 @@ class Utility: WeightedUtilityFunction, UtilityFunction {
         print(currentGameState.playerDeck.count)
             print(currentGameState.uncuredDiseases.count)
             print(currentGameState.outbreaksSoFar)*/
-            let cubesOnBoard =  Float(calcCubesOnBoard(currentGameState: currentGameState))
+        let cubesOnBoard =  Float(calcCubesOnBoard(currentGameState: PandemicSimulatorProtocol.self as! PandemicSimulatorProtocol))
          print("Current Cubes \(cubesOnBoard)")
         
         let cubesRemaining = Float(currentGameState.cubesRemaining[.yellow]!)
@@ -133,20 +135,47 @@ class Utility: WeightedUtilityFunction, UtilityFunction {
      - currentGameState: the currentGameState
      - currentWeights: the current weights
      */
-    func calculateUtilityWithWeights(currentGameState: GameState,
+    func calculateUtilityWithWeights(currentGameState: PandemicSimulatorProtocol,
                                      currentWeights:Dictionary<String, Float> ) -> Float{
-        return 1.0
+        var total: Float
+        
+        //let cubesOnBoard =  Float(calcCubesOnBoard(currentGameState: PandemicSimulatorProtocol.self as! PandemicSimulatorProtocol))
+        //print("Current Cubes \(cubesOnBoard)")
+        
+        let cubesRemaining = Float(currentGameState.cubesRemaining[.yellow]!)
+            + Float(currentGameState.cubesRemaining[.red]!)
+            + Float(currentGameState.cubesRemaining[.blue]!)
+            +  Float(currentGameState.cubesRemaining[.black]!)
+        total = Float(cubesRemaining*weights["cubesRemaining"]!)
+        total += Float(currentGameState.infectionRate.cardsToDraw)*weights["infectionRate"]!
+        total += Float(currentGameState.curedDiseases.count)*weights["curedDiseases"]!
+        total += Float(currentGameState.infectionRate.cardsToDraw)*weights["infectionRate"]!
+        total += Float(currentGameState.maxOutbreaks)*weights["maxOutbreaks"]!
+        total += Float(1/currentGameState.playerDeck.count)*weights["playerDeckCount"]!
+        total += Float(currentGameState.uncuredDiseases.count)*weights["uncuredDiseases"]!
+        total += Float(currentGameState.outbreaksSoFar)*weights["outbreaksSoFar"]!
+        /*if (cubesOnBoard == 0){
+            total += reward
+        }*/
+        /**if (currentGameState.gameStatus == .win){
+            total += reward
+        }
+        else if (currentGameState.gameStatus.lose)
+            total += Float(-500.0)
+    }
+        **/
+        return total
     }
     
-    func calcCubesOnBoard(currentGameState: GameState) -> Int {
+    func calcCubesOnBoard(currentGameState: PandemicSimulatorProtocol) -> Int {
         var count = 0
-        for location in currentGameState.locations{
+        /*for location in currentGameState.b   locationGraph{
             count += location.cubes.black.rawValue
             count += location.cubes.yellow.rawValue
             count += location.cubes.blue.rawValue
             count += location.cubes.red.rawValue
-        }
-        return count
+        }*/
+        return 1
         
     }
     

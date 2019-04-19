@@ -16,6 +16,7 @@
 		01660BF42230D47200FD400A /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF32230D47200FD400A /* Card.swift */; };
 		01660BF62230D85200FD400A /* Decks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF52230D85200FD400A /* Decks.swift */; };
 		01660BF82230E00E00FD400A /* GameBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01660BF72230E00E00FD400A /* GameBoard.swift */; };
+		4E45E73F226A3D8C009D79BA /* TrainterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E45E73E226A3D8C009D79BA /* TrainterTest.swift */; };
 		4EBD7D752258FB0500F0CFF0 /* UtilityFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBD7D742258FB0500F0CFF0 /* UtilityFunction.swift */; };
 		4EBD7D772258FB3B00F0CFF0 /* WeightedUtilityFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBD7D762258FB3B00F0CFF0 /* WeightedUtilityFunction.swift */; };
 		4EBD7D79225903CA00F0CFF0 /* Simulation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBD7D78225903CA00F0CFF0 /* Simulation.swift */; };
@@ -87,6 +88,7 @@
 		01660BF32230D47200FD400A /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		01660BF52230D85200FD400A /* Decks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decks.swift; sourceTree = "<group>"; };
 		01660BF72230E00E00FD400A /* GameBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBoard.swift; sourceTree = "<group>"; };
+		4E45E73E226A3D8C009D79BA /* TrainterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainterTest.swift; sourceTree = "<group>"; };
 		4EBD7D742258FB0500F0CFF0 /* UtilityFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UtilityFunction.swift; path = MachineLearning/UtilityFunction.swift; sourceTree = SOURCE_ROOT; };
 		4EBD7D762258FB3B00F0CFF0 /* WeightedUtilityFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WeightedUtilityFunction.swift; path = MachineLearning/WeightedUtilityFunction.swift; sourceTree = SOURCE_ROOT; };
 		4EBD7D78225903CA00F0CFF0 /* Simulation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Simulation.swift; path = MachineLearning/Simulation.swift; sourceTree = SOURCE_ROOT; };
@@ -212,6 +214,7 @@
 				ED9EE0AA22587093007FB6CE /* CardRelatedTransitionTesting.swift */,
 				4EBD7D7A2259166A00F0CFF0 /* SimulationsTests.swift */,
 				ED15A33E225FE484000E75E4 /* CurrentPlayerTests.swift */,
+				4E45E73E226A3D8C009D79BA /* TrainterTest.swift */,
 			);
 			path = PandemicSolverTests;
 			sourceTree = "<group>";
@@ -452,6 +455,7 @@
 				EDAC5D972253245E008A0A2C /* GeneratingLegalMovesTessts.swift in Sources */,
 				EDEAF590224C665F007C2CC6 /* CityTest.swift in Sources */,
 				ED9164F922543AAB0026AA6A /* DispatcherTransitionTests.swift in Sources */,
+				4E45E73F226A3D8C009D79BA /* TrainterTest.swift in Sources */,
 				ED15A33F225FE484000E75E4 /* CurrentPlayerTests.swift in Sources */,
 				ED51C8A02257E5A0008C1E7D /* InfectionRateTests.swift in Sources */,
 				ED3D6321224E883B00F51DCF /* TestCubeCount.swift in Sources */,

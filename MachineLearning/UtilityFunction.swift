@@ -25,6 +25,6 @@ protocol UtilityFunction
      - Returns
      - utility
      */
-    func calculateUtility(currentGameState: GameState)-> Float
+    func calculateUtility(currentGameState: PandemicSimulatorProtocol)-> Float
 
 }
