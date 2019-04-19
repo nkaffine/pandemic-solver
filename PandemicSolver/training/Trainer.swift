@@ -10,14 +10,12 @@ import Foundation
 
 class Trainer
 {
-    private let simulator: Simulator
-    private var editableSimulator: Simulator
+    private var simulator: PandemicSimulatorProtocol
     private var utility: WeightedUtilityFunction
     
     init(utility: WeightedUtilityFunction, missingRole: Role? = nil)
     {
-        simulator = GameBoard(missingRole: missingRole)
-        editableSimulator = simulator
+        simulator = PandemicSimulator(missingRule: nil)
         self.utility = utility
     }
     
@@ -31,15 +29,14 @@ class Trainer
             /**
              This will just run the same game every time, Nick will write something to easily reset it.
              */
-            editableSimulator = simulator
-            while editableSimulator.gameStatus.isInProgress
+            while simulator.gameStatus.isInProgress
             {
                 /**
                  Maps a list of legal actions to the gamestate that would result from executing them.
                  */
-                let gameStates = editableSimulator.legalActions().map
-                { action -> GameState in
-                    return try! editableSimulator.execute(action: action)
+                let gameStates = simulator.legalActions().map
+                { action -> PandemicSimulatorProtocol in
+                    return try! simulator.execute(action: action)
                 }
                 let maxGameState = gameStates.max(by:
                 { (gameState1, gameState2) -> Bool in
@@ -47,8 +44,9 @@ class Trainer
                         < utility.calculateUtilityWithWeights(currentGameState: gameState2, currentWeights: utility.weights)
                 })
                 //Assuming just greedy
-                editableSimulator = (maxGameState! as! Simulator)
+                simulator = (maxGameState! as! Simulator)
             }
+            simulator = simulator.reset()
             //TODO: Calculate distance between two locations
             //Use LocationSearchHelper
         }
