@@ -64,6 +64,7 @@ class Trainer
                         < utility.calculateUtilityWithWeights(currentGameState: gameState2, currentWeights: utility.weights)
                 })
                 //Assuming just greedy
+                simulator = maxGameState!
                 print (self.utility.calculateUtilityWithWeights(currentGameState:maxGameState!, currentWeights: utility.weights))
                 
         }

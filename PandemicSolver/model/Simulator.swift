@@ -185,6 +185,7 @@ protocol PandemicSimulatorProtocol
 
 class PandemicSimulator: PandemicSimulatorProtocol
 {
+    
     private var board: GameBoard
     
     init(missingRule: Role? = nil)
