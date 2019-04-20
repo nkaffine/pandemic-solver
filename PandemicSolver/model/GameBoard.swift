@@ -8,7 +8,7 @@
 
 import Foundation
 
-class GameBoard: GameState, Simulator, GameStateFeatures, CustomStringConvertible
+class GameBoard: GameState, Simulator, CustomStringConvertible
 {
     private let locationGraph: LocationGraphProtocol
     
@@ -72,9 +72,9 @@ class GameBoard: GameState, Simulator, GameStateFeatures, CustomStringConvertibl
     /**
      Initializes the game but does not set the game up.
      */
-    init() {
+    init(missingRole: Role? = nil) {
         self.locationGraph = LocationGraph()
-        self.pawns = GameStartHelper.selectPawns()
+        self.pawns = GameStartHelper.selectPawns(with: missingRole)
         var locations = [Pawn: CityName]()
         var cityCards = GameStartHelper.generateCityCards()
         var pawnHands = [Pawn: HandProtocol]()

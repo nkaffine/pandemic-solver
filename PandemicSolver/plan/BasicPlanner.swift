@@ -42,7 +42,7 @@ struct BasicPlanner: PlannerProtocol
         return bestAction!.action
     }
     
-    private func getUtility(of action: Action, from game: GameState) -> Utility
+    private func getUtility(of action: Action, from game: GameState) -> UtilityValue
     {
         if action == .drawAndInfect
         {
@@ -73,7 +73,7 @@ struct BasicPlanner: PlannerProtocol
 private struct ActionUtilityPair: Comparable
 {
     let action: Action
-    let utility: Utility
+    let utility: UtilityValue
     
     static func < (lhs: ActionUtilityPair, rhs: ActionUtilityPair) -> Bool
     {

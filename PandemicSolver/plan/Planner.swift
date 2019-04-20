@@ -19,7 +19,7 @@ protocol PlannerProtocol
 }
 
 //MARK: Temporary stuff.
-typealias Utility = Double
+typealias UtilityValue = Double
 
 protocol UtilityProtocol
 {
@@ -29,12 +29,12 @@ protocol UtilityProtocol
         - game: the game state from which the utility will be calculated.
      - Returns: a double representing how promissing the given gamestate is.
      */
-    func utility(of game: GameState) -> Utility
+    func utility(of game: GameState) -> UtilityValue
 }
 
 struct RandomUtility: UtilityProtocol
 {
-    func utility(of game: GameState) -> Utility
+    func utility(of game: GameState) -> UtilityValue
     {
         return Double((-100..<100).randomElement()!)
     }
