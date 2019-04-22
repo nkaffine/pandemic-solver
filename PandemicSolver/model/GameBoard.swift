@@ -140,7 +140,7 @@ class GameBoard: GameState, Simulator, GameStateFeatures, CustomStringConvertibl
                                   pawnHands: pawnHands)
     }
     
-    func transition(pawn: Pawn, for action: Action) throws -> GameState
+    func transition(pawn: Pawn, for action: Action) throws -> (GameState, Reward)
     {
         switch action
         {
@@ -163,7 +163,7 @@ class GameBoard: GameState, Simulator, GameStateFeatures, CustomStringConvertibl
                         {
                             throw BoardError.invalidMove
                         }
-                        return move(pawn: pawn1, to: city)
+                        return (move(pawn: pawn1, to: city), .none)
                 }
             case .general(let generalAction):
                 return try execute(action: generalAction, for: pawn)
@@ -172,7 +172,7 @@ class GameBoard: GameState, Simulator, GameStateFeatures, CustomStringConvertibl
                 {
                     throw BoardError.invalidMove
                 }
-                return self.drawPlayerCards().drawInfectionCards()
+                return (self.drawPlayerCards().drawInfectionCards(), .none)
         }
     }
     
@@ -253,9 +253,9 @@ extension GameBoard
      - action: the action the pawn is going to execute
      - pawn: the pawn that is going to execute the action.
      - Throws: `BoardError.invalidMove` when the move is invalid
-     - Returns: the gamestate with the updated state for the action.
+     - Returns: the gamestate with the updated state for the action and the reward of that reaction.
      */
-    private func execute(action: GeneralAction, for pawn: Pawn) throws -> GameState
+    private func execute(action: GeneralAction, for pawn: Pawn) throws -> (GameState, Reward)
     {
         //TODO: Break these out into helper functions
         switch action
@@ -273,11 +273,11 @@ extension GameBoard
                 //TODO: Deal with hand limit stuff
                 let (atHandLimit, newHand) = hand.discard(card: Card(cityName: city))
                 let newHands = pawnHands.imutableUpdate(key: pawn, value: newHand)
-                return copy(locationGraph: locationGraph.addResearchStation(to: city), pawnHands: newHands)
+                return (copy(locationGraph: locationGraph.addResearchStation(to: city), pawnHands: newHands), .none)
             }
             else
             {
-                return copy(locationGraph: locationGraph.addResearchStation(to: city))
+                return (copy(locationGraph: locationGraph.addResearchStation(to: city)), .none)
             }
             
         case .drive(let city):
@@ -285,7 +285,7 @@ extension GameBoard
             {
                 throw BoardError.invalidMove
             }
-            return move(pawn: pawn, to: city)
+            return (move(pawn: pawn, to: city), .none)
             
         //The cases where you move and don't discard a card
         case .shuttleFlight(let city):
@@ -293,7 +293,7 @@ extension GameBoard
             {
                 throw BoardError.invalidMove
             }
-            return move(pawn: pawn, to: city)
+            return (move(pawn: pawn, to: city), .none)
             
         //The cases where you move and discard a card
         case .directFlight(let city):
@@ -304,7 +304,7 @@ extension GameBoard
             //TODO: Deal with hand limit stuff
             let (atHandLimit, newHand) = hand.discard(card: Card(cityName: city))
             let newHands = pawnHands.imutableUpdate(key: currentPlayer, value: newHand)
-            return copy(pawnHands: newHands).move(pawn: pawn, to: city)
+            return (copy(pawnHands: newHands).move(pawn: pawn, to: city), .none)
             
         case .charterFlight(let city):
             guard let hand = pawnHands[currentPlayer], let currentLocation = pawnLocations[pawn],
@@ -315,7 +315,7 @@ extension GameBoard
             //TODO: Deal with hand limit stuff
             let (atHandLimit, newHand) = hand.discard(card: Card(cityName: currentLocation))
             let newHands = pawnHands.imutableUpdate(key: currentPlayer, value: newHand)
-            return copy(pawnHands: newHands).move(pawn: pawn, to: city)
+            return (copy(pawnHands: newHands).move(pawn: pawn, to: city), .none)
             
         case .cure(let disease):
             let threshold = pawn.role == .scientist ? 4 : 5
@@ -344,20 +344,20 @@ extension GameBoard
             let (atHandLimit, newHand) = hand.discard(cards: cardsToDiscard)
             let newHands = pawnHands.imutableUpdate(key: pawn, value: newHand)
             let newCuredDisease = self.curedDiseases + [disease]
-            return copy(pawnHands: newHands,
+            return (copy(pawnHands: newHands,
                         uncuredDiseases: uncuredDiseases.filter { $0 != disease },
                         curedDiseases: newCuredDisease,
-                        gameStatus: newCuredDisease.count == 4 ? .win(reason: "All Diseases Cured") : .inProgress)
+                        gameStatus: newCuredDisease.count == 4 ? .win(reason: "All Diseases Cured") : .inProgress), .curedDisease)
             
         case .treat(let disease):
             guard let city = pawnLocations[pawn] else
             {
                 throw BoardError.invalidMove
             }
-            return copy(locationGraph: locationGraph.removeCubes(.one, of: disease, on: city), gameStatus: gameStatus)
+            return (copy(locationGraph: locationGraph.removeCubes(.one, of: disease, on: city), gameStatus: gameStatus), .treatedDisease)
             
         case .pass:
-            return self
+            return (self, .none)
             
         case .shareKnowledge(let card, let pawn2):
             guard let hand1 = pawnHands[pawn], let hand2 = pawnHands[pawn2] else
@@ -369,7 +369,7 @@ extension GameBoard
             //TODO: Add discarding card mechanism.
             let newHand2 = hand2.draw(card: card).1
             let newPawnHands = pawnHands.imutableUpdate(key: pawn, value: newHand1).imutableUpdate(key: pawn2, value: newHand2)
-            return copy(pawnHands: newPawnHands)
+            return (copy(pawnHands: newPawnHands), .sharedKnowledge)
         }
     }
 }

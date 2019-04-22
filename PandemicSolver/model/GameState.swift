@@ -166,14 +166,14 @@ protocol GameState
     /**
      Moves the given pawn by doing the given action.
      - Parameters:
-     - pawn: the pawn that is performing the action.
-     - action: the action that is being performed.
+         - pawn: the pawn that is performing the action.
+         - action: the action that is being performed.
      - Throws: `BoardError.invalidMove` if the move is invalid.
      - `BoardError.invalidPawn` when the pawn is not in the game
-     - Returns: the state of the game after the transition (if this is implemented as a struct
-     this will be easy to make multithreaded).
+     - Returns: the state of the game after the transition and the reward
+        correlated with the action taken.
      */
-    func transition(pawn: Pawn, for action: Action) throws -> GameState
+    func transition(pawn: Pawn, for action: Action) throws -> (GameState, Reward)
     /**
      Returns the current hand for the given pawn.
      - Parameters:
