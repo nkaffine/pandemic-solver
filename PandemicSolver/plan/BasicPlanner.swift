@@ -23,7 +23,7 @@ struct BasicPlanner: PlannerProtocol
         self.utility = utility
     }
     
-    func calcaulateAction(from game: GameState) -> Action
+    func calcaulateAction(from game: PandemicSimulatorProtocol) -> Action
     {
         var bestAction: ActionUtilityPair?
         game.legalActions().forEach
@@ -42,7 +42,7 @@ struct BasicPlanner: PlannerProtocol
         return bestAction!.action
     }
     
-    private func getUtility(of action: Action, from game: GameState) -> UtilityValue
+    private func getUtility(of action: Action, from game: PandemicSimulatorProtocol) -> UtilityValue
     {
         if action == .drawAndInfect
         {
@@ -51,7 +51,7 @@ struct BasicPlanner: PlannerProtocol
         else
         {
             var maxUtility: Double?
-            let nextGameState: GameState = try! game.execute(action: action)
+            let nextGameState: PandemicSimulatorProtocol = try! game.execute(action: action)
             nextGameState.legalActions().forEach
             { legalAction in
                 let utility = getUtility(of: legalAction, from: nextGameState)

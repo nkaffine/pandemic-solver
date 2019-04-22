@@ -10,8 +10,8 @@ import UIKit
 
 class ViewController: UIViewController {
     private var gameRunner: GameBoard!
-    private var simulator: PlanningSimulator = PlanningSimulator(planner: BasicPlanner(utility: RandomUtility()))
-    private var gameState: GameState?
+    private var simulator: PlanningSimulator = PlanningSimulator(planner: MonteCarloPlannerSimpleExploration(utility: RandomUtility()))
+    private var gameState: PandemicSimulatorProtocol?
     private var startTime: Date?
     private var endTime: Date?
     @IBOutlet weak private (set) var runButton: UIButton!

@@ -14,12 +14,12 @@ indirect enum Action: Equatable, CustomStringConvertible
     {
         switch self
         {
-        case .general(let generalAction):
-            return generalAction.description
-        case .dispatcher(let dispatcherAction):
-            return dispatcherAction.description
-        case .drawAndInfect:
-            return "draw and infect"
+            case .general(let generalAction):
+                return generalAction.description
+            case .dispatcher(let dispatcherAction):
+                return dispatcherAction.description
+            case .drawAndInfect:
+                return "draw and infect"
         }
     }
     

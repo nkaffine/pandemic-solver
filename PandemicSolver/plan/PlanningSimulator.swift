@@ -11,18 +11,18 @@ import Foundation
 class PlanningSimulator
 {
     private var planner: PlannerProtocol
-    private var gameState: GameState
+    private var gameState: PandemicSimulatorProtocol
     
-    var startingState: GameState
+    var startingState: PandemicSimulatorProtocol
     
     init(planner: PlannerProtocol)
     {
         self.planner = planner
-        gameState = GameBoard()
+        gameState = PandemicSimulator()
         startingState = gameState
     }
     
-    func simulateGame() -> GameState
+    func simulateGame() -> PandemicSimulatorProtocol
     {
         gameState = gameState.startGame()
         while gameState.gameStatus.isInProgress
@@ -34,6 +34,6 @@ class PlanningSimulator
     
     func reset()
     {
-        self.gameState = GameBoard()
+        self.gameState = gameState.reset()
     }
 }
