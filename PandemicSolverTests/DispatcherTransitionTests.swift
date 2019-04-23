@@ -72,13 +72,13 @@ class DispatcherTransitionTests: XCTestCase {
             }
         }.first!
         //Making sure the two pawns in the swap are not in the same city.
-        let newSut = try! sut.transition(pawn: swappingPawn2, for: moveAction)
+        let newSut = try! sut.transition(pawn: swappingPawn2, for: moveAction).0
         XCTAssertNotEqual(sut.location(of: swappingPawn2), newSut.location(of: swappingPawn2))
         XCTAssertNotEqual(newSut.location(of: swappingPawn2), sut.location(of: swappingPawn))
         
         //Checking that swapping them moves them to the same city and that the city is the second pawns original city.
         let newAction = Action.dispatcher(action: .snap(pawn: swappingPawn2, to: swappingPawn))
-        let newSut2 = try! newSut.transition(pawn: dispatcher, for: newAction)
+        let newSut2 = try! newSut.transition(pawn: dispatcher, for: newAction).0
         XCTAssertEqual(newSut2.location(of: swappingPawn2), newSut2.location(of: swappingPawn))
         XCTAssertEqual(newSut2.location(of: swappingPawn), sut.location(of: swappingPawn))
     }
@@ -99,7 +99,7 @@ class DispatcherTransitionTests: XCTestCase {
 class DispatcherMockBoard: GameBoard
 {
     var transitions: [(pawn: Pawn, action: Action)] = []
-    override func transition(pawn: Pawn, for action: Action) throws -> GameState
+    override func transition(pawn: Pawn, for action: Action) throws -> (GameState, Reward)
     {
         transitions.append((pawn, action))
         return try super.transition(pawn: pawn, for: action)
