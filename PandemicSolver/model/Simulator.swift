@@ -189,8 +189,12 @@ protocol PandemicSimulatorProtocol
     func reset() -> PandemicSimulatorProtocol
 }
 
-class PandemicSimulator: PandemicSimulatorProtocol
+class PandemicSimulator: PandemicSimulatorProtocol, CustomStringConvertible
 {
+    var description: String
+    {
+        return board.description
+    }
     
     private var board: GameBoard
     

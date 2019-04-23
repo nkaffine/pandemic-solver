@@ -108,7 +108,7 @@ extension ViewController
         if let gameState = gameState, let startTime = startTime, let endTime = endTime
         {
             timeOutput.text = "Time taken: \(endTime.timeIntervalSince(startTime))"
-            outputView.text = (gameState as! GameBoard).description
+            outputView.text = (gameState as! PandemicSimulator).description
         }
     }
 }

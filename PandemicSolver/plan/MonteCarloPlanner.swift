@@ -11,7 +11,7 @@ import Foundation
 class MonteCarloPlannerSimpleExploration: PlannerProtocol
 {
     private let utility: UtilityProtocol
-    private let numberOfSimulations = 100
+    private let numberOfSimulations = 10
     
     init(utility: UtilityProtocol)
     {
