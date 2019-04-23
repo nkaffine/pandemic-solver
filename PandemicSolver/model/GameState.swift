@@ -153,7 +153,7 @@ protocol GameState
      - Returns: the gamestate after the action is executed
      - Note: this executes the action as the pawn whose turn it is currently.
      */
-    func execute(action: Action) throws -> GameState
+    func execute(action: Action) throws -> (GameState, Reward)
     
     /**
      Returns all the legal actions in the current state for the given pawn.

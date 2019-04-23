@@ -27,7 +27,7 @@ class PlanningSimulator
         gameState = gameState.startGame()
         while gameState.gameStatus.isInProgress
         {
-            gameState = try! gameState.execute(action: planner.calcaulateAction(from: gameState))
+            gameState = try! gameState.execute(action: planner.calcaulateAction(from: gameState)).0
         }
         return gameState
     }

@@ -51,7 +51,7 @@ struct BasicPlanner: PlannerProtocol
         else
         {
             var maxUtility: Double?
-            let nextGameState: PandemicSimulatorProtocol = try! game.execute(action: action)
+            let nextGameState: PandemicSimulatorProtocol = try! game.execute(action: action).0
             nextGameState.legalActions().forEach
             { legalAction in
                 let utility = getUtility(of: legalAction, from: nextGameState)

@@ -10,14 +10,18 @@ import UIKit
 
 class ViewController: UIViewController {
     private var gameRunner: GameBoard!
-    private var simulator: PlanningSimulator = PlanningSimulator(planner: MonteCarloPlannerSimpleExploration(utility: RandomUtility()))
-    private var gameState: PandemicSimulatorProtocol?
+    private var simulator: PlanningSimulator = PlanningSimulator(planner: MonteCarloTreeSearchUCB(policy: UtilityPolicy()))
+//    private var gameState: PandemicSimulatorProtocol?
     private var startTime: Date?
     private var endTime: Date?
+    private var gameState: PandemicSimulatorProtocol?
     @IBOutlet weak private (set) var runButton: UIButton!
     @IBOutlet weak private (set) var outputView: UITextView!
     @IBOutlet weak private (set) var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var timeOutput: UITextView!
+    private var results: [(time: Double, status: GameStatus, players: [Pawn], playerDeckCount: Int)] = []
+    private var maxIterations = 30
+    private var iterationsSoFar = 0
     
     
     override func viewDidLoad() {
@@ -81,7 +85,7 @@ extension ViewController
     private func simulate()
     {
         simulator.reset()
-        outputView.text = "Players: \(simulator.startingState.pawns)"
+//        outputView.text = "Players: \(simulator.startingState.pawns)"
         activityIndicator.startAnimating()
         runButton.isEnabled = false
         startTime = Date()
@@ -100,7 +104,39 @@ extension ViewController
         endTime = Date()
         activityIndicator.stopAnimating()
         runButton.isEnabled = true
-        outputSimulationResults()
+        if let startTime = startTime, let endTime = endTime
+        {
+            self.results.append((endTime.timeIntervalSince(startTime), gameState!.gameStatus, gameState!.pawns, gameState!.playerDeck.count))
+            printResult(row: self.iterationsSoFar)
+        }
+        reset()
+    }
+    
+    private func reset()
+    {
+        simulator = PlanningSimulator(planner: MonteCarloTreeSearchUCB(policy: UtilityPolicy()))
+        gameState = nil
+        startTime = nil
+        endTime = nil
+        iterationsSoFar += 1
+        if iterationsSoFar < maxIterations
+        {
+            simulate()
+            outputView.text += "Iteration: \(iterationsSoFar): \(results.last!.time)\n"
+        }
+        else
+        {
+            outputView.text = ""
+        }
+    }
+    
+    private func outputResults()
+    {
+        results.forEach
+        { time, status, pawns, playerDeckCount in
+            print("Duration: \(time), status: \(status), Pawns: \(pawns), Turns: \(playerDeckCount)")
+            //outputView.text.append("Duration: \(time), Status: \(status), Pawns: \(pawns)\n")
+        }
     }
     
     private func outputSimulationResults()
@@ -110,6 +146,26 @@ extension ViewController
             timeOutput.text = "Time taken: \(endTime.timeIntervalSince(startTime))"
             outputView.text = (gameState as! PandemicSimulator).description
         }
+    }
+    
+    private func printResult(row: Int)
+    {
+        let row = results[row]
+        var status: String = ""
+        switch row.status
+        {
+            case .win(let reason):
+                status = "win: \(reason)"
+            case .loss(let reason):
+                status = "loss: \(reason)"
+            default:
+                break
+        }
+        let players: String = row.players.reduce("")
+        { result, pawn -> String in
+            result + ",\(pawn)"
+        }
+        print("\(row.time),\(status),\(players),\(row.playerDeckCount)")
     }
 }
 

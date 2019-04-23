@@ -36,7 +36,7 @@ protocol Simulator
      - Returns: the gamestate after the action is executed
      - Note: this executes the action as the pawn whose turn it is currently.
      */
-    func execute(action: Action) throws -> GameState
+    func execute(action: Action) throws -> (GameState, Reward)
     /**
      Does the first round of infecting and changes the game status to inProgress.
      - Returns: the new gameboard with the updated state.
@@ -169,10 +169,10 @@ protocol PandemicSimulatorProtocol
      - Parameters:
         - action: the action being executed
      - Throws: `BoardError.invalidMove` when the move is invalid
-     - Returns: the simulator after the action is executed
+     - Returns: the simulator after the action is executed and the reward for that.
      - Note: this executes the action as the pawn whose turn it is currently.
      */
-    func execute(action: Action) throws -> PandemicSimulatorProtocol
+    func execute(action: Action) throws -> (PandemicSimulatorProtocol, Reward)
     
     /**
      Does the first round of infecting and changes the game status to inProgress.
@@ -187,6 +187,8 @@ protocol PandemicSimulatorProtocol
     func reset(missingRole: Role) -> PandemicSimulatorProtocol
     
     func reset() -> PandemicSimulatorProtocol
+    
+    func createBranch() -> PandemicSimulatorProtocol
 }
 
 class PandemicSimulator: PandemicSimulatorProtocol, CustomStringConvertible
@@ -228,10 +230,10 @@ class PandemicSimulator: PandemicSimulatorProtocol, CustomStringConvertible
         return board.legalActions()
     }
     
-    func execute(action: Action) throws -> PandemicSimulatorProtocol
+    func execute(action: Action) throws -> (PandemicSimulatorProtocol, Reward)
     {
-        let gameState = try board.execute(action: action)
-        return PandemicSimulator(board: gameState as! GameBoard)
+        let (gameState, reward) = try board.execute(action: action)
+        return (PandemicSimulator(board: gameState as! GameBoard), reward)
     }
     
     func startGame() -> PandemicSimulatorProtocol
@@ -322,5 +324,10 @@ class PandemicSimulator: PandemicSimulatorProtocol, CustomStringConvertible
     func reset() -> PandemicSimulatorProtocol
     {
         return PandemicSimulator(board: GameBoard())
+    }
+    
+    func createBranch() -> PandemicSimulatorProtocol
+    {
+        return PandemicSimulator(board: board.createSimulationBranch())
     }
 }

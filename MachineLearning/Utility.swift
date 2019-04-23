@@ -40,18 +40,16 @@ class Utility: WeightedUtilityFunction, UtilityFunction {
      */
     
     var weights: [String: Float]
-    
-   
     init() {
         weights = [
-            "cubesOnBoard" : -1,
-            "cubesRemaining" : -1,
-            "curedDiseases" : 1,
-            "infectionRate" : -1,
-            "maxOutbreaks" : -1,
-            "playerDeckCount" : -1,
-            "uncuredDiseases" : -1,
-            "outbreaksSoFar" : -1,
+            "cubesOnBoard" : -1.0103805,
+            "cubesRemaining" : -0.6300001,
+            "curedDiseases" : -1.0,
+            "infectionRate" : -0.47999975,
+            "maxOutbreaks" : -9.090004,
+            "playerDeckCount" : -2.6800003,
+            "uncuredDiseases" : 1.0,
+            "outbreaksSoFar" : -1.0018458,
             
             
         ]
@@ -86,8 +84,8 @@ class Utility: WeightedUtilityFunction, UtilityFunction {
         print(currentGameState.playerDeck.count)
             print(currentGameState.uncuredDiseases.count)
             print(currentGameState.outbreaksSoFar)*/
-        let cubesOnBoard =  Float(calcCubesOnBoard(currentGameState: PandemicSimulatorProtocol.self as! PandemicSimulatorProtocol))
-         print("Current Cubes \(cubesOnBoard)")
+        let cubesOnBoard =  Float(calcCubesOnBoard(currentGameState: currentGameState))
+//         print("Current Cubes \(cubesOnBoard)")
         
         let cubesRemaining = Float(currentGameState.cubesRemaining[.yellow]!)
             + Float(currentGameState.cubesRemaining[.red]!)
@@ -181,4 +179,24 @@ class Utility: WeightedUtilityFunction, UtilityFunction {
     
     
     
+}
+
+
+struct UtilityPolicy: PolicyProtocol
+{
+    func action(for game: PandemicSimulatorProtocol) -> Action {
+        return game.legalActions().map
+        { action -> (Action, Float) in
+            (action, utility.calculateUtility(currentGameState: try! game.execute(action: action).0))
+        }.max(by: { (action1, action2) -> Bool in
+            action1.1 < action2.1
+        })!.0
+    }
+    
+    private var utility: Utility
+    
+    init()
+    {
+        self.utility = Utility()
+    }
 }
