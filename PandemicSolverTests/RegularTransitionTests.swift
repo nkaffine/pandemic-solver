@@ -44,7 +44,7 @@ class RegularTransitionTests: XCTestCase {
         XCTAssertFalse(sut.locations.filter { $0.city.name == city }.first!.hasResearchStation)
         
         //Check that the move actually did something and that the old state wasn't changed
-        let newSut1 = (try! sut.transition(pawn: pawn, for: Action.general(action: .buildResearchStation)))
+        let newSut1 = (try! sut.transition(pawn: pawn, for: Action.general(action: .buildResearchStation))).0
         
         //Check that the card was discarded
         XCTAssertTrue(try! sut.hand(for: pawn).cards.contains(Card(cityName: sut.location(of: pawn).city.name)))
@@ -73,7 +73,7 @@ class RegularTransitionTests: XCTestCase {
         
         //Check that the ops expert can build the research station from the start
         XCTAssertTrue(sut.legalActions(for: operationsExpert).contains(buildResearchStation))
-        let newSut = try! sut.transition(pawn: operationsExpert, for: buildResearchStation)
+        let newSut = try! sut.transition(pawn: operationsExpert, for: buildResearchStation).0
         //Ops expert shouldn't discard a card
         XCTAssertEqual(try! newSut.hand(for: operationsExpert).cards, try! sut.hand(for: operationsExpert).cards)
         
@@ -83,7 +83,7 @@ class RegularTransitionTests: XCTestCase {
         //Should be able to build after moving as well
         let newSut2 = moveRandomLegalDirection(with: operationsExpert, in: newSut)
         XCTAssertTrue(newSut2.legalActions(for: operationsExpert).contains(buildResearchStation))
-        let newSut3 = try! newSut2.transition(pawn: operationsExpert, for: buildResearchStation)
+        let newSut3 = try! newSut2.transition(pawn: operationsExpert, for: buildResearchStation).0
         //Ops expert shouldn't discard card.
         XCTAssertEqual(try! newSut3.hand(for: operationsExpert).cards, try! sut.hand(for: operationsExpert).cards)
         
@@ -106,7 +106,7 @@ class RegularTransitionTests: XCTestCase {
         {
             newState = moveRandomLegalDirection(with: pawn, in: newState)
         }
-        let newState2 = try! newState.transition(pawn: pawn, for: Action.general(action: .buildResearchStation))
+        let newState2 = try! newState.transition(pawn: pawn, for: Action.general(action: .buildResearchStation)).0
         XCTAssertTrue((try! newState2.hand(for: pawn)).cards.contains(Card(cityName: newState2.location(of: pawn).city.name)))
     }
     
@@ -330,18 +330,18 @@ class RegularTransitionTests: XCTestCase {
         let pawn = Pawn(role: .operationsExpert)
         var researchStations = [CityName]()
         researchStations.append(sut.location(of: pawn).city.name)
-        let sut2 = try! sut.transition(pawn: pawn, for: .general(action: .buildResearchStation))
+        let sut2 = try! sut.transition(pawn: pawn, for: .general(action: .buildResearchStation)).0
         let sut3 = try! moveRandomLegalDirection(with: pawn, in: sut2)
-            .transition(pawn: pawn, for: .general(action: .buildResearchStation))
+            .transition(pawn: pawn, for: .general(action: .buildResearchStation)).0
         researchStations.append(sut3.location(of: pawn).city.name)
         sut.pawns.filter{ $0.role != .operationsExpert }.forEach
         { pawn in
             XCTAssertTrue(sut3.legalActions(for: pawn).contains(.general(action: .shuttleFlight(to: researchStations[1]))))
-            let sut4 = try! sut3.transition(pawn: pawn, for: .general(action: .shuttleFlight(to: researchStations[1])))
+            let sut4 = try! sut3.transition(pawn: pawn, for: .general(action: .shuttleFlight(to: researchStations[1]))).0
             XCTAssertEqual(sut4.location(of: pawn).city.name, researchStations[1])
         }
         XCTAssertTrue(sut3.legalActions(for: pawn).contains(.general(action: .shuttleFlight(to: researchStations[0]))))
-        let sut4 = try! sut3.transition(pawn: pawn, for: .general(action: .shuttleFlight(to: researchStations[0])))
+        let sut4 = try! sut3.transition(pawn: pawn, for: .general(action: .shuttleFlight(to: researchStations[0]))).0
         XCTAssertEqual(sut4.location(of: pawn).city.name, researchStations[0])
     }
     
@@ -369,19 +369,19 @@ class RegularTransitionTests: XCTestCase {
             switch currentLocation.city.color
             {
                 case .red:
-                    let newState = try! currentState.transition(pawn: pawn, for: .general(action: .treat(disease: .red)))
+                    let newState = try! currentState.transition(pawn: pawn, for: .general(action: .treat(disease: .red))).0
                     XCTAssertTrue(newState.locations.first(where: { $0 == currentLocation })!.cubes.red <
                         currentState.locations.first(where: { $0 == currentLocation })!.cubes.red)
                 case .yellow:
-                    let newState = try! currentState.transition(pawn: pawn, for: .general(action: .treat(disease: .yellow)))
+                    let newState = try! currentState.transition(pawn: pawn, for: .general(action: .treat(disease: .yellow))).0
                     XCTAssertTrue(newState.locations.first(where: { $0 == currentLocation })!.cubes.yellow <
                         currentState.locations.first(where: { $0 == currentLocation })!.cubes.yellow)
                 case .black:
-                    let newState = try! currentState.transition(pawn: pawn, for: .general(action: .treat(disease: .black)))
+                    let newState = try! currentState.transition(pawn: pawn, for: .general(action: .treat(disease: .black))).0
                     XCTAssertTrue(newState.locations.first(where: { $0 == currentLocation })!.cubes.black <
                         currentState.locations.first(where: { $0 == currentLocation })!.cubes.black)
                 case .blue:
-                    let newState = try! currentState.transition(pawn: pawn, for: .general(action: .treat(disease: .blue)))
+                    let newState = try! currentState.transition(pawn: pawn, for: .general(action: .treat(disease: .blue))).0
                     XCTAssertTrue(newState.locations.first(where: { $0 == currentLocation })!.cubes.blue <
                         currentState.locations.first(where: { $0 == currentLocation })!.cubes.blue)
             }
@@ -392,7 +392,7 @@ class RegularTransitionTests: XCTestCase {
     {
         sut.pawns.forEach
         { pawn in
-            let newSut = try! sut.transition(pawn: pawn, for: .general(action: .pass))
+            let newSut = try! sut.transition(pawn: pawn, for: .general(action: .pass)).0
             XCTAssertEqual(newSut.actionsRemaining, sut.actionsRemaining)
             XCTAssertEqual(newSut.cubesRemaining, sut.cubesRemaining)
             XCTAssertEqual(newSut.curedDiseases, sut.curedDiseases)
@@ -457,7 +457,7 @@ class RegularTransitionTests: XCTestCase {
                     return false
             }
         }
-        return try! state.transition(pawn: pawn, for: legalMoveActions.randomElement()!)
+        return try! state.transition(pawn: pawn, for: legalMoveActions.randomElement()!).0
     }
     
     /**
@@ -509,7 +509,7 @@ class RegularTransitionTests: XCTestCase {
                 case .drawAndInfect:
                     return false
             }
-        }.randomElement()!)
+        }.randomElement()!).0
     }
     
     private func canBuildResearchStation(pawn: Pawn) -> Bool

@@ -33,6 +33,8 @@
 		ED20B263226907790017512D /* Trainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED20B262226907790017512D /* Trainer.swift */; };
 		ED20B265226918010017512D /* LocationSearchHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED20B264226918010017512D /* LocationSearchHelper.swift */; };
 		ED20B26722691C540017512D /* LocationSearchHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED20B26622691C540017512D /* LocationSearchHelperTests.swift */; };
+		ED1BFCB5226E7D1C0019BE70 /* Reward.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1BFCB4226E7D1C0019BE70 /* Reward.swift */; };
+>>>>>>> simulator-with-rewards
 		ED3C827B224EEB1A006417FB /* DictionaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3C827A224EEB1A006417FB /* DictionaryTests.swift */; };
 		ED3C827D224FAEF0006417FB /* BoardLocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3C827C224FAEF0006417FB /* BoardLocationTests.swift */; };
 		ED3C827F224FBC1D006417FB /* BoardLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3C827E224FBC1D006417FB /* BoardLocation.swift */; };
@@ -105,6 +107,8 @@
 		ED20B262226907790017512D /* Trainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trainer.swift; sourceTree = "<group>"; };
 		ED20B264226918010017512D /* LocationSearchHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchHelper.swift; sourceTree = "<group>"; };
 		ED20B26622691C540017512D /* LocationSearchHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchHelperTests.swift; sourceTree = "<group>"; };
+		ED1BFCB4226E7D1C0019BE70 /* Reward.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reward.swift; sourceTree = "<group>"; };
+>>>>>>> simulator-with-rewards
 		ED3C827A224EEB1A006417FB /* DictionaryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryTests.swift; sourceTree = "<group>"; };
 		ED3C827C224FAEF0006417FB /* BoardLocationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardLocationTests.swift; sourceTree = "<group>"; };
 		ED3C827E224FBC1D006417FB /* BoardLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardLocation.swift; sourceTree = "<group>"; };
@@ -223,6 +227,7 @@
 			isa = PBXGroup;
 			children = (
 				01660BF32230D47200FD400A /* Card.swift */,
+				ED1BFCB4226E7D1C0019BE70 /* Reward.swift */,
 				ED9EE0A8225837CF007FB6CE /* Simulator.swift */,
 				EDEAF591224C671F007C2CC6 /* Disease.swift */,
 				EDEAF58D224C6630007C2CC6 /* City.swift */,
@@ -414,6 +419,7 @@
 				ED20B263226907790017512D /* Trainer.swift in Sources */,
 				EDEAF594224C6758007C2CC6 /* Hand.swift in Sources */,
 				01660BD52230D28100FD400A /* ViewController.swift in Sources */,
+				ED1BFCB5226E7D1C0019BE70 /* Reward.swift in Sources */,
 				01660BF82230E00E00FD400A /* GameBoard.swift in Sources */,
 				ED9EC1DF224D41AF009D9BD9 /* Policy.swift in Sources */,
 				ED20B25F226906200017512D /* PlanningSimulator.swift in Sources */,
