@@ -188,7 +188,7 @@ class GameBoard: GameState, Simulator, GameStateFeatures, CustomStringConvertibl
     }
     
     func execute(action: Action) throws -> GameState {
-        return try (transition(pawn: currentTurn.currentPawn, for: action) as! GameBoard).incrementTurn()
+        return try (transition(pawn: currentTurn.currentPawn, for: action).0 as! GameBoard).incrementTurn()
     }
     
     /**
