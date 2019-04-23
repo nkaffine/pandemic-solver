@@ -56,7 +56,7 @@ class Trainer
                
               { action -> PandemicSimulatorProtocol in
                 //print(action.description)
-                    return try! simulator.execute(action: action)
+                    return try! simulator.execute(action: action).0
                 }
                
                 var maxGameState = gameStates.max(by:
@@ -80,9 +80,8 @@ class Trainer
                         let actionNumber  = Int.random(in: 0 ..< countActions)
                         // print(actionNumber)
                         //  print(actions[actionNumber])
-                        
                         //try! (maxGameState, reward) = simulator.execute(action: actions[actionNumber])
-                         try! maxGameState = simulator.execute(action: actions[actionNumber])
+                         try! maxGameState = simulator.execute(action: actions[actionNumber]).0
                         print("Greedy!")
                         //simulator = try! simulator.execute(action: actions[actionNumber])
                     }

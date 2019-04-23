@@ -36,7 +36,7 @@ protocol Simulator
      - Returns: the gamestate after the action is executed
      - Note: this executes the action as the pawn whose turn it is currently.
      */
-    func execute(action: Action) throws -> GameState
+    func execute(action: Action) throws -> (GameState, Reward)
     /**
      Does the first round of infecting and changes the game status to inProgress.
      - Returns: the new gameboard with the updated state.
@@ -172,7 +172,7 @@ protocol PandemicSimulatorProtocol
      - Returns: the simulator after the action is executed
      - Note: this executes the action as the pawn whose turn it is currently.
      */
-    func execute(action: Action) throws -> PandemicSimulatorProtocol
+    func execute(action: Action) throws -> (PandemicSimulatorProtocol, Reward)
     
     /**
      Does the first round of infecting and changes the game status to inProgress.
@@ -224,10 +224,10 @@ class PandemicSimulator: PandemicSimulatorProtocol
         return board.legalActions()
     }
     
-    func execute(action: Action) throws -> PandemicSimulatorProtocol
+    func execute(action: Action) throws -> (PandemicSimulatorProtocol, Reward)
     {
-        let gameState = try board.execute(action: action)
-        return PandemicSimulator(board: gameState as! GameBoard)
+        let (gameState, reward) = try board.execute(action: action)
+        return (PandemicSimulator(board: gameState as! GameBoard), reward)
     }
     
     func startGame() -> PandemicSimulatorProtocol

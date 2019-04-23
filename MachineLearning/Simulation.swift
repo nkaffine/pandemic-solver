@@ -70,7 +70,7 @@ class Simulation {
         let countActions = actions.count
         let actionNumber  = Int.random(in: 0 ..< countActions)
       
-        try! updatedState = gs.execute(action: actions[actionNumber])
+        try! updatedState = gs.execute(action: actions[actionNumber]).0
         print("Action taken \(actions[actionNumber])")
         let pawns = updatedState.pawns
         for pawn in pawns {
