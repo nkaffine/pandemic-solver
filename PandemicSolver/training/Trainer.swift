@@ -62,19 +62,22 @@ class Trainer
                     return try! simulator.execute(action: action)
                 }
                
+               
                 var maxGameState = gameStates.max(by:
-                   
-                { (gameState1, gameState2) -> Bool in
-                    self.utility.calculateUtilityWithWeights(currentGameState: gameState1.0, currentWeights: utility.weights, reward:gameState1.1)
-                        > utility.calculateUtilityWithWeights(currentGameState: gameState2.0, currentWeights: utility.weights, reward:gameState1.1)
+                    
+                    { (gameState1, gameState2) -> Bool in
+                        self.utility.calculateUtilityWithWeights(currentGameState: gameState1.0, currentWeights: utility.weights, reward:gameState1.1)
+                            < utility.calculateUtilityWithWeights(currentGameState: gameState2.0, currentWeights: utility.weights, reward:gameState1.1)
                 })
+               
                   let newMax = self.utility.calculateUtilityWithWeights(currentGameState:maxGameState!.0, currentWeights: utility.weights, reward: (maxGameState?.1)! )
-                 print(newMax)
+               
+             
                 //epison greedy
               
                 var rewardValue: Float
                     let epsilonGreedy  = Double.random(in: 0 ..< 1)
-                    if epsilonGreedy < 0.15 {
+                if epsilonGreedy < 0.15 {
                         let actions = simulator.legalActions()
                         let countActions = actions.count
                         let actionNumber  = Int.random(in: 0 ..< countActions)
@@ -82,11 +85,11 @@ class Trainer
                         //  print(actions[actionNumber])
                         //try! (maxGameState, reward) = simulator.execute(action: actions[actionNumber])
                          try! maxGameState = simulator.execute(action: actions[actionNumber])
-                        print("Greedy!")
+                        //print("Greedy!")
                      
                         let newMax = self.utility.calculateUtilityWithWeights(currentGameState:maxGameState!.0, currentWeights: utility.weights, reward: (maxGameState?.1)! )
                       
-                        print (newMax)
+                    //print (newMax)
                 
                         utility.weights = utility.updateWeights(currentGameState: simulator, currentWeights: utility.weights, predictedUtility: newMax, actualUtility:maxQ)
                 
@@ -102,17 +105,17 @@ class Trainer
             print(utility.weights)
             print(count)
              
-           /* utility.weights["minDistance"] =  utility.weights["minDistance"]! * -0.01
-           utility.weights["cubesOnBoard"] = utility.weights["cubesOnBoard"]! * -0.01
-            utility.weights["cubesRemaining"] = utility.weights["cubesRemaining"]! * -0.01
-            utility.weights["curedDiseases"] = utility.weights["curedDiseases"]! * -0.01
-            utility.weights["maxOutbreaks"] = utility.weights["maxOutbreaks"]! * -0.01
-            utility.weights["playerDeckCount"] = utility.weights["playerDeckCount"]! * -0.01
-            utility.weights["uncuredDiseases"] = utility.weights["uncuredDiseases"]! * -0.01
-            utility.weights["outbreaksSoFar"] = utility.weights["outbreaksSoFar"]! * -0.01
-            utility.weights["playerDeckCount"] = utility.weights["infectionRate"]! * -0.01*/
+           utility.weights["minDistance"] =  utility.weights["minDistance"]!
+           utility.weights["cubesOnBoard"] = utility.weights["cubesOnBoard"]!
+            utility.weights["cubesRemaining"] = utility.weights["cubesRemaining"]!
+            utility.weights["curedDiseases"] = utility.weights["curedDiseases"]!
+            utility.weights["maxOutbreaks"] = utility.weights["maxOutbreaks"]! 
+            utility.weights["playerDeckCount"] = utility.weights["playerDeckCount"]!
+            utility.weights["uncuredDiseases"] = utility.weights["uncuredDiseases"]!
+            utility.weights["outbreaksSoFar"] = utility.weights["outbreaksSoFar"]!
+            utility.weights["infectionRatet"] = utility.weights["infectionRate"]! 
             
-            utility.weights["minDistance"] =   -1.0
+           /* utility.weights["minDistance"] =   -1.0
              utility.weights["cubesOnBoard"] = -1.0
              utility.weights["cubesRemaining"] = -1.0
              utility.weights["curedDiseases"] = 1.0
@@ -120,7 +123,7 @@ class Trainer
              utility.weights["playerDeckCount"] = -1.0
              utility.weights["uncuredDiseases"] = -1.0
              utility.weights["outbreaksSoFar"] = -1.0
-               utility.weights["infectionRate"] = -3.0
+               utility.weights["infectionRate"] = -3.0*/
             
          
         
