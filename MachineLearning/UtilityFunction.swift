@@ -15,7 +15,7 @@ protocol UtilityFunction
 {
     /** the current value of the game state
      */
-    var utility: Float { get }
+    var utility: Double { get }
    
     
     /**
@@ -25,6 +25,6 @@ protocol UtilityFunction
      - Returns
      - utility
      */
-    func calculateUtility(currentGameState: PandemicSimulatorProtocol)-> Float
+    func calculateUtility(currentGameState: PandemicSimulatorProtocol)-> Double
 
 }

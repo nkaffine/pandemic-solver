@@ -11,7 +11,7 @@ import Foundation
 class Simulation {
     var interations: Int
     var currentGame: Simulator
-    var weights: [String: Float]
+    var weights: [String: Double]
     var utility: Utility
     
     init(iterations: Int){

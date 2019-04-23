@@ -10,13 +10,13 @@ import Foundation
 protocol WeightedUtilityFunction
 {
     
-    var utility: Float { get }
+    var utility: Double { get }
     /** the current value of the game state
      */
-    var reward: Float { get }
+    var reward: Double { get }
     /** the reward value for a win
      */
-    var weights: [String: Float] {get set}
+    var weights: [String: Double] {get set}
     /**
      weights for the current game state. The cube based weights are the same
      for all colors
@@ -41,7 +41,7 @@ protocol WeightedUtilityFunction
      - currentWeights: the current weights
      */
     func calculateUtilityWithWeights(currentGameState: PandemicSimulatorProtocol,
-                          currentWeights:Dictionary<String, Float> ) -> Float
+                          currentWeights:Dictionary<String, Double> ) -> Double
     
     /**
      Given the current weights, the predicted utility, and the actual utility,
@@ -55,9 +55,9 @@ protocol WeightedUtilityFunction
      */
     
     
-    func updateWeights(currentGameState: PandemicSimulatorProtocol, currentWeights:Dictionary<String, Float>,
-                       predictedUtility: Float, actualUtility: Float )
-        -> Dictionary<String, Float>
+    func updateWeights(currentGameState: PandemicSimulatorProtocol, currentWeights:Dictionary<String, Double>,
+                       predictedUtility: Double, actualUtility: Double )
+        -> Dictionary<String, Double>
     
    
 }

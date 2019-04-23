@@ -36,7 +36,7 @@ class SimulationsTests: XCTestCase {
          newGS  = sim.run()
          gs1 = sim.oneTurn(gs: newGS)
        
-        for i in 1...350{
+        for _ in 1...350{
             gs2 = sim.oneTurn(gs:gs1)
             gs3 = sim.oneTurn(gs: gs2)
             gs4 = sim.oneTurn(gs: gs3)

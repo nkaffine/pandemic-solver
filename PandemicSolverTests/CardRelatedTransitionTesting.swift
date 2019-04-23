@@ -67,7 +67,7 @@ class CardRelatedTransitionTesting: XCTestCase {
                 default:
                     return false
                 }
-            }).first!)
+            }).first!).0
             XCTAssertEqual(newState.curedDiseases.count, 1)
             let threshold = newState.currentPlayer.role == .scientist ? 4 : 5
             XCTAssertTrue((try! newState.hand(for: newState.currentPlayer)).cards.count
@@ -119,7 +119,7 @@ class CardRelatedTransitionTesting: XCTestCase {
                     }
             }
         }
-        return try! state.execute(action: movingActions.randomElement()!)
+        return try! state.execute(action: movingActions.randomElement()!).0
     }
     
     private func tryToCureInAtlanta(state: GameState) -> GameState
@@ -139,7 +139,7 @@ class CardRelatedTransitionTesting: XCTestCase {
         }
         if !drawAndInfect.isEmpty
         {
-            return try! state.execute(action: .drawAndInfect)
+            return try! state.execute(action: .drawAndInfect).0
         }
         let curing = legalActions.filter
         { action -> Bool in
@@ -161,7 +161,7 @@ class CardRelatedTransitionTesting: XCTestCase {
         }
         if !curing.isEmpty
         {
-            return try! state.execute(action: curing.first!)
+            return try! state.execute(action: curing.first!).0
         }
         else
         {
@@ -207,7 +207,7 @@ class CardRelatedTransitionTesting: XCTestCase {
             }
             if let (_, bestAction) = bestAction
             {
-                return try! state.execute(action: .general(action: bestAction))
+                return try! state.execute(action: .general(action: bestAction)).0
             }
             else
             {

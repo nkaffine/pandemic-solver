@@ -30,7 +30,7 @@ class Trainer
             /**
              This will just run the same game every time, Nick will write something to easily reset it.
              */
-            var maxQ = Float(0.0)
+            var maxQ = Double(0.0)
             simulator = simulator.startGame()
             print(simulator.gameStatus)
             var  count = 0

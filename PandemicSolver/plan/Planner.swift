@@ -65,7 +65,7 @@ struct RolloutPolicy: PolicyProtocol
     func action(for game: PandemicSimulatorProtocol) -> Action
     {
         return game.legalActions().map
-        { action -> (Action, Float) in
+        { action -> (Action, Double) in
             (action, utility.calculateUtility(currentGameState: game))
         }.max
         { actionPair1, actionPair2 -> Bool in

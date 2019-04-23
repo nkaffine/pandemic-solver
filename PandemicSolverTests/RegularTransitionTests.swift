@@ -153,7 +153,7 @@ class RegularTransitionTests: XCTestCase {
             {
                 let oldState = sut!
                 let currentPlayer = sut.currentPlayer
-                sut = try! sut.execute(action: charterActions.randomElement()!)
+                sut = try! sut.execute(action: charterActions.randomElement()!).0
                 XCTAssertNotEqual(try! sut.hand(for: currentPlayer).cards, try! oldState.hand(for: currentPlayer).cards)
                 XCTAssertFalse(try sut.hand(for: currentPlayer)
                     .cards.contains(Card(cityName: oldState.location(of: currentPlayer).city.name)))
@@ -161,7 +161,7 @@ class RegularTransitionTests: XCTestCase {
             }
             else
             {
-                sut = try! sut.execute(action: legalActions.randomElement()!)
+                sut = try! sut.execute(action: legalActions.randomElement()!).0
             }
             if !sut.gameStatus.isInProgress
             {
@@ -183,7 +183,7 @@ class RegularTransitionTests: XCTestCase {
             if haveHadCharterFlightError[sut.currentPlayer] ?? false
             {
                 //Take any random action
-                sut = try! sut.execute(action: sut.legalActions().randomElement()!)
+                sut = try! sut.execute(action: sut.legalActions().randomElement()!).0
             }
             else
             {
@@ -194,14 +194,14 @@ class RegularTransitionTests: XCTestCase {
                 if (currentHand.cards.contains(Card(cityName: currentLocation.city.name)))
                 {
                     //Just do a random action and don't update the dictionary
-                    sut = try! sut.execute(action: sut.legalActions().randomElement()!)
+                    sut = try! sut.execute(action: sut.legalActions().randomElement()!).0
                 }
                 else
                 {
                     //Take a charter flight that should be an error.
                     XCTAssertNil(try? sut.execute(action: .general(action: .charterFlight(to: currentLocation.city.name))))
                     haveHadCharterFlightError[sut.currentPlayer] = true
-                    sut = try! sut.execute(action: sut.legalActions().randomElement()!)
+                    sut = try! sut.execute(action: sut.legalActions().randomElement()!).0
                 }
             }
             //Check if the game is over and then restart it if it is.
@@ -272,7 +272,7 @@ class RegularTransitionTests: XCTestCase {
                             return currentPlayer
                     }
                 }()
-                sut = try! sut.execute(action: action)
+                sut = try! sut.execute(action: action).0
                 let cardDiscarded = (try! oldState.hand(for: currentPlayer)).cards
                     .filter{ !(try! sut.hand(for: currentPlayer)).cards.contains($0) }.first!
                 XCTAssertEqual(sut.location(of: movingPawn).city.name, cardDiscarded.cityName!)
@@ -283,7 +283,7 @@ class RegularTransitionTests: XCTestCase {
             }
             else
             {
-                sut = try! sut.execute(action: legalActions.randomElement()!)
+                sut = try! sut.execute(action: legalActions.randomElement()!).0
             }
             if !sut.gameStatus.isInProgress
             {
@@ -305,7 +305,7 @@ class RegularTransitionTests: XCTestCase {
             if directFlightErrors[sut.currentPlayer] ?? false
             {
                 //The error has already been observed, just act randomly
-                sut = try! sut.execute(action: sut.legalActions().randomElement()!)
+                sut = try! sut.execute(action: sut.legalActions().randomElement()!).0
             }
             else
             {
@@ -316,7 +316,7 @@ class RegularTransitionTests: XCTestCase {
                 { city in
                     XCTAssertNil(try? sut.execute(action: .general(action: .directFlight(to: city))))
                 }
-                sut = try! sut.execute(action: sut.legalActions().randomElement()!)
+                sut = try! sut.execute(action: sut.legalActions().randomElement()!).0
             }
             if !sut.gameStatus.isInProgress
             {
