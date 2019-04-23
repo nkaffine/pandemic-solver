@@ -13,7 +13,7 @@ enum Reward
     ///The player cured a disease
     case curedDisease
     ///Count outbreaks ocurred.
-    case outbreak(count: Int)
+    case outbreak
     ///A card was traded.
     case sharedKnowledge
     ///Treated a disease.
@@ -24,20 +24,20 @@ enum Reward
     /**
      The reward of the given action for the linear value function approximation.
     */
-    var reward: Int
+    var reward: Float
     {
         switch self
         {
             case .curedDisease:
-                return 0
-            case .outbreak(let count):
-                return 0 * count
+                return 2000.0
+            case .outbreak:
+                return 0.0
             case .sharedKnowledge:
-                return 0
+                return 1000.0
             case .treatedDisease:
-                return 0
+                return 200.0
             case .none:
-                return 0
+                return 0.0
         }
     }
 }

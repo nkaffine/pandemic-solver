@@ -13,7 +13,7 @@ protocol WeightedUtilityFunction
     var utility: Float { get }
     /** the current value of the game state
      */
-    var reward: Float { get }
+    //var reward: Float { get }
     /** the reward value for a win
      */
     var weights: [String: Float] {get set}
@@ -41,7 +41,7 @@ protocol WeightedUtilityFunction
      - currentWeights: the current weights
      */
     func calculateUtilityWithWeights(currentGameState: PandemicSimulatorProtocol,
-                          currentWeights:Dictionary<String, Float> ) -> Float
+                                     currentWeights:Dictionary<String, Float>, reward:Reward) -> Float
     
     /**
      Given the current weights, the predicted utility, and the actual utility,

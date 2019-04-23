@@ -21,7 +21,7 @@ class Utility: WeightedUtilityFunction, UtilityFunction {
     var utility: Float
     /** the reward value for a win
      */
-    var reward: Float
+    //var reward: Float
     /**
      weights for the current game state. The cube based weights are the same
      for all colors
@@ -57,7 +57,7 @@ class Utility: WeightedUtilityFunction, UtilityFunction {
             
         ]
         utility = 0.0
-        reward = 1000.0
+       
     }
     
     
@@ -187,7 +187,7 @@ class Utility: WeightedUtilityFunction, UtilityFunction {
      - currentWeights: the current weights
      */
     func calculateUtilityWithWeights(currentGameState: PandemicSimulatorProtocol,
-                                     currentWeights:Dictionary<String, Float> ) -> Float{
+                                     currentWeights:Dictionary<String, Float>, reward: Reward ) -> Float{
         var total: Float
         var redCount  = 0
         var yellowCount  = 0
@@ -242,9 +242,10 @@ class Utility: WeightedUtilityFunction, UtilityFunction {
         total += Float(1/currentGameState.playerDeck.count)*weights["playerDeckCount"]!
         total += Float(currentGameState.uncuredDiseases.count)*weights["uncuredDiseases"]!
         total += Float(currentGameState.outbreaksSoFar)*weights["outbreaksSoFar"]!
-       if (cubesOnBoard == 0) {
-            total += reward
-        }
+        // add in rewards
+        total += reward.reward
+        //print(reward.reward)
+        
       
        
     

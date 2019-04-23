@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import PandemicSolver
+/*@testable import PandemicSolver
 
 class CardRelatedTransitionTesting: XCTestCase {
     var sut: GameState!
@@ -324,4 +324,4 @@ struct StupidHelper
             return 3
         }
     }
-}
+}*/

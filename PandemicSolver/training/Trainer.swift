@@ -31,6 +31,7 @@ class Trainer
              This will just run the same game every time, Nick will write something to easily reset it.
              */
             var maxQ = Float(0.0)
+            
             simulator = simulator.startGame()
             print(simulator.gameStatus)
             var  count = 0
@@ -52,40 +53,46 @@ class Trainer
                 /**
                  Maps a list of legal actions to the gamestate that would result from executing them.
                  */
+                var reward:Reward
+                
                 let gameStates = simulator.legalActions().map
                
-              { action -> PandemicSimulatorProtocol in
+              {action -> (PandemicSimulatorProtocol, Reward) in
                 //print(action.description)
-                    return try! simulator.execute(action: action).0
+                    return try! simulator.execute(action: action)
                 }
                
                 var maxGameState = gameStates.max(by:
                    
                 { (gameState1, gameState2) -> Bool in
-                    self.utility.calculateUtilityWithWeights(currentGameState: gameState1, currentWeights: utility.weights)
-                        > utility.calculateUtilityWithWeights(currentGameState: gameState2, currentWeights: utility.weights)
+                    self.utility.calculateUtilityWithWeights(currentGameState: gameState1.0, currentWeights: utility.weights, reward:gameState1.1)
+                        > utility.calculateUtilityWithWeights(currentGameState: gameState2.0, currentWeights: utility.weights, reward:gameState1.1)
                 })
-                //Assuming just greedy
-                let newMax = self.utility.calculateUtilityWithWeights(currentGameState:maxGameState!, currentWeights: utility.weights)
-                //print (newMax)
-              
-                utility.weights = utility.updateWeights(currentGameState: simulator, currentWeights: utility.weights, predictedUtility: newMax, actualUtility:maxQ)
-                //print(newMax)
+                  let newMax = self.utility.calculateUtilityWithWeights(currentGameState:maxGameState!.0, currentWeights: utility.weights, reward: (maxGameState?.1)! )
+                 print(newMax)
                 //epison greedy
-                
+              
+                var rewardValue: Float
                     let epsilonGreedy  = Double.random(in: 0 ..< 1)
-                    if epsilonGreedy < 0.05 {
+                    if epsilonGreedy < 0.15 {
                         let actions = simulator.legalActions()
                         let countActions = actions.count
                         let actionNumber  = Int.random(in: 0 ..< countActions)
                         // print(actionNumber)
                         //  print(actions[actionNumber])
                         //try! (maxGameState, reward) = simulator.execute(action: actions[actionNumber])
-                         try! maxGameState = simulator.execute(action: actions[actionNumber]).0
+                         try! maxGameState = simulator.execute(action: actions[actionNumber])
                         print("Greedy!")
-                        //simulator = try! simulator.execute(action: actions[actionNumber])
+                     
+                        let newMax = self.utility.calculateUtilityWithWeights(currentGameState:maxGameState!.0, currentWeights: utility.weights, reward: (maxGameState?.1)! )
+                      
+                        print (newMax)
+                
+                        utility.weights = utility.updateWeights(currentGameState: simulator, currentWeights: utility.weights, predictedUtility: newMax, actualUtility:maxQ)
+                
                     }
-                simulator = maxGameState!
+                simulator = maxGameState!.0
+                
                 //print(simulator.cubesRemaining, simulator.curedDiseases, simulator.infectionRate, simulator.location(of: simulator.currentPlayer))
                 count = count + 1
                 

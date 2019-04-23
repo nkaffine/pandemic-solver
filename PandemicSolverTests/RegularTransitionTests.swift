@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import PandemicSolver
+/*@testable import PandemicSolver
 
 class RegularTransitionTests: XCTestCase {
     var sut: GameState!
@@ -112,7 +112,7 @@ class RegularTransitionTests: XCTestCase {
     
     func testCharterFlight()
     {
-        var haveDoneCharterActions: [Pawn : Bool] = [:]
+      /*  var haveDoneCharterActions: [Pawn : Bool] = [:]
         while !(sut.pawns.reduce(true,
         { result, pawn -> Bool in
             return result && (haveDoneCharterActions[pawn] ?? false)
@@ -167,11 +167,11 @@ class RegularTransitionTests: XCTestCase {
             {
                 sut = GameBoard().startGame()
             }
-        }
+        }*/
     }
     
     func testCharterFlightError()
-    {
+    {/*
         //Start the game and perform an illegal charter flight action for each pawn when it is their turn in the game.
         sut = sut.startGame()
         var haveHadCharterFlightError: [Pawn : Bool] = [:]
@@ -209,11 +209,11 @@ class RegularTransitionTests: XCTestCase {
             {
                 sut = GameBoard().startGame()
             }
-        }
+        }*/
     }
     
     func testDirectFlight()
-    {
+    {/*
         var haveDoneDirectFlights: [Pawn : Bool] = [:]
         while !(sut.pawns.reduce(true,
                                  { result, pawn -> Bool in
@@ -533,4 +533,5 @@ class RegularTransitionTests: XCTestCase {
             }
         }.isEmpty
     }
-}
+}*/
+*/

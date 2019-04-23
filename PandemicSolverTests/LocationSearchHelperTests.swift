@@ -8,7 +8,7 @@
 
 import XCTest
 @testable import PandemicSolver
-
+/*
 class LocationSearchHelperTests: XCTestCase {
     var graph: LocationGraph!
     
@@ -40,3 +40,4 @@ class LocationSearchHelperTests: XCTestCase {
         XCTAssertEqual(LocationSearchHelper.path(from: .buenosAres, to: .beijing, in: graph), [.buenosAres, .bogota, .mexicoCity, .losAngeles, .sanFrancisco, .tokyo, .shanghai, .beijing])
     }
 }
+*/
