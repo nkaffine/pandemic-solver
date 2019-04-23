@@ -16,7 +16,7 @@ protocol WeightedUtilityFunction
     var reward: Float { get }
     /** the reward value for a win
      */
-    var weights: [String: Float] { get }
+    var weights: [String: Float] {get set}
     /**
      weights for the current game state. The cube based weights are the same
      for all colors
@@ -55,7 +55,7 @@ protocol WeightedUtilityFunction
      */
     
     
-    func updateWeights(currentWeights:Dictionary<String, Float>,
+    func updateWeights(currentGameState: PandemicSimulatorProtocol, currentWeights:Dictionary<String, Float>,
                        predictedUtility: Float, actualUtility: Float )
         -> Dictionary<String, Float>
     

@@ -40,16 +40,19 @@ class Utility: WeightedUtilityFunction, UtilityFunction {
      */
     
     var weights: [String: Float]
+    
+   
     init() {
         weights = [
-            "cubesOnBoard" : -1.0103805,
-            "cubesRemaining" : -0.6300001,
-            "curedDiseases" : -1.0,
-            "infectionRate" : -0.47999975,
-            "maxOutbreaks" : -9.090004,
-            "playerDeckCount" : -2.6800003,
-            "uncuredDiseases" : 1.0,
-            "outbreaksSoFar" : -1.0018458,
+            "cubesOnBoard" : -1,
+            "cubesRemaining" : -1,
+            "curedDiseases" : 1,
+            "infectionRate" : -3,
+            "maxOutbreaks" : -10,
+            "playerDeckCount" : -1,
+            "uncuredDiseases" : -1,
+            "outbreaksSoFar" : -1,
+             "minDistance" : -1,
             
             
         ]
@@ -84,9 +87,8 @@ class Utility: WeightedUtilityFunction, UtilityFunction {
         print(currentGameState.playerDeck.count)
             print(currentGameState.uncuredDiseases.count)
             print(currentGameState.outbreaksSoFar)*/
-        let cubesOnBoard =  Float(calcCubesOnBoard(currentGameState: currentGameState))
-//         print("Current Cubes \(cubesOnBoard)")
-        
+       
+      /**  let cubesOnBoard = 1.0
         let cubesRemaining = Float(currentGameState.cubesRemaining[.yellow]!)
             + Float(currentGameState.cubesRemaining[.red]!)
             + Float(currentGameState.cubesRemaining[.blue]!)
@@ -102,10 +104,10 @@ class Utility: WeightedUtilityFunction, UtilityFunction {
         if (cubesOnBoard == 0){
             total += reward
         }
-    
+    */
         
               
-       return total
+       return 1.0
     }
 
         
@@ -120,12 +122,63 @@ class Utility: WeightedUtilityFunction, UtilityFunction {
          - newWeights - updated dictionary of weights
          */
         
-        
-        func updateWeights(currentWeights:Dictionary<String, Float>,
+    
+    func updateWeights(currentGameState: PandemicSimulatorProtocol,currentWeights:Dictionary<String, Float>,
                            predictedUtility: Float, actualUtility: Float )
             -> Dictionary<String, Float>{
+            
+                let alpha = Float(0.005)
+                 let infectedCitites =  currentGameState.infectedCities
+                let difference = (predictedUtility  - actualUtility)*alpha
+                let minDistance = calcMinDistance(currentGameState: currentGameState)
+                
+                var redCount  = 0
+                var yellowCount  = 0
+                var blackCount  = 0
+                var blueCount  = 0
+                for city  in infectedCitites{
+                    switch (city.1[0].disease) {
+                    case .red:
+                        redCount = redCount + city.1[0].count
+                        
+                    case .blue:
+                        blueCount = blueCount +  city.1[0].count
+                    case .yellow:
+                        yellowCount = yellowCount + city.1[0].count
+                    case .black:
+                        blackCount =  blackCount + city.1[0].count
+                        
+                        
+                        
+                    }
+                    
+                    
+                }
+                 let cubesOnBoard  = Float(blackCount + redCount + yellowCount + blueCount)
+                let cubesRemaining = (1/Float(currentGameState.cubesRemaining[.yellow]!) + 0.01)
+                    + (1/Float(currentGameState.cubesRemaining[.red]!) + 0.01)
+                    + (1/Float(currentGameState.cubesRemaining[.blue]!) + 0.01)
+                    +  (1/Float(currentGameState.cubesRemaining[.black]!) + 0.01)
+                weights["minDistance"] =  currentWeights["minDistance"]! +  difference*(minDistance)*0.01
+                weights["cubesOnBoard"] = currentWeights["cubesOnBoard"]! 
+                 weights["cubesRemaining"] = currentWeights["cubesRemaining"]! + difference*cubesRemaining*0.001
+                 weights["curedDiseases"] = currentWeights["curedDiseases"]! + Float(currentGameState.curedDiseases.count)*0.01
+                 weights["maxOutbreaks"] = currentWeights["maxOutbreaks"]! + Float(currentGameState.maxOutbreaks)*0.01
+                 weights["playerDeckCount"] = currentWeights["playerDeckCount"]! + Float(1/currentGameState.playerDeck.count)
+                weights["uncuredDiseases"] = currentWeights["uncuredDiseases"]! + Float(currentGameState.uncuredDiseases.count)*0.01
+                weights["outbreaksSoFar"] = currentWeights["outbreaksSoFar"]! + Float(currentGameState.outbreaksSoFar)*0.01
+                weights["infectionRate"] = currentWeights["infectionRate"]! + Float(currentGameState.infectionRate.cardsToDraw)*0.01
+                
+                    
+                    
+                
+                    
+               
+    
+                
+               
         
-        return self.weights
+        return weights
     }
     /**
      Calculates the Utility funtion with the given weights
@@ -136,67 +189,83 @@ class Utility: WeightedUtilityFunction, UtilityFunction {
     func calculateUtilityWithWeights(currentGameState: PandemicSimulatorProtocol,
                                      currentWeights:Dictionary<String, Float> ) -> Float{
         var total: Float
+        var redCount  = 0
+        var yellowCount  = 0
+        var blackCount  = 0
+        var blueCount  = 0
+        let infectedCitites =  currentGameState.infectedCities
         
-        //let cubesOnBoard =  Float(calcCubesOnBoard(currentGameState: PandemicSimulatorProtocol.self as! PandemicSimulatorProtocol))
+       
+        
+   
+       
+       
+        
+        var minDistance   =  calcMinDistance(currentGameState: currentGameState)
+        //print(currentLocation.city.name)
+        for city  in infectedCitites{
+            switch (city.1[0].disease) {
+            case .red:
+                redCount = redCount + city.1[0].count
+                
+            case .blue:
+                blueCount = blueCount +  city.1[0].count
+            case .yellow:
+                yellowCount = yellowCount + city.1[0].count
+            case .black:
+                blackCount =  blackCount + city.1[0].count
+            
+            
+            
+            }
+        
+          
+        }
+        
         //print("Current Cubes \(cubesOnBoard)")
-        
-        let cubesRemaining = Float(currentGameState.cubesRemaining[.yellow]!)
-            + Float(currentGameState.cubesRemaining[.red]!)
-            + Float(currentGameState.cubesRemaining[.blue]!)
-            +  Float(currentGameState.cubesRemaining[.black]!)
-        total = Float(cubesRemaining*weights["cubesRemaining"]!)
+        //print("Yellow \(currentGameState.cubesRemaining[.yellow]!) and \(yellowCount)")
+        //print("Blue \(currentGameState.cubesRemaining[.blue]!) and \(blueCount)")
+        //print("Red \(currentGameState.cubesRemaining[.red]!) and \(redCount)")
+        //print("Black \(currentGameState.cubesRemaining[.black]!) and \(blackCount)")
+        //Use the inverso of cubes remaining so that a small number of cubes is bad
+        let cubesRemaining = (1/Float(currentGameState.cubesRemaining[.yellow]!) + 0.01)
+            + (1/Float(currentGameState.cubesRemaining[.red]!) + 0.01)
+            + (1/Float(currentGameState.cubesRemaining[.blue]!) + 0.01)
+            +  (1/Float(currentGameState.cubesRemaining[.black]!) + 0.01)
+        let cubesOnBoard  = Float(blackCount + redCount + yellowCount + blueCount)
+        total = Float((cubesRemaining)*weights["cubesRemaining"]!)
+        total += (cubesOnBoard)*weights["cubesOnBoard"]!
+        total += Float((minDistance))*weights["minDistance"]!
         total += Float(currentGameState.infectionRate.cardsToDraw)*weights["infectionRate"]!
         total += Float(currentGameState.curedDiseases.count)*weights["curedDiseases"]!
-        total += Float(currentGameState.infectionRate.cardsToDraw)*weights["infectionRate"]!
         total += Float(currentGameState.maxOutbreaks)*weights["maxOutbreaks"]!
         total += Float(1/currentGameState.playerDeck.count)*weights["playerDeckCount"]!
         total += Float(currentGameState.uncuredDiseases.count)*weights["uncuredDiseases"]!
         total += Float(currentGameState.outbreaksSoFar)*weights["outbreaksSoFar"]!
-        /*if (cubesOnBoard == 0){
-            total += reward
-        }*/
-        /**if (currentGameState.gameStatus == .win){
+       if (cubesOnBoard == 0) {
             total += reward
         }
-        else if (currentGameState.gameStatus.lose)
-            total += Float(-500.0)
-    }
-        **/
+      
+       
+    
         return total
     }
     
-    func calcCubesOnBoard(currentGameState: PandemicSimulatorProtocol) -> Int {
-        var count = 0
-        /*for location in currentGameState.b   locationGraph{
-            count += location.cubes.black.rawValue
-            count += location.cubes.yellow.rawValue
-            count += location.cubes.blue.rawValue
-            count += location.cubes.red.rawValue
-        }*/
-        return 1
-        
+   
+func calcMinDistance(currentGameState:PandemicSimulatorProtocol) -> Float {
+    let currentLocation  = currentGameState.location(of: currentGameState.currentPlayer)
+    let infectedCitites =  currentGameState.infectedCities
+    var minDistance   = 100
+    let  graph = LocationGraph()
+    
+    for city  in infectedCitites{
+        let distanceToCity  = LocationSearchHelper.distance(from: currentLocation.city.name, to: city.city, in: graph)
+        if (distanceToCity < minDistance){
+            minDistance = distanceToCity
+        }
+       
     }
-    
-    
+    return Float(minDistance)
     
 }
-
-
-struct UtilityPolicy: PolicyProtocol
-{
-    func action(for game: PandemicSimulatorProtocol) -> Action {
-        return game.legalActions().map
-        { action -> (Action, Float) in
-            (action, utility.calculateUtility(currentGameState: try! game.execute(action: action).0))
-        }.max(by: { (action1, action2) -> Bool in
-            action1.1 < action2.1
-        })!.0
-    }
-    
-    private var utility: Utility
-    
-    init()
-    {
-        self.utility = Utility()
-    }
 }

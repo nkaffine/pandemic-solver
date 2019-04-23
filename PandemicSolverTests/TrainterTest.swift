@@ -14,6 +14,7 @@ class TrainterTest: XCTestCase {
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
        let utility = Utility()
+        
         trainer = Trainer(utility:utility)
     }
 
